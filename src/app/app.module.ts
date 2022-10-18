@@ -74,6 +74,12 @@ import { LayoutModule } from './layout/layout.module';
 import { RoutesModule } from './routes/routes.module';
 import { SharedModule } from './shared/shared.module';
 import { STWidgetModule } from './shared/st-widget/st-widget.module';
+import { NuMonacoEditorModule } from '@ng-util/monaco-editor';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { IconDefinition } from '@ant-design/icons-angular';
+import * as AllIcons from '@ant-design/icons-angular/icons';
+const antDesignIcons = AllIcons as { [key: string]: IconDefinition };
+const icons: IconDefinition[] = Object.keys(antDesignIcons).map(key => antDesignIcons[key]);
 
 @NgModule({
   declarations: [AppComponent],
@@ -89,8 +95,10 @@ import { STWidgetModule } from './shared/st-widget/st-widget.module';
     STWidgetModule,
     NzMessageModule,
     NzNotificationModule,
+    NuMonacoEditorModule.forRoot({ baseUrl: 'assets/monaco-editor' }),
     ...FORM_MODULES,
-    ...GLOBAL_THIRD_MODULES
+    ...GLOBAL_THIRD_MODULES,
+    NzIconModule.forRoot(icons)
   ],
   providers: [...LANG_PROVIDES, ...INTERCEPTOR_PROVIDES, ...APPINIT_PROVIDES],
   bootstrap: [AppComponent]

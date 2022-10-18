@@ -1,0 +1,233 @@
+// 外部依赖
+import { Injectable } from '@angular/core';
+import { SFSchemaEnum } from '@delon/form';
+import { _HttpClient, Menu, SettingsService, TitleService } from '@delon/theme';
+import { ArrayService } from '@delon/util';
+import { Result } from '@shared';
+import type { NzSafeAny } from 'ng-zorro-antd/core/types';
+import { Observable, BehaviorSubject, map, observable } from 'rxjs';
+import { io, Socket } from 'socket.io-client';
+
+/**基础服务，需要在多处多次调用 */
+@Injectable({ providedIn: 'root' })
+export class BaseService {
+  /**后端地址 */
+  baseUrl: string;
+  /**当前主菜单链接 */
+  link: string;
+  /**用户对象最新操作ID */
+  private userOperateId: number;
+  /**用户ID与用户姓名的Map */
+  private userMap: Map<number, string>;
+  /**用户选项订阅主体 */
+  userSub: BehaviorSubject<SFSchemaEnum[]>;
+  /**菜单对象最新操作ID */
+  private menuOperateId: number;
+  /**缓存的菜单Map */
+  menuMap: Map<number, any>;
+  /**菜单订阅主体 */
+  menuSub: BehaviorSubject<Menu[]>;
+  /**侧边栏菜单清单 */
+  private menuList: Menu[];
+  /**排序订阅主体 */
+  sortSub: BehaviorSubject<string>;
+  /** 长连接对象 */
+  socket!: Socket;
+
+  /**
+   * 构建函数
+   *
+   * @param client 注入的http服务
+   * @param arrSrv 注入的数组服务
+   * @param settingSrv 注入的数组服务
+   * @param titleSrv 注入的数组服务
+   */
+  constructor(
+    private readonly client: _HttpClient,
+    private readonly arrSrv: ArrayService,
+    private readonly settingSrv: SettingsService,
+    private readonly titleSrv: TitleService
+  ) {
+    this.baseUrl = '';
+    this.link = '';
+    this.userOperateId = 0;
+    this.userMap = new Map<number, string>();
+    this.userSub = new BehaviorSubject<SFSchemaEnum[]>([]);
+    this.menuOperateId = 0;
+    this.menuMap = new Map<number, any>();
+    this.menuSub = new BehaviorSubject<Menu[]>([]);
+    this.menuList = [];
+    this.sortSub = new BehaviorSubject<string>('');
+  }
+
+  /**
+   * 初始化用户数据
+   *
+   * @returns Observable
+   */
+  userinit(): Observable<void> {
+    console.debug('初始化用户数据！');
+    return this.client.get('common/init/user', { operateId: this.userOperateId }).pipe(
+      map(res => {
+        if (!res.code && res.data.length) {
+          for (const userItem of res.data) {
+            this.userMap.set(userItem['userid'], userItem['username']);
+            if (this.userOperateId < userItem['operateId']) {
+              this.userOperateId = userItem['operateId'];
+            }
+          }
+        }
+        console.debug('完成用户数据初始化！');
+        const userlist: SFSchemaEnum[] = Array.from(this.userMap).map(item => ({ value: item[0], label: item[1], title: item[1] }));
+        this.userSub.next(userlist);
+        console.debug('最新用户清单', userlist);
+      })
+    );
+  }
+
+  /**
+   * 用户ID换用户姓名
+   *
+   * @param userid 用户ID
+   * @returns 用户姓名
+   */
+  username(userid: number): string {
+    return this.userMap.get(userid) || '';
+  }
+
+  userlist(): SFSchemaEnum[] {
+    return Array.from(this.userMap).map((item: any) => ({ value: item[0], label: item[1] }));
+  }
+
+  /**
+   * 初始化菜单数据
+   *
+   * @returns Observable
+   */
+  menuinit(): Observable<void> {
+    console.debug('初始化菜单数据！');
+    return this.client.get('common/init/menu', { operateId: this.menuOperateId }).pipe(
+      map((res: Result) => {
+        if (!res.code && res['data'].length) {
+          for (const menuitem of res['data']) {
+            this.menuMap.set(menuitem['menuid'], menuitem);
+            if (this.menuOperateId < menuitem['operateId']) {
+              this.menuOperateId = menuitem['operateId'];
+            }
+          }
+        }
+        this.menuList = this.arrSrv
+          .arrToTree(
+            Array.from(this.menuMap.values())
+              .filter(item => item.status)
+              .sort((a, b) => a.orderid - b.orderid)
+              .map(item => {
+                if (item.pmenuid === 0) {
+                  // 主菜单返回逻辑
+                  return {
+                    menuid: item.menuid,
+                    pmenuid: item.pmenuid,
+                    text: item.config.text,
+                    group: true,
+                    link: item.config.link,
+                    acl: item.abilities.length ? item.abilities : undefined
+                  };
+                } else {
+                  // 子菜单返回逻辑
+                  return {
+                    menuid: item.menuid,
+                    pmenuid: item.pmenuid,
+                    text: item.config.text,
+                    link: item.config.link,
+                    icon: item.config.icon ? `anticon-${item.config.icon}` : null,
+                    reuse: item.config.reuse,
+                    acl: item.abilities.length ? item.abilities : undefined
+                  };
+                }
+              }),
+            { idMapName: 'menuid', parentIdMapName: 'pmenuid', rootParentIdValue: 0 }
+          )
+          .map((item: Menu) => {
+            item.children?.push({ text: '返回', link: 'common/home', icon: 'anticon-left' });
+            return item;
+          });
+        console.debug('完成菜单数据初始化！', this.menuList);
+      })
+    );
+  }
+
+  /**
+   * 触发刷新侧边栏菜单
+   *
+   * @param link 侧边栏菜单的主菜单链接
+   */
+  menuchange(link?: string): void {
+    console.debug('主菜单链接', link);
+    if (link) {
+      this.link = link;
+    }
+    /**侧边栏菜单 */
+    const menulist: Menu[] = this.menuList.filter(item => item.link === this.link);
+    // 弹出菜单栏数据
+    if (menulist.length) {
+      console.debug('发送的菜单', menulist);
+      this.menuSub.next(menulist);
+    }
+  }
+
+  /**建立通知长连接 */
+  connect(): void {
+    console.debug('建立通知长连接！', this.socket);
+    const wsurl = `${this.baseUrl}common`;
+    if (!this.socket || this.socket.disconnected) {
+      this.socket = io(wsurl);
+      this.socket.on('connect', () => {
+        console.debug('已连接成功', this.socket);
+      });
+    }
+    // 系统事件
+    this.socket.on('disconnect', (msg: any) => {
+      console.debug('disconnect', msg);
+    });
+    this.socket.on('disconnecting', () => {
+      console.debug('disconnecting');
+    });
+    this.socket.on('error', () => {
+      console.debug('error');
+    });
+    // 自定义事件
+    this.socket.on('log', (data: any) => {
+      console.debug('收到log消息：', data);
+    });
+    this.socket.on('setting', (data: any) => {
+      console.debug('收到setting消息：', data);
+      if (data.code === 'sys') {
+        this.client.get('common/init/sys').subscribe((res: NzSafeAny) => {
+          this.settingSrv.setApp(res.data);
+          this.titleSrv.suffix = res.data.title;
+          console.debug('系统配置实时更新');
+        });
+      }
+    });
+    // 重新初始化用户信息
+    this.socket.on('user', (data: any) => {
+      console.debug('收到user消息：', data);
+      this.userinit().subscribe();
+    });
+    // 重新初始化菜单信息
+    this.socket.on('menu', (data: any) => {
+      console.debug('收到menu消息：', data);
+      this.menuinit().subscribe(() => this.menuchange());
+    });
+    // 重新初始化排序信息
+    this.socket.on('sort', (data: any) => {
+      console.debug('收到sort消息：', data);
+      this.sortSub.next(data);
+    });
+  }
+
+  /**断开通知长连接 */
+  disconnet(): void {
+    this.socket.close();
+  }
+}

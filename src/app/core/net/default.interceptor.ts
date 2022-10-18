@@ -9,11 +9,13 @@ import {
 } from '@angular/common/http';
 import { Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
+import { BaseService } from '@core';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
-import { ALAIN_I18N_TOKEN, IGNORE_BASE_URL, _HttpClient, CUSTOM_ERROR, RAW_BODY } from '@delon/theme';
-import { environment } from '@env/environment';
+import { ALAIN_I18N_TOKEN, IGNORE_BASE_URL, _HttpClient } from '@delon/theme';
+import { environment } from '@env';
+import { Result } from '@shared';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { BehaviorSubject, Observable, of, throwError, catchError, filter, mergeMap, switchMap, take } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError, catchError, map, filter, mergeMap, switchMap, take } from 'rxjs';
 
 const CODEMESSAGE: { [key: number]: string } = {
   200: '服务器成功返回请求的数据。',
@@ -38,12 +40,16 @@ const CODEMESSAGE: { [key: number]: string } = {
  */
 @Injectable()
 export class DefaultInterceptor implements HttpInterceptor {
+  /**开启刷新token功能标记 */
   private refreshTokenEnabled = environment.api.refreshTokenEnabled;
+  /**刷新token方式 */
   private refreshTokenType: 're-request' | 'auth-refresh' = environment.api.refreshTokenType;
+  /**正在刷新token标记 */
   private refreshToking = false;
+  /**暂存刷新token期间的后端请求 */
   private refreshToken$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(private injector: Injector) {
+  constructor(private injector: Injector, private baseSrv: BaseService) {
     if (this.refreshTokenType === 'auth-refresh') {
       this.buildAuthRefresh();
     }
@@ -57,7 +63,7 @@ export class DefaultInterceptor implements HttpInterceptor {
     return this.injector.get(DA_SERVICE_TOKEN);
   }
 
-  private get http(): _HttpClient {
+  private get client(): _HttpClient {
     return this.injector.get(_HttpClient);
   }
 
@@ -78,15 +84,22 @@ export class DefaultInterceptor implements HttpInterceptor {
    * 刷新 Token 请求
    */
   private refreshTokenRequest(): Observable<any> {
-    const model = this.tokenSrv.get();
-    return this.http.post(`/api/auth/refresh`, null, null, { headers: { refresh_token: model?.['refresh_token'] || '' } });
+    return this.client.get('common/init/refresh').pipe(
+      map((res: Result) => {
+        if (res.code) {
+          this.baseSrv.disconnet();
+          throw '刷新令牌失败';
+        }
+        return res['data'];
+      })
+    );
   }
 
   // #region 刷新Token方式一：使用 401 重新刷新 Token
 
   private tryRefreshToken(ev: HttpResponseBase, req: HttpRequest<any>, next: HttpHandler): Observable<any> {
-    // 1、若请求为刷新Token请求，表示来自刷新Token可以直接跳转登录页
-    if ([`/api/auth/refresh`].some(url => req.url.includes(url))) {
+    // 1、若请求为刷新Token请求，表示刷新Token已失败，可以直接跳转登录页
+    if (['common/refresh'].some(url => req.url.includes(url))) {
       this.toLogin();
       return throwError(() => ev);
     }
@@ -154,8 +167,6 @@ export class DefaultInterceptor implements HttpInterceptor {
       )
       .subscribe({
         next: res => {
-          // TODO: Mock expired value
-          res.expired = +new Date() + 1000 * 60 * 5;
           this.refreshToking = false;
           this.tokenSrv.set(res);
         },
@@ -166,7 +177,7 @@ export class DefaultInterceptor implements HttpInterceptor {
   // #endregion
 
   private toLogin(): void {
-    this.notification.error(`未登录或登录已过期，请重新登录。`, ``);
+    this.notification.error(`令牌过期`, `您的令牌已过期，请重新登录！`);
     this.goTo(this.tokenSrv.login_url!);
   }
 
@@ -233,18 +244,15 @@ export class DefaultInterceptor implements HttpInterceptor {
     if (!headers?.has('Accept-Language') && lang) {
       res['Accept-Language'] = lang;
     }
-
     return res;
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // 统一加上服务端前缀
     let url = req.url;
-    if (!req.context.get(IGNORE_BASE_URL) && !url.startsWith('https://') && !url.startsWith('http://')) {
-      const { baseUrl } = environment.api;
-      url = baseUrl + (baseUrl.endsWith('/') && url.startsWith('/') ? url.substring(1) : url);
+    if (!req.context.get(IGNORE_BASE_URL) && !url.startsWith('https://') && !url.startsWith('http://') && !url.startsWith('assets')) {
+      url = this.baseSrv.baseUrl + (this.baseSrv.baseUrl.endsWith('/') && url.startsWith('/') ? url.substring(1) : url);
     }
-
     const newReq = req.clone({ url, setHeaders: this.getAdditionalHeaders(req.headers) });
     return next.handle(newReq).pipe(
       mergeMap(ev => {
@@ -254,8 +262,8 @@ export class DefaultInterceptor implements HttpInterceptor {
         }
         // 若一切都正常，则后续操作
         return of(ev);
-      })
-      // catchError((err: HttpErrorResponse) => this.handleData(err, newReq, next))
+      }),
+      catchError((err: HttpErrorResponse) => this.handleData(err, newReq, next))
     );
   }
 }

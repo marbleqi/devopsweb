@@ -6,7 +6,7 @@ import { AlainConfig, ALAIN_CONFIG } from '@delon/util/config';
 
 import { throwIfAlreadyLoaded } from '@core';
 
-import { environment } from '@env/environment';
+import { environment } from '@env';
 
 // Please refer to: https://ng-alain.com/docs/global-config
 // #region NG-ALAIN Config

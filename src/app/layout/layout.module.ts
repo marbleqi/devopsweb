@@ -19,12 +19,14 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { ReuseTabModule } from '@delon/abc/reuse-tab';
 
-import { LayoutBasicComponent } from './basic/basic.component';
-import { HeaderClearStorageComponent } from './basic/widgets/clear-storage.component';
-import { HeaderFullScreenComponent } from './basic/widgets/fullscreen.component';
-import { HeaderSearchComponent } from './basic/widgets/search.component';
-import { HeaderUserComponent } from './basic/widgets/user.component';
-import { LayoutBlankComponent } from './blank/blank.component';
+import {
+  LayoutBasicComponent,
+  HeaderClearStorageComponent,
+  HeaderFullScreenComponent,
+  HeaderSearchComponent,
+  HeaderUserComponent,
+  LayoutBlankComponent
+} from '.';
 
 const COMPONENTS = [LayoutBasicComponent, LayoutBlankComponent];
 

@@ -1,3 +1,6 @@
+// Interfaces
+export * from './interfaces';
+
 // Components
 
 // Utils

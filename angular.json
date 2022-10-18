@@ -14,7 +14,7 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "skipTests": false,
+          "skipTests": true,
           "flat": false,
           "inlineStyle": true,
           "inlineTemplate": false,
@@ -22,31 +22,34 @@
         },
         "ng-alain:module": {
           "routing": true,
-          "skipTests": false
+          "skipTests": true
+        },
+        "ng-alain:empty": {
+          "skipTests": true
         },
         "ng-alain:list": {
-          "skipTests": false
+          "skipTests": true
         },
         "ng-alain:edit": {
-          "skipTests": false,
+          "skipTests": true,
           "modal": true
         },
         "ng-alain:view": {
-          "skipTests": false,
+          "skipTests": true,
           "modal": true
         },
         "ng-alain:curd": {
-          "skipTests": false
+          "skipTests": true
         },
         "@schematics/angular:module": {
           "routing": true,
-          "skipTests": false
+          "skipTests": true
         },
         "@schematics/angular:directive": {
-          "skipTests": false
+          "skipTests": true
         },
         "@schematics/angular:service": {
-          "skipTests": false
+          "skipTests": true
         }
       },
       "root": "",
@@ -56,7 +59,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/devopsweb",
+            "outputPath": "dist/html",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -74,8 +77,7 @@
               "ajv",
               "ajv-formats",
               "extend",
-              "file-saver",
-              "mockjs"
+              "file-saver"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [

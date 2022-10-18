@@ -23,14 +23,20 @@
     ],
     "allowSyntheticDefaultImports": true,
     "paths": {
+      "@src": [
+        "src/index"
+      ],
       "@shared": [
         "src/app/shared/index"
       ],
       "@core": [
         "src/app/core/index"
       ],
-      "@env/*": [
-        "src/environments/*"
+      "@env": [
+        "src/environments/index"
+      ],
+      "@layout": [
+        "src/app/layout/index"
       ]
     }
   },
