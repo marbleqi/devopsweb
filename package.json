@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng s -o",
+    "start": "ng s --host 0.0.0.0 --port 80 --disable-host-check",
     "build": "npm run ng-high-memory build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

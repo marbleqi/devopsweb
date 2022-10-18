@@ -1,6 +1,16 @@
 {
   "typescript.tsdk": "./node_modules/typescript/lib",
+  "editor.formatOnPaste": true,
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 2000,
   "editor.formatOnSave": true,
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.renderWhitespace": "all",
+  "files.eol": "\n",
+  "javascript.format.semicolons": "insert",
+  "typescript.format.semicolons": "insert",
   "editor.codeActionsOnSave": {
     // For ESLint
     "source.fixAll.eslint": true,

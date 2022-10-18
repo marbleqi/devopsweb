@@ -11,6 +11,7 @@
 npm-debug.log
 yarn-error.log
 
+
 # IDEs and editors
 .idea/
 .project
@@ -40,3 +41,9 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# 忽略yarn锁定文件
+/yarn.lock
+
+# 忽略后端地址配置文件
+/src/assets/config/api.json

@@ -1,0 +1,27 @@
+<layout-default [options]="options" [nav]="navTpl" [content]="contentTpl" [customError]="null">
+  <layout-default-header-item direction="right" hidden="mobile">
+    <div layout-default-header-item-trigger nz-dropdown [nzDropdownMenu]="settingsMenu" nzTrigger="click" nzPlacement="bottomRight">
+      <i nz-icon nzType="setting"></i>
+    </div>
+    <nz-dropdown-menu #settingsMenu="nzDropdownMenu">
+      <div nz-menu style="width: 200px">
+        <div nz-menu-item>
+          <header-fullscreen></header-fullscreen>
+        </div>
+        <div nz-menu-item>
+          <header-clear-storage></header-clear-storage>
+        </div>
+      </div>
+    </nz-dropdown-menu>
+  </layout-default-header-item>
+  <layout-default-header-item direction="right">
+    <header-user></header-user>
+  </layout-default-header-item>
+  <ng-template #navTpl>
+    <layout-default-nav [openStrictly]="true"></layout-default-nav>
+  </ng-template>
+  <ng-template #contentTpl>
+    <reuse-tab #reuseTab tabType="card"></reuse-tab>
+    <router-outlet (activate)="reuseTab.activate($event)"></router-outlet>
+  </ng-template>
+</layout-default>

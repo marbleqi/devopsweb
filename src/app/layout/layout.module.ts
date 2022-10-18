@@ -17,6 +17,7 @@ import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { ReuseTabModule } from '@delon/abc/reuse-tab';
 
 import { LayoutBasicComponent } from './basic/basic.component';
 import { HeaderClearStorageComponent } from './basic/widgets/clear-storage.component';
@@ -38,6 +39,7 @@ const PASSPORT = [LayoutPassportComponent];
     CommonModule,
     FormsModule,
     RouterModule,
+    ReuseTabModule,
     ThemeBtnModule,
     SettingDrawerModule,
     LayoutDefaultModule,
