@@ -1,0 +1,8 @@
+<page-header title="角色" [action]="phActionTpl">
+  <ng-template #phActionTpl>
+    <button nz-button (click)="getData()">刷新</button>
+    <button nz-button nzType="primary" (click)="add()">新建</button>
+    <button nz-button nzType="primary" (click)="sort()" [disabled]="dissort">排序</button>
+  </ng-template>
+</page-header>
+<st #st [data]="stData" [columns]="columns"></st>

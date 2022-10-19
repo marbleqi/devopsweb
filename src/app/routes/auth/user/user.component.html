@@ -1,0 +1,7 @@
+<page-header title="用户" [action]="phActionTpl">
+  <ng-template #phActionTpl>
+    <button nz-button (click)="getData()">刷新</button>
+    <button nz-button nzType="primary" (click)="add()">新建</button>
+  </ng-template>
+</page-header>
+<st #st [data]="stData" [columns]="columns" [loading]="loading"></st>

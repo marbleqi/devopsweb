@@ -1,0 +1,7 @@
+<page-header title="令牌" [action]="phActionTpl">
+  <ng-template #phActionTpl>
+    <button nz-button (click)="getData()">刷新</button>
+    <button nz-button (click)="remove()" [disabled]="disremove">删除</button>
+  </ng-template>
+</page-header>
+<st #st [data]="stData" [columns]="columns" (change)="change($event)"></st>

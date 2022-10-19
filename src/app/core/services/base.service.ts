@@ -65,22 +65,23 @@ export class BaseService {
    *
    * @returns Observable
    */
-  userinit(): Observable<void> {
+  userInit(): Observable<void> {
     console.debug('初始化用户数据！');
     return this.client.get('common/init/user', { operateId: this.userOperateId }).pipe(
       map(res => {
+        console.debug('接口中的用户数据', res);
         if (!res.code && res.data.length) {
           for (const userItem of res.data) {
-            this.userMap.set(userItem['userid'], userItem['username']);
-            if (this.userOperateId < userItem['operateId']) {
-              this.userOperateId = userItem['operateId'];
+            this.userMap.set(userItem.userId, userItem.userName);
+            if (this.userOperateId < userItem.operateId) {
+              this.userOperateId = userItem.operateId;
             }
           }
         }
-        console.debug('完成用户数据初始化！');
-        const userlist: SFSchemaEnum[] = Array.from(this.userMap).map(item => ({ value: item[0], label: item[1], title: item[1] }));
-        this.userSub.next(userlist);
-        console.debug('最新用户清单', userlist);
+        console.debug('完成用户数据初始化！', this.userMap);
+        const userList: SFSchemaEnum[] = Array.from(this.userMap).map(item => ({ value: item[0], label: item[1], title: item[1] }));
+        this.userSub.next(userList);
+        console.debug('最新用户清单', userList);
       })
     );
   }
@@ -91,11 +92,11 @@ export class BaseService {
    * @param userid 用户ID
    * @returns 用户姓名
    */
-  username(userid: number): string {
+  userName(userid: number): string {
     return this.userMap.get(userid) || '';
   }
 
-  userlist(): SFSchemaEnum[] {
+  userList(): SFSchemaEnum[] {
     return Array.from(this.userMap).map((item: any) => ({ value: item[0], label: item[1] }));
   }
 
@@ -104,15 +105,16 @@ export class BaseService {
    *
    * @returns Observable
    */
-  menuinit(): Observable<void> {
+  menuInit(): Observable<void> {
     console.debug('初始化菜单数据！');
     return this.client.get('common/init/menu', { operateId: this.menuOperateId }).pipe(
       map((res: Result) => {
-        if (!res.code && res['data'].length) {
-          for (const menuitem of res['data']) {
-            this.menuMap.set(menuitem['menuid'], menuitem);
-            if (this.menuOperateId < menuitem['operateId']) {
-              this.menuOperateId = menuitem['operateId'];
+        console.debug('接口中的菜单数据', res);
+        if (!res.code && res.data.length) {
+          for (const menuItem of res.data) {
+            this.menuMap.set(menuItem.menuId, menuItem);
+            if (this.menuOperateId < menuItem.operateId) {
+              this.menuOperateId = menuItem.operateId;
             }
           }
         }
@@ -120,13 +122,13 @@ export class BaseService {
           .arrToTree(
             Array.from(this.menuMap.values())
               .filter(item => item.status)
-              .sort((a, b) => a.orderid - b.orderid)
+              .sort((a, b) => a.orderId - b.orderId)
               .map(item => {
-                if (item.pmenuid === 0) {
+                if (item.pMenuId === 0) {
                   // 主菜单返回逻辑
                   return {
-                    menuid: item.menuid,
-                    pmenuid: item.pmenuid,
+                    menuId: item.menuId,
+                    pMenuId: item.pMenuId,
                     text: item.config.text,
                     group: true,
                     link: item.config.link,
@@ -135,8 +137,8 @@ export class BaseService {
                 } else {
                   // 子菜单返回逻辑
                   return {
-                    menuid: item.menuid,
-                    pmenuid: item.pmenuid,
+                    menuId: item.menuId,
+                    pMenuId: item.pMenuId,
                     text: item.config.text,
                     link: item.config.link,
                     icon: item.config.icon ? `anticon-${item.config.icon}` : null,
@@ -145,7 +147,7 @@ export class BaseService {
                   };
                 }
               }),
-            { idMapName: 'menuid', parentIdMapName: 'pmenuid', rootParentIdValue: 0 }
+            { idMapName: 'menuId', parentIdMapName: 'pMenuId', rootParentIdValue: 0 }
           )
           .map((item: Menu) => {
             item.children?.push({ text: '返回', link: 'common/home', icon: 'anticon-left' });
@@ -161,23 +163,23 @@ export class BaseService {
    *
    * @param link 侧边栏菜单的主菜单链接
    */
-  menuchange(link?: string): void {
+  menuChange(link?: string): void {
     console.debug('主菜单链接', link);
     if (link) {
       this.link = link;
     }
     /**侧边栏菜单 */
-    const menulist: Menu[] = this.menuList.filter(item => item.link === this.link);
+    const menuList: Menu[] = this.menuList.filter(item => item.link === this.link);
     // 弹出菜单栏数据
-    if (menulist.length) {
-      console.debug('发送的菜单', menulist);
-      this.menuSub.next(menulist);
+    if (menuList.length) {
+      console.debug('发送的菜单', menuList);
+      this.menuSub.next(menuList);
     }
   }
 
   /**建立通知长连接 */
   connect(): void {
-    console.debug('建立通知长连接！', this.socket);
+    console.debug('建立通知长连接！');
     const wsurl = `${this.baseUrl}common`;
     if (!this.socket || this.socket.disconnected) {
       this.socket = io(wsurl);
@@ -201,23 +203,23 @@ export class BaseService {
     });
     this.socket.on('setting', (data: any) => {
       console.debug('收到setting消息：', data);
-      if (data.code === 'sys') {
+      if (data === 'sys') {
         this.client.get('common/init/sys').subscribe((res: NzSafeAny) => {
           this.settingSrv.setApp(res.data);
           this.titleSrv.suffix = res.data.title;
-          console.debug('系统配置实时更新');
+          console.debug('系统配置已实时更新');
         });
       }
     });
     // 重新初始化用户信息
     this.socket.on('user', (data: any) => {
       console.debug('收到user消息：', data);
-      this.userinit().subscribe();
+      this.userInit().subscribe();
     });
     // 重新初始化菜单信息
     this.socket.on('menu', (data: any) => {
       console.debug('收到menu消息：', data);
-      this.menuinit().subscribe(() => this.menuchange());
+      this.menuInit().subscribe(() => this.menuChange());
     });
     // 重新初始化排序信息
     this.socket.on('sort', (data: any) => {

@@ -1,0 +1,33 @@
+<div class="modal-header">
+  <div class="modal-title">{{ title }}</div>
+</div>
+<nz-spin *ngIf="!i" class="modal-spin"></nz-spin>
+<sf *ngIf="i" #sf mode="edit" [schema]="schema" [ui]="ui" [formData]="i" button="none">
+  <ng-template sf-template="config/icon" let-i let-ui="ui" let-schema="schema">
+    <nz-radio-group nzSize="large" nzButtonStyle="solid" [ngModel]="i.value" (ngModelChange)="i.setValue($event)">
+      <label *ngFor="let item of iconList" nz-radio-button [nzValue]="item" nz-tooltip [nzTooltipTitle]="item">
+        <i nz-icon [nzType]="item" nzTheme="outline"></i>
+      </label>
+    </nz-radio-group>
+  </ng-template>
+  <ng-template sf-template="abilities" let-i let-ui="ui" let-schema="schema">
+    <nz-tree
+      #abilities
+      nzExpandAll
+      nzCheckable
+      nzShowLine
+      nzCheckStrictly
+      [nzVirtualHeight]="height"
+      [nzData]="abilityNodes"
+      [nzCheckedKeys]="i.value"
+      (nzCheckBoxChange)="i.setValue($event.keys)"
+    ></nz-tree>
+  </ng-template>
+  <div class="modal-footer">
+    <button nz-button type="button" (click)="close()">关闭</button>
+    <button *ngIf="updatable" nz-button type="submit" nzType="primary" (click)="save(sf.value)" [disabled]="!sf.valid">保存</button>
+    <button *ngIf="creatable" nz-button type="submit" nzType="primary" (click)="saveas(sf.value)" [disabled]="!sf.valid">
+      {{ buttonName }}
+    </button>
+  </div>
+</sf>

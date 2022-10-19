@@ -19,7 +19,9 @@ const routes: Routes = [
       { path: '', redirectTo: 'sys', pathMatch: 'full' },
       { path: 'exception', loadChildren: () => import('./exception/exception.module').then(m => m.ExceptionModule) },
       // 业务子模块
-      { path: 'sys', loadChildren: () => import('./sys/sys.module').then(m => m.SysModule) }
+      { path: 'sys', loadChildren: () => import('./sys/sys.module').then(m => m.SysModule) },
+      { path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
+      { path: 'common', loadChildren: () => import('./common/common.module').then(m => m.CommonModule) }
     ]
   },
   // 空白布局

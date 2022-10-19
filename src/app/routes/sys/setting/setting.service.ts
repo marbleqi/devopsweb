@@ -38,7 +38,7 @@ export class SysSettingService {
         }
         return {
           ...res['data'],
-          updateUserName: this.baseSrv.username(res['data'].updateUserId),
+          updateUserName: this.baseSrv.userName(res['data'].updateUserId),
           updateAt: format(res['data'].updateAt, 'yyyy-MM-dd HH:mm:ss.SSS')
         };
       })

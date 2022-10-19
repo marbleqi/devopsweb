@@ -1,9 +1,7 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 
-import { SysSettingComponent } from './setting/setting.component';
-import { SysSettingService } from './setting/setting.service';
-import { SysRoutingModule } from './sys-routing.module';
+import { SysSettingService, SysSettingComponent, SysRoutingModule } from '.';
 
 const COMPONENTS: Array<Type<void>> = [SysSettingComponent];
 

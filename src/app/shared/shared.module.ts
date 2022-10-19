@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { NgModule, Type } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -5,19 +6,20 @@ import { RouterModule } from '@angular/router';
 import { DelonACLModule } from '@delon/acl';
 import { DelonFormModule } from '@delon/form';
 import { AlainThemeModule } from '@delon/theme';
+import { SortComponent } from '@shared';
 
 import { SHARED_DELON_MODULES } from './shared-delon.module';
 import { SHARED_ZORRO_MODULES } from './shared-zorro.module';
 
 // #region third libs
 
-const THIRDMODULES: Array<Type<void>> = [];
+const THIRDMODULES: Array<Type<void>> = [DragDropModule];
 
 // #endregion
 
 // #region your componets & directives
 
-const COMPONENTS: Array<Type<void>> = [];
+const COMPONENTS: Array<Type<void>> = [SortComponent];
 const DIRECTIVES: Array<Type<void>> = [];
 
 // #endregion

@@ -56,7 +56,7 @@ export class StartupService {
                 // 连接通用长连接
                 this.baseSrv.connect();
                 // 初始化菜单信息和用户信息
-                return this.baseSrv.menuinit().pipe(mergeMap(() => this.baseSrv.userinit()));
+                return this.baseSrv.menuInit().pipe(mergeMap(() => this.baseSrv.userInit()));
               }
             })
           );

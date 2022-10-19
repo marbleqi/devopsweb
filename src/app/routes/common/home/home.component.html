@@ -1,0 +1,14 @@
+<page-header title="导航" [action]="phActionTpl">
+  <ng-template #phActionTpl>
+    <button nz-button (click)="getData()">刷新</button>
+  </ng-template>
+</page-header>
+<div nz-row [nzGutter]="8">
+  <div *ngFor="let mainItem of mainMenu" nz-col nzXs="24" nzSm="12" nzMd="8" nzLg="8" nzXl="6" nzXXl="4">
+    <nz-card [nzTitle]="mainItem.text">
+      <div *ngFor="let item of mainItem.children">
+        <a [routerLink]="item.link"><i nz-icon [nzType]="item.icon" nzTheme="outline"></i>{{ item.text }}</a>
+      </div>
+    </nz-card>
+  </div>
+</div>

@@ -20,7 +20,7 @@ export class SysSettingComponent implements OnInit, OnReuseInit {
           name: { type: 'string', title: '系统名称' },
           title: { type: 'string', title: '标题' },
           description: { type: 'string', title: '系统说明' },
-          company: { type: 'string', title: '公司' },
+          company: { type: 'string', title: '网站主体' },
           domain: { type: 'string', title: '域名' },
           icp: { type: 'string', title: 'ICP备案号' },
           expired: { type: 'number', title: '令牌期限', minimum: 5, maximum: 1440, multipleOf: 5, default: 5 },
@@ -52,13 +52,13 @@ export class SysSettingComponent implements OnInit, OnReuseInit {
   constructor(private baseSrv: BaseService, private settingSrv: SysSettingService, private msgSrv: NzMessageService) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuchange('sys');
+    this.baseSrv.menuChange('sys');
     console.debug('页面自身初始化');
     this.reset();
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuchange('sys');
+    this.baseSrv.menuChange('sys');
     console.debug('页面路由复用初始化');
     this.reset();
   }

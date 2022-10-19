@@ -1,0 +1,19 @@
+<div class="modal-header">
+  <div class="modal-title">{{ title }}</div>
+</div>
+<nz-table [nzData]="sortData" [nzFrontPagination]="false" [nzShowPagination]="false">
+  <thead>
+    <tr>
+      <th *ngFor="let title of titles">{{ title }}</th>
+    </tr>
+  </thead>
+  <tbody cdkDropList (cdkDropListDropped)="drop($event)">
+    <tr *ngFor="let data of sortData" cdkDrag>
+      <td *ngFor="let field of fields">{{ data[field] }}</td>
+    </tr>
+  </tbody>
+</nz-table>
+<div class="modal-footer">
+  <button nz-button type="button" (click)="close()">关闭</button>
+  <button nz-button type="submit" nzType="primary" (click)="save()">提交</button>
+</div>
