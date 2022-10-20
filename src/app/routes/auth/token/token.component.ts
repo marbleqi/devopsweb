@@ -13,7 +13,7 @@ import { AuthTokenService } from '..';
 export class AuthTokenComponent implements OnInit, OnReuseInit {
   disremove = true;
   stData: STData[] = [];
-  checkdata: STData[] = [];
+  checkData: STData[] = [];
   scroll!: { x?: string; y?: string };
   columns: STColumn[] = [{}];
 
@@ -31,7 +31,7 @@ export class AuthTokenComponent implements OnInit, OnReuseInit {
         width: 350,
         sort: { compare: (a, b) => a.token.localeCompare(b.token) }
       },
-      { title: '用户ID', index: 'userid', width: 75, sort: { compare: (a, b) => a.userid - b.userid } },
+      { title: '用户ID', index: 'userId', width: 75, sort: { compare: (a, b) => a.userId - b.userId } },
       {
         title: '用户姓名',
         index: 'userName',
@@ -48,19 +48,19 @@ export class AuthTokenComponent implements OnInit, OnReuseInit {
       },
       {
         title: '创建时间',
-        index: 'create_at',
+        index: 'createAt',
         type: 'date',
         dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS',
         width: 170,
-        sort: { compare: (a, b) => a.create_at - b.create_at }
+        sort: { compare: (a, b) => a.createAt - b.createAt }
       },
       {
         title: '更新时间',
-        index: 'update_at',
+        index: 'updateAt',
         type: 'date',
         dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS',
         width: 170,
-        sort: { compare: (a, b) => a.update_at - b.update_at }
+        sort: { compare: (a, b) => a.updateAt - b.updateAt }
       },
       {
         title: '操作',
@@ -83,19 +83,19 @@ export class AuthTokenComponent implements OnInit, OnReuseInit {
 
   change(value: STChange) {
     if (value.type === 'checkbox') {
-      this.checkdata = value.checkbox as STData[];
-      this.disremove = this.checkdata.length === 0;
-      console.debug(this.checkdata);
+      this.checkData = value.checkbox as STData[];
+      this.disremove = this.checkData.length === 0;
+      console.debug(this.checkData);
     }
   }
 
   remove(record: STData | null = null): void {
     if (record) {
-      this.checkdata = [record];
+      this.checkData = [record];
     }
-    const allnum = this.checkdata.length;
+    const allnum = this.checkData.length;
     let curnum = 0;
-    for (const item of this.checkdata) {
+    for (const item of this.checkData) {
       this.tokenSrv.destroy(item['token']).subscribe(res => {
         if (res.code) {
           this.msgSrv.warning(`删除令牌${item['token']}失败`);

@@ -7,9 +7,9 @@ import { Observable, map, of } from 'rxjs';
 @Injectable()
 export class AuthAbilityService {
   /**缓存的角色列表 */
-  private abilitylist: any[];
+  private abilityList: any[];
   /**缓存的角色树 */
-  private abilitytree: any[];
+  private abilityTree: any[];
 
   /**
    * 构建函数
@@ -18,8 +18,8 @@ export class AuthAbilityService {
    * @param arrSrv 注入的数组服务
    */
   constructor(private client: _HttpClient, private arrSrv: ArrayService) {
-    this.abilitylist = [];
-    this.abilitytree = [];
+    this.abilityList = [];
+    this.abilityTree = [];
   }
 
   /**
@@ -29,11 +29,11 @@ export class AuthAbilityService {
    * @returns 权限点列表
    */
   index(type: 'list' | 'tree' = 'list'): Observable<any[]> {
-    if (this.abilitylist.length) {
+    if (this.abilityList.length) {
       if (type === 'list') {
-        return of(this.abilitylist);
+        return of(this.abilityList);
       } else {
-        return of(this.abilitytree);
+        return of(this.abilityTree);
       }
     } else {
       return this.client.get(`auth/ability/index`).pipe(
@@ -41,9 +41,9 @@ export class AuthAbilityService {
           if (res.code) {
             return [];
           } else {
-            this.abilitylist = res['data'].sort((a: any, b: any) => a.id - b.id);
-            this.abilitytree = this.arrSrv.arrToTree(
-              this.abilitylist.map((item: any) => ({
+            this.abilityList = res.data.sort((a: any, b: any) => a.id - b.id);
+            this.abilityTree = this.arrSrv.arrToTree(
+              this.abilityList.map((item: any) => ({
                 key: item.id,
                 pid: item.pid,
                 title: `${item.name}——${item.description}`
@@ -51,9 +51,9 @@ export class AuthAbilityService {
               { idMapName: 'key', parentIdMapName: 'pid' }
             );
             if (type === 'list') {
-              return this.abilitylist;
+              return this.abilityList;
             } else {
-              return this.abilitytree;
+              return this.abilityTree;
             }
           }
         })
@@ -74,7 +74,7 @@ export class AuthAbilityService {
         if (res.code) {
           return [];
         }
-        return res['data'] as number[];
+        return res.data as number[];
       })
     );
   }

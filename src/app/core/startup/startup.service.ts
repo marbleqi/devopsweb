@@ -43,16 +43,16 @@ export class StartupService {
           return this.client.get('common/init/startup').pipe(
             mergeMap((res: NzSafeAny) => {
               // 设置应用信息：包括应用名称，说明等
-              this.settingSrv.setApp(res['data'].app);
+              this.settingSrv.setApp(res.data.app);
               // 设置浏览器标题栏后缀
-              this.titleSrv.suffix = res['data'].app.title || '管理平台';
+              this.titleSrv.suffix = res.data.app.title || '管理平台';
               if (res.code) {
                 throw res.msg;
               } else {
                 // 设置用户信息：包括姓名，头像
-                this.settingSrv.setUser(res['data'].user);
+                this.settingSrv.setUser(res.data.user);
                 // 设置用户权限点
-                this.aclSrv.setAbility(res['data'].ability);
+                this.aclSrv.setAbility(res.data.ability);
                 // 连接通用长连接
                 this.baseSrv.connect();
                 // 初始化菜单信息和用户信息
@@ -67,9 +67,9 @@ export class StartupService {
                 throw res.msg;
               } else {
                 // 设置应用信息：包括应用名称，说明等
-                this.settingSrv.setApp(res['data'].app || {});
+                this.settingSrv.setApp(res.data.app || {});
                 // 设置浏览器标题栏后缀
-                this.titleSrv.suffix = res['data'].app.title || '管理平台';
+                this.titleSrv.suffix = res.data.app.title || '管理平台';
               }
             })
           );

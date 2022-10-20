@@ -130,7 +130,6 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
   }
 
   getData(pMenuId: number, operateId?: number): void {
-    console.debug('operateId', operateId, typeof operateId);
     this.pMenuId = pMenuId;
     this.menuSrv.index(operateId).subscribe(res => {
       console.debug('获取的所有菜单数据', res);

@@ -34,7 +34,10 @@ export class AuthRoleService {
    *
    * @returns 角色列表
    */
-  index(): Observable<any[]> {
+  index(operateId?: number): Observable<any[]> {
+    if (typeof operateId === 'number') {
+      this.operateId = operateId;
+    }
     return this.client.get('auth/role/index', { operateId: this.operateId }).pipe(
       map((res: Result) => {
         if (!res.code && res.data.length) {

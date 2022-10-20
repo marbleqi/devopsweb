@@ -15,7 +15,7 @@ export class AuthRoleGrantComponent implements OnInit {
   loading = false;
   title!: string;
   record: any = {};
-  gettimes: number = 0;
+  getTimes: number = 0;
   i: any;
   schema!: SFSchema;
   ui!: SFUISchema;
@@ -37,23 +37,22 @@ export class AuthRoleGrantComponent implements OnInit {
 
   /**对话框初始化 */
   ngOnInit(): void {
-    this.baseSrv.userSub.pipe(first()).subscribe((userenum: SFSchemaEnum[]) => {
+    this.baseSrv.userSub.pipe(first()).subscribe((userEnum: SFSchemaEnum[]) => {
       if (this.record) {
-        this.title = `编辑角色${this.record.config.rolename}的授权用户`;
+        this.title = `编辑角色${this.record.roleName}的授权用户`;
         this.schema = {
           properties: {
-            config: {
-              type: 'object',
-              properties: { rolename: { type: 'string', title: '角色名称' }, description: { type: 'string', title: '角色说明' } }
-            },
-            userlist: { type: 'number', title: '用户授权', enum: userenum }
+            roleName: { type: 'string', title: '角色名称' },
+            description: { type: 'string', title: '角色说明' },
+            userList: { type: 'number', title: '用户授权', enum: userEnum }
           },
           required: ['userlist']
         };
         this.ui = {
           '*': { spanLabelFixed: 100, grid: { span: 12 } },
-          $config: { grid: { span: 24 }, $rolename: { widget: 'text' }, $description: { widget: 'text' } },
-          $userlist: {
+          $roleName: { widget: 'text' },
+          $description: { widget: 'text' },
+          $userList: {
             widget: 'transfer',
             showSearch: true,
             titles: ['未授权用户', '已授权用户'],
@@ -61,8 +60,8 @@ export class AuthRoleGrantComponent implements OnInit {
             listStyle: { width: '100%', 'height.px': window.innerHeight - 700 }
           }
         };
-        this.roleSrv.granted(this.record.roleId).subscribe(userlist => {
-          this.i = { config: this.record.config, userlist };
+        this.roleSrv.granted(this.record.roleId).subscribe(userList => {
+          this.i = { roleName: this.record.roleName, description: this.record.description, userList };
           console.debug('i', this.i);
         });
       }
@@ -75,7 +74,7 @@ export class AuthRoleGrantComponent implements OnInit {
    * @param value 原始表单数据
    */
   save(value: any): void {
-    this.roleSrv.granting(this.record.roleId, value.userlist).subscribe(res => {
+    this.roleSrv.granting(this.record.roleId, value.userList).subscribe(res => {
       if (res.code) {
         this.msgSrv.error(res.msg);
       } else {

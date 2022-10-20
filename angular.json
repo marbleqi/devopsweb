@@ -77,7 +77,8 @@
               "ajv",
               "ajv-formats",
               "extend",
-              "file-saver"
+              "file-saver",
+              "qs"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [

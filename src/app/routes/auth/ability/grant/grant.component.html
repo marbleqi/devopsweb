@@ -3,15 +3,14 @@
 </div>
 <nz-spin *ngIf="!i" class="modal-spin"></nz-spin>
 <sf *ngIf="i" #sf mode="edit" [schema]="schema" [ui]="ui" [formData]="i" button="none">
-  <ng-template sf-template="menulist" let-i let-ui="ui" let-schema="schema">
+  <ng-template sf-template="menuList" let-i let-ui="ui" let-schema="schema">
     <nz-tree
-      #menulist
       nzExpandAll
       nzCheckable
       nzShowLine
       nzCheckStrictly
       [nzVirtualHeight]="height"
-      [nzData]="menunodes"
+      [nzData]="menuNodes"
       [nzCheckedKeys]="i.value"
       (nzCheckBoxChange)="i.setValue($event.keys)"
     ></nz-tree>

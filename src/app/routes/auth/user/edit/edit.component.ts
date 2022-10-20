@@ -33,18 +33,20 @@ export class AuthUserEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.roleSrv.index().subscribe(res => {
-      const rolelist: SFSchemaEnum[] = res.map(item => ({ title: item.config.rolename, value: item.roleId }));
+      const roleList: SFSchemaEnum[] = res.map(item => ({ title: item.roleName, value: item.roleId }));
       this.schema = {
         properties: {
-          loginname: { type: 'string', title: '登陆名' },
+          userId: { type: 'number', title: '用户ID' },
+          loginName: { type: 'string', title: '登陆名' },
+          userName: { type: 'string', title: '姓名' },
           config: {
             type: 'object',
             properties: {
-              userName: { type: 'string', title: '姓名' },
               avatar: { type: 'string', title: '头像地址' },
-              pswlogin: { type: 'boolean', title: '允许密码登陆', default: true },
-              qrlogin: { type: 'boolean', title: '允许扫码登录', default: true },
-              applogin: { type: 'boolean', title: '允许APP登录', default: true }
+              email: { type: 'string', title: '电子邮箱' },
+              pswLogin: { type: 'boolean', title: '允许密码登陆', default: true },
+              qrLogin: { type: 'boolean', title: '允许扫码登录', default: true },
+              appLogin: { type: 'boolean', title: '允许APP登录', default: true }
             }
           },
           status: {
@@ -55,26 +57,25 @@ export class AuthUserEditComponent implements OnInit {
               { label: '禁用', value: 0 }
             ]
           },
-          roles: { type: 'number', title: '角色', enum: rolelist },
-          update_userName: { type: 'string', title: '更新用户' },
-          update_at: { type: 'string', title: '更新时间' },
-          pswtimes: { type: 'number', title: '密码错误次数' },
-          logintimes: { type: 'number', title: '登陆次数' },
-          first_login_at: { type: 'string', title: '首次登录时间' },
-          last_login_at: { type: 'string', title: '最后登录时间' },
-          last_session_at: { type: 'string', title: '最后会话时间' }
+          roles: { type: 'number', title: '角色', enum: roleList },
+          updateUserName: { type: 'string', title: '更新用户' },
+          updateAt: { type: 'string', title: '更新时间' },
+          pswTimes: { type: 'number', title: '密码错误次数' },
+          loginTimes: { type: 'number', title: '登陆次数' },
+          firstLoginAt: { type: 'string', title: '首次登录时间' },
+          lastLoginAt: { type: 'string', title: '最后登录时间' },
+          lastSessionAt: { type: 'string', title: '最后会话时间' }
         },
         required: ['loginname', 'userName']
       };
       this.ui = {
         '*': { spanLabelFixed: 100, grid: { span: 12 } },
+        $userId: { widget: 'text', grid: { span: 24 } },
         $config: {
           grid: { span: 24 },
-          $userName: { grid: { span: 12 } },
-          $avatar: { grid: { span: 12 } },
-          $pswlogin: { grid: { span: 8 } },
-          $qrlogin: { grid: { span: 8 } },
-          $applogin: { grid: { span: 8 } }
+          $pswLogin: { grid: { span: 8 } },
+          $qrLogin: { grid: { span: 8 } },
+          $appLogin: { grid: { span: 8 } }
         },
         $status: { widget: 'radio', styleType: 'button', buttonStyle: 'solid' },
         $roles: {
@@ -84,13 +85,16 @@ export class AuthUserEditComponent implements OnInit {
           grid: { span: 24 },
           listStyle: { width: '100%', 'height.px': window.innerHeight - 700 }
         },
-        $update_userName: { widget: 'text' },
-        $update_at: { widget: 'text' },
-        $pswtimes: { widget: 'text' },
-        $logintimes: { widget: 'text' },
-        $first_login_at: { widget: 'text' },
-        $last_login_at: { widget: 'text' },
-        $last_session_at: { widget: 'text' }
+        $createUserName: { widget: 'text' },
+        $createAt: { widget: 'text' },
+        $updateUserName: { widget: 'text' },
+        $updateAt: { widget: 'text' },
+        $pswTimes: { widget: 'text' },
+        $loginTimes: { widget: 'text' },
+        $firstLoginAt: { widget: 'text' },
+        $lastLoginIp: { widget: 'text' },
+        $lastLoginAt: { widget: 'text' },
+        $lastSessionAt: { widget: 'text' }
       };
       if (this.record) {
         if (this.copy) {
@@ -104,7 +108,7 @@ export class AuthUserEditComponent implements OnInit {
           this.creatable = false;
           this.buttonName = '';
         }
-        this.userSrv.show(this.record.userid).subscribe(res => {
+        this.userSrv.show(this.record.userId).subscribe(res => {
           this.i = res;
         });
       } else {
@@ -112,7 +116,7 @@ export class AuthUserEditComponent implements OnInit {
         this.updatable = false;
         this.creatable = true;
         this.buttonName = '创建';
-        this.i = { config: { pswlogin: true, qrlogin: true }, roles: [] };
+        this.i = { config: { pswLogin: true, qrLogin: true, appLogin: true }, roles: [] };
       }
     });
   }
@@ -132,7 +136,7 @@ export class AuthUserEditComponent implements OnInit {
 
   save(value: any): void {
     this.loading = true;
-    this.userSrv.update(this.record.userid, value).subscribe((res: Result) => {
+    this.userSrv.update(this.record.userId, value).subscribe((res: Result) => {
       if (res.code) {
         this.msgSrv.error(res.msg);
       } else {

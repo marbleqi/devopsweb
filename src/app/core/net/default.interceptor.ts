@@ -90,7 +90,7 @@ export class DefaultInterceptor implements HttpInterceptor {
           this.baseSrv.disconnet();
           throw '刷新令牌失败';
         }
-        return res['data'];
+        return res.data;
       })
     );
   }

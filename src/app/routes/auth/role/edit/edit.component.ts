@@ -21,11 +21,11 @@ export class AuthRoleEditComponent implements OnInit {
   /**树型组件高度 */
   height!: string;
   /**权限点节点树 */
-  abilitynodes!: NzTreeNodeOptions[];
+  abilityNodes!: NzTreeNodeOptions[];
   /**已选权限点 */
-  checkabilities!: number[];
+  checkedAbilities!: number[];
   /**已展开权限点 */
-  expandabilities!: number[];
+  expandAbilities!: number[];
   record: any = {};
   i: any;
   schema: SFSchema = {
@@ -74,7 +74,7 @@ export class AuthRoleEditComponent implements OnInit {
     this.height = `${(window.innerHeight - 500).toString()}px`;
     // 设置权限点备选项
     this.abilitySrv.index('tree').subscribe((res: any) => {
-      this.abilitynodes = res;
+      this.abilityNodes = res;
     });
     // 初始化数据
     if (this.record) {

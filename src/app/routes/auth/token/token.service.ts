@@ -25,15 +25,15 @@ export class AuthTokenService {
         if (res.code) {
           return [];
         } else {
-          return res['data']
+          return res.data
             .map((item: any) => {
-              const userid = Number(item.userid);
+              const userId = Number(item.userId);
               const expired = Number(item.expired);
-              const create_at = Number(item.create_at);
-              const update_at = Number(item.update_at);
-              return { ...item, userid, userName: this.baseSrv.userName(userid), expired, create_at, update_at };
+              const createAt = Number(item.createAt);
+              const updateAt = Number(item.updateAt);
+              return { ...item, userId, userName: this.baseSrv.userName(userId), expired, createAt, updateAt };
             })
-            .sort((a: any, b: any) => b.create_at - a.create_at);
+            .sort((a: any, b: any) => b.createAt - a.createAt);
         }
       })
     );

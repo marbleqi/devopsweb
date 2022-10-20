@@ -20,7 +20,65 @@ export class AuthUserComponent implements OnInit, OnReuseInit {
   loading: boolean = false;
   stData: STData[] = [];
   scroll!: { x?: string; y?: string };
-  columns: STColumn[] = [{}];
+  columns: STColumn[] = [
+    { title: '用户ID', index: 'userId', width: 100, sort: { compare: (a, b) => a.userId - b.userId } },
+    {
+      title: '登陆名',
+      index: 'loginName',
+      filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.loginName.includes(filter.value) }
+    },
+    {
+      title: '姓名',
+      index: 'userName',
+      filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.userName.includes(filter.value) }
+    },
+    { title: '状态', index: 'status', width: 100, sort: { compare: (a, b) => a.status - b.status }, type: 'tag', tag: statustag },
+    { title: '更新人', index: 'updateUserName', width: 150 },
+    {
+      title: '更新时间',
+      index: 'updateAt',
+      type: 'date',
+      dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS',
+      width: 170,
+      sort: { compare: (a, b) => a.updateAt - b.updateAt }
+    },
+    {
+      title: '操作',
+      className: 'text-center',
+      buttons: [
+        {
+          text: '编辑',
+          icon: 'edit',
+          type: 'modal',
+          tooltip: '修改用户信息',
+          click: () => this.getData(),
+          modal: { component: AuthUserEditComponent, params: () => ({ copy: false }) }
+        },
+        {
+          text: '复制',
+          icon: 'copy',
+          type: 'modal',
+          tooltip: '以用户参数为模板，创建新的用户',
+          click: () => this.getData(),
+          modal: { component: AuthUserEditComponent, params: () => ({ copy: true }) }
+        },
+        {
+          text: '更多',
+          children: [
+            { text: '解锁', icon: 'lock', click: record => this.unlock(record), tooltip: '解锁用户' },
+            {
+              text: '重置密码',
+              icon: 'setting',
+              type: 'modal',
+              tooltip: '重置用户密码',
+              click: () => this.getData(),
+              modal: { component: AuthUserResetComponent, params: () => ({ copy: false }), size: 'sm' }
+            }
+          ]
+        }
+      ]
+    }
+  ];
 
   constructor(
     private baseSrv: BaseService,
@@ -31,65 +89,6 @@ export class AuthUserComponent implements OnInit, OnReuseInit {
 
   ngOnInit(): void {
     this.baseSrv.menuChange('auth');
-    this.columns = [
-      { title: '用户ID', index: 'userid', width: 100, sort: { compare: (a, b) => a.userid - b.userid } },
-      {
-        title: '登陆名',
-        index: 'loginname',
-        filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.loginname.includes(filter.value) }
-      },
-      {
-        title: '姓名',
-        index: 'config.userName',
-        filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.config.userName.includes(filter.value) }
-      },
-      { title: '状态', index: 'status', width: 100, sort: { compare: (a, b) => a.status - b.status }, type: 'tag', tag: statustag },
-      { title: '更新人', index: 'update_userName', width: 150 },
-      {
-        title: '更新时间',
-        index: 'update_at',
-        type: 'date',
-        dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS',
-        width: 170,
-        sort: { compare: (a, b) => a.update_at - b.update_at }
-      },
-      {
-        title: '操作',
-        className: 'text-center',
-        buttons: [
-          {
-            text: '编辑',
-            icon: 'edit',
-            type: 'modal',
-            tooltip: '修改用户信息',
-            click: () => this.getData(),
-            modal: { component: AuthUserEditComponent, params: () => ({ copy: false }) }
-          },
-          {
-            text: '复制',
-            icon: 'copy',
-            type: 'modal',
-            tooltip: '以用户参数为模板，创建新的用户',
-            click: () => this.getData(),
-            modal: { component: AuthUserEditComponent, params: () => ({ copy: true }) }
-          },
-          {
-            text: '更多',
-            children: [
-              { text: '解锁', icon: 'lock', click: record => this.unlock(record), tooltip: '解锁用户' },
-              {
-                text: '重置密码',
-                icon: 'setting',
-                type: 'modal',
-                tooltip: '重置用户密码',
-                click: () => this.getData(),
-                modal: { component: AuthUserResetComponent, params: () => ({ copy: false }), size: 'sm' }
-              }
-            ]
-          }
-        ]
-      }
-    ];
     console.debug('窗体内高', window.innerHeight);
     this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.getData();
@@ -113,7 +112,7 @@ export class AuthUserComponent implements OnInit, OnReuseInit {
   }
 
   unlock(record: STData): void {
-    this.userSrv.unlock(record['userid']).subscribe(res => {
+    this.userSrv.unlock(record['userId']).subscribe(res => {
       if (res.code) {
         this.msgSrv.warning('解锁失败');
       } else {

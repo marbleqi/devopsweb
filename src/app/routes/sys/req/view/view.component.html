@@ -1,0 +1,9 @@
+<div class="modal-header">
+  <div class="modal-title">请求日志{{ record.reqId }}详情</div>
+</div>
+<nz-spin *ngIf="!i" class="modal-spin"></nz-spin>
+<sf *ngIf="i" mode="edit" [schema]="schema" [ui]="ui" [formData]="i" button="none">
+  <div class="modal-footer">
+    <button nz-button type="button" (click)="close()">关闭</button>
+  </div>
+</sf>

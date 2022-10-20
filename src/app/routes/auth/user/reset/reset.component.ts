@@ -15,17 +15,16 @@ export class AuthUserResetComponent implements OnInit {
   title!: string;
   schema: SFSchema = {
     properties: {
-      newpsw1: { type: 'string', title: '新密码' },
-      newpsw2: { type: 'string', title: '确认新密码' }
+      newPassword: { type: 'string', title: '新密码' },
+      confirmPassword: { type: 'string', title: '确认密码' }
     },
-    required: ['newpsw1', 'newpsw2']
+    required: ['newPassword', 'confirmPassword']
   };
   ui: SFUISchema = {
     '*': { spanLabelFixed: 100, grid: { span: 24 } },
-    $newpsw1: {
+    $newPassword: {
       widget: 'string',
       type: 'password',
-      visibleIf: { chgpsw: [true] },
       validator: (value, formProperty, form) => {
         if (form.value === null) {
           return [];
@@ -37,20 +36,19 @@ export class AuthUserResetComponent implements OnInit {
         return msg;
       }
     },
-    $newpsw2: {
+    $confirmPassword: {
       widget: 'string',
       type: 'password',
-      visibleIf: { chgpsw: [true] },
       validator: (value, formProperty, form) => {
         if (form.value === null) {
           return [];
         }
         const msg = [];
         if (!value) {
-          msg.push({ keyword: 'required', message: '确认新密码为必填项！' });
+          msg.push({ keyword: 'required', message: '确认密码为必填项！' });
         }
-        if (form.value.newpsw1 !== value) {
-          msg.push({ keyword: 'not', message: '新密码与确认新密码必须一致！' });
+        if (form.value.newPassword !== value) {
+          msg.push({ keyword: 'not', message: '新密码与确认密码必须一致！' });
         }
         return msg;
       }
@@ -64,7 +62,7 @@ export class AuthUserResetComponent implements OnInit {
   }
 
   save(value: any): void {
-    this.userSrv.resetpsw(this.record.userid, { loginpsw: value.newpsw1 }).subscribe(res => {
+    this.userSrv.resetpsw(this.record.userId, { newPassword: value.newPassword }).subscribe(res => {
       if (res.code) {
         this.msgSrv.warning('重置失败');
       } else {

@@ -36,7 +36,7 @@ export class AuthMenuService {
   index(operateId?: number): Observable<any[]> {
     console.debug('菜单服务中', operateId, typeof operateId);
     if (typeof operateId === 'number') {
-      this.operateId = 0;
+      this.operateId = operateId;
     }
     return this.client.get('auth/menu/index', { operateId: this.operateId }).pipe(
       map((res: Result) => {

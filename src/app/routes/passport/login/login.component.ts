@@ -138,7 +138,7 @@ export class UserLoginComponent implements OnInit {
         // 清空路由复用信息
         this.reuseTabSrv.clear();
         // 设置用户Token信息
-        const data: ITokenModel = res['data'];
+        const data: ITokenModel = res.data;
         this.tokenSrv.set(data);
         console.debug('获取令牌', this.tokenSrv.get());
         // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响

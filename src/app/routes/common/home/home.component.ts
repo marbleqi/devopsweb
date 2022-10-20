@@ -26,13 +26,14 @@ export class CommonHomeComponent implements OnInit, OnReuseInit {
     this.mainMenu = this.arrSrv.arrToTree(
       Array.from(this.baseSrv.menuMap.values())
         .filter(item => item.status)
-        .sort((a, b) => a.orderid - b.orderid)
+        .sort((a, b) => a.orderId - b.orderId)
         .map((item: any) => ({
           menuId: item.menuId,
           pMenuId: item.pMenuId,
           text: item.config.text,
           link: item.config.link,
-          icon: item.config.icon
+          icon: item.config.icon,
+          acl: item.abilities.length ? item.abilities : undefined
         })),
       { idMapName: 'menuId', parentIdMapName: 'pMenuId', rootParentIdValue: 0 }
     );

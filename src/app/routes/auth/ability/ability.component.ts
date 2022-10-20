@@ -35,14 +35,14 @@ export class AuthAbilityComponent implements OnInit, OnReuseInit {
           text: '菜单授权',
           icon: 'audit',
           type: 'modal',
-          modal: { component: AuthAbilityGrantComponent, params: () => ({ granttype: 'menu' }) },
+          modal: { component: AuthAbilityGrantComponent, params: () => ({ grantType: 'menu' }) },
           click: () => this.getData()
         },
         {
           text: '角色授权',
           icon: 'audit',
           type: 'modal',
-          modal: { component: AuthAbilityGrantComponent, params: () => ({ granttype: 'role' }) },
+          modal: { component: AuthAbilityGrantComponent, params: () => ({ grantType: 'role' }) },
           click: () => this.getData()
         }
       ]
