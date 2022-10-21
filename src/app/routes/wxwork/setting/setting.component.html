@@ -1,0 +1,7 @@
+<page-header title="配置"></page-header>
+<sf #sf mode="edit" [schema]="schema" [ui]="ui" [formData]="i" button="none">
+  <div class="text-center">
+    <button nz-button type="submit" nzType="primary" (click)="save(sf.value)" [disabled]="!sf.valid">保存</button>
+    <button nz-button type="button" (click)="reset()">重置</button>
+  </div>
+</sf>

@@ -1,15 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ACLGuard } from '@delon/acl';
 
-import { SysQueueComponent } from './queue/queue.component';
-import { SysReqComponent } from './req/req.component';
-import { SysSettingComponent } from './setting/setting.component';
+import { SysSettingComponent, SysReqComponent, SysQueueComponent } from '.';
 
 const routes: Routes = [
   { path: '', redirectTo: 'setting', pathMatch: 'full' },
-  { path: 'setting', component: SysSettingComponent },
-  { path: 'queue', component: SysQueueComponent },
-  { path: 'req', component: SysReqComponent }
+  { path: 'setting', canActivate: [ACLGuard], data: { guard: [110] }, component: SysSettingComponent },
+  { path: 'req', canActivate: [ACLGuard], data: { guard: [120] }, component: SysReqComponent },
+  { path: 'queue', canActivate: [ACLGuard], data: { guard: [130] }, component: SysQueueComponent }
 ];
 
 @NgModule({

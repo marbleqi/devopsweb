@@ -7,7 +7,7 @@ import { SortComponent } from '@shared';
 
 import { AuthRoleService, AuthRoleEditComponent, AuthRoleGrantComponent } from '..';
 
-const statustag: STColumnTag = {
+const statusTag: STColumnTag = {
   0: { text: '禁用', color: 'red' },
   1: { text: '有效', color: 'green' }
 };
@@ -36,7 +36,7 @@ export class AuthRoleComponent implements OnInit, OnReuseInit {
       sort: { compare: (a, b) => a.description.localeCompare(b.description) },
       filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.description.includes(filter.value) }
     },
-    { title: '状态', index: 'status', width: 100, sort: { compare: (a, b) => a.status - b.status }, type: 'tag', tag: statustag },
+    { title: '状态', index: 'status', width: 100, sort: { compare: (a, b) => a.status - b.status }, type: 'tag', tag: statusTag },
     { title: '更新人', index: 'updateUserName', width: 150 },
     {
       title: '更新时间',

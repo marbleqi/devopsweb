@@ -1,0 +1,104 @@
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { BaseService } from '@core';
+import { SFComponent, SFSchema, SFUISchema, SFSchemaEnum } from '@delon/form';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalRef } from 'ng-zorro-antd/modal';
+
+import { WxworkUserService } from '../..';
+
+@Component({
+  selector: 'app-wxwork-user-add',
+  templateUrl: './add.component.html'
+})
+export class WxworkUserAddComponent implements OnInit {
+  loading = false;
+  copy: boolean | undefined;
+  title: string | undefined;
+  updatable!: boolean;
+  creatable!: boolean;
+  buttonname!: string;
+  record: any = {};
+  gettimes: number = 0;
+  i: any;
+  @ViewChild('sf') private readonly sf!: SFComponent;
+  schema: SFSchema = {
+    properties: {
+      loginname: { type: 'string', title: '登陆名' },
+      config: {
+        type: 'object',
+        properties: {
+          username: { type: 'string', title: '姓名' },
+          avatar: { type: 'string', title: '头像地址' },
+          pswlogin: { type: 'boolean', title: '允许密码登陆', default: true },
+          qrlogin: { type: 'boolean', title: '允许扫码登录', default: true },
+          applogin: { type: 'boolean', title: '允许APP登录', default: true }
+        },
+        required: ['username']
+      },
+      status: {
+        type: 'number',
+        title: '状态',
+        enum: [
+          { label: '有效', value: 1 },
+          { label: '禁用', value: 0 }
+        ]
+      },
+      roles: { type: 'number', title: '角色', enum: this.baseSrv.roleList() }
+    },
+    required: ['loginname', 'status']
+  };
+  ui: SFUISchema = {
+    '*': { spanLabelFixed: 100, grid: { span: 12 } },
+    $config: {
+      grid: { span: 24 },
+      $username: { grid: { span: 12 } },
+      $avatar: { grid: { span: 12 } },
+      $pswlogin: { grid: { span: 8 } },
+      $qrlogin: { grid: { span: 8 } },
+      $applogin: { grid: { span: 8 } }
+    },
+    $status: { widget: 'radio', styleType: 'button', buttonStyle: 'solid' },
+    $roles: {
+      widget: 'transfer',
+      showSearch: true,
+      titles: ['未授权角色', '已授权角色'],
+      grid: { span: 24 },
+      listStyle: { width: '100%', 'height.px': window.innerHeight - 700 }
+    }
+  };
+
+  constructor(
+    private readonly baseSrv: BaseService,
+    private readonly userSrv: WxworkUserService,
+    private readonly modal: NzModalRef,
+    private readonly msgSrv: NzMessageService
+  ) {}
+
+  ngOnInit(): void {
+    if (this.record) {
+      this.i = {
+        loginname: this.record.userid,
+        config: { username: this.record.name, pswlogin: false, qrlogin: true, applogin: true },
+        status: 1,
+        roles: []
+      };
+    }
+  }
+
+  saveas(value: any): void {
+    this.loading = true;
+    this.userSrv.create({ ...value, userid: this.record.userid }).subscribe(res => {
+      if (res.code) {
+        this.msgSrv.error(res.msg);
+      } else {
+        this.msgSrv.success(res.msg);
+        this.modal.close(true);
+      }
+      this.loading = false;
+    });
+  }
+
+  close(): void {
+    this.modal.destroy(true);
+  }
+}

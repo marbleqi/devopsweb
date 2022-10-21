@@ -88,6 +88,8 @@ export class AuthRoleService {
    */
   params(value: any) {
     return {
+      roleName: value.roleName,
+      description: value.description,
       config: value.config,
       status: value.status,
       abilities: value.abilities

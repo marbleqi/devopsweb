@@ -83,6 +83,7 @@ export class AuthUserService {
   params(value: any) {
     return {
       loginName: value.loginName,
+      userName: value.userName,
       config: value.config,
       status: value.status,
       roles: value.roles

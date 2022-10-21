@@ -5,7 +5,7 @@ import { _HttpClient, Menu, SettingsService, TitleService } from '@delon/theme';
 import { ArrayService } from '@delon/util';
 import { Result } from '@shared';
 import type { NzSafeAny } from 'ng-zorro-antd/core/types';
-import { Observable, BehaviorSubject, map, observable } from 'rxjs';
+import { Observable, BehaviorSubject, map } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
 /**基础服务，需要在多处多次调用 */
@@ -89,14 +89,18 @@ export class BaseService {
   /**
    * 用户ID换用户姓名
    *
-   * @param userid 用户ID
+   * @param userId 用户ID
    * @returns 用户姓名
    */
-  userName(userid: number): string {
-    return this.userMap.get(userid) || '';
+  userName(userId: number): string {
+    return this.userMap.get(userId) || '';
   }
 
   userList(): SFSchemaEnum[] {
+    return Array.from(this.userMap).map((item: any) => ({ value: item[0], label: item[1] }));
+  }
+
+  roleList(): SFSchemaEnum[] {
     return Array.from(this.userMap).map((item: any) => ({ value: item[0], label: item[1] }));
   }
 
@@ -187,6 +191,7 @@ export class BaseService {
         console.debug('已连接成功', this.socket);
       });
     }
+
     // 系统事件
     this.socket.on('disconnect', (msg: any) => {
       console.debug('disconnect', msg);
@@ -197,6 +202,7 @@ export class BaseService {
     this.socket.on('error', () => {
       console.debug('error');
     });
+
     // 自定义事件
     this.socket.on('log', (data: any) => {
       console.debug('收到log消息：', data);
@@ -211,16 +217,19 @@ export class BaseService {
         });
       }
     });
+
     // 重新初始化用户信息
     this.socket.on('user', (data: any) => {
       console.debug('收到user消息：', data);
       this.userInit().subscribe();
     });
+
     // 重新初始化菜单信息
     this.socket.on('menu', (data: any) => {
       console.debug('收到menu消息：', data);
       this.menuInit().subscribe(() => this.menuChange());
     });
+
     // 重新初始化排序信息
     this.socket.on('sort', (data: any) => {
       console.debug('收到sort消息：', data);

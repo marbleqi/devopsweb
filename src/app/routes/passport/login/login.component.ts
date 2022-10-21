@@ -9,6 +9,8 @@ import { Result } from '@shared';
 import { stringify } from 'qs';
 import { finalize } from 'rxjs';
 
+import { LoginWxworkComponent } from '../..';
+
 @Component({
   selector: 'passport-login',
   templateUrl: './login.component.html',
@@ -75,7 +77,7 @@ export class UserLoginComponent implements OnInit {
     }
     // 如果判断用户的钉钉APP访问
     if (navigator.userAgent.includes('dingtalk')) {
-      // this.todingtalk();
+      this.todingtalk();
       this.info = navigator.userAgent;
     }
   }
@@ -98,7 +100,7 @@ export class UserLoginComponent implements OnInit {
 
   open(type: 'wxwork' | 'dingtalk'): void {
     if (type === 'wxwork') {
-      // this.modal.createStatic(LoginWxworkComponent, {}, { size: 'sm', modalOptions: { nzCentered: true } }).subscribe();
+      this.modal.createStatic(LoginWxworkComponent, {}, { size: 'sm', modalOptions: { nzCentered: true } }).subscribe();
     } else {
       this.todingtalk();
     }
@@ -112,7 +114,6 @@ export class UserLoginComponent implements OnInit {
     if (this.userName.invalid || this.password.invalid) {
       return;
     }
-
     // 默认配置中对所有HTTP请求都会强制 [校验](https://ng-alain.com/auth/getting-started) 用户 Token
     // 然一般来说登录请求不需要校验，因此可以在请求URL加上：`/login?_allow_anonymous=true` 表示不触发用户 Token 校验
     this.loading = true;

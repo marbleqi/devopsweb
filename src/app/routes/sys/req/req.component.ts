@@ -167,14 +167,25 @@ export class SysReqComponent implements OnInit, OnReuseInit {
       this.value = value;
     }
     console.debug('value', this.value);
-    const params = {
-      userId: this.value.userId,
-      module: this.module,
-      controller: this.controller,
-      action: this.action,
-      status: this.value.status,
-      startAt: this.value.startAt
-    };
+    const params: any = {};
+    if (this.value.userId) {
+      params['userId'] = this.value.userId;
+    }
+    if (this.module) {
+      params['module'] = this.module;
+    }
+    if (this.controller) {
+      params['controller'] = this.controller;
+    }
+    if (this.action) {
+      params['action'] = this.action;
+    }
+    if (this.value.status) {
+      params['status'] = this.value.status;
+    }
+    if (this.value.startAt) {
+      params['startAt'] = this.value.startAt;
+    }
     this.reqSrv.index(params).subscribe((data: STData[]) => {
       console.debug('data', data);
       this.stData = data;

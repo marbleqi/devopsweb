@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { startPageGuard } from '@core';
+import { ACLGuard } from '@delon/acl';
 import { SimpleGuard } from '@delon/auth';
 import { environment } from '@env';
 // layout
-import { LayoutBasicComponent, LayoutPassportComponent } from '@layout';
+import { LayoutBasicComponent, LayoutBlankComponent, LayoutPassportComponent } from '@layout';
 
 // dashboard pages
 import { CallbackComponent, UserLoginComponent } from '.';
@@ -19,18 +20,39 @@ const routes: Routes = [
       { path: '', redirectTo: 'sys', pathMatch: 'full' },
       { path: 'exception', loadChildren: () => import('./exception/exception.module').then(m => m.ExceptionModule) },
       // 业务子模块
-      { path: 'sys', loadChildren: () => import('./sys/sys.module').then(m => m.SysModule) },
-      { path: 'auth', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
-      { path: 'common', loadChildren: () => import('./common/common.module').then(m => m.CommonModule) }
+      { path: 'common', loadChildren: () => import('./common/common.module').then(m => m.CommonModule) },
+      {
+        path: 'sys',
+        canActivate: [ACLGuard],
+        data: { guard: [100] },
+        loadChildren: () => import('./sys/sys.module').then(m => m.SysModule)
+      },
+      {
+        path: 'auth',
+        canActivate: [ACLGuard],
+        data: { guard: [200] },
+        loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
+      },
+      {
+        path: 'wxwork',
+        canActivate: [ACLGuard],
+        data: { guard: [300] },
+        loadChildren: () => import('./wxwork/wxwork.module').then(m => m.WxworkModule)
+      },
+      {
+        path: 'dingtalk',
+        canActivate: [ACLGuard],
+        data: { guard: [400] },
+        loadChildren: () => import('./dingtalk/dingtalk.module').then(m => m.DingtalkModule)
+      }
     ]
   },
   // 空白布局
-  // {
-  //     path: 'blank',
-  //     component: LayoutBlankComponent,
-  //     children: [
-  //     ]
-  // },
+  {
+    path: 'blank',
+    component: LayoutBlankComponent,
+    children: []
+  },
   // passport
   {
     path: 'passport',

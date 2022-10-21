@@ -1,0 +1,11 @@
+<div class="modal-header">
+  <div class="modal-title">企业微信扫码登录</div>
+</div>
+<div nz-row nzJustify="center">
+  <div nz-col>
+    <iframe [src]="wxworkqr" frameBorder="0" allowTransparency="true" scrolling="no" width="250" height="300"></iframe>
+  </div>
+</div>
+<div class="modal-footer">
+  <button nz-button type="button" (click)="close()">关闭</button>
+</div>
