@@ -21,11 +21,6 @@ export class AuthMenuService {
   constructor(private client: _HttpClient, private baseSrv: BaseService) {
     this.operateId = 0;
     this.menuMap = new Map<number, any>();
-    this.baseSrv.sortSub.subscribe((res: string) => {
-      if (res === 'menu') {
-        this.operateId = 0;
-      }
-    });
   }
 
   /**

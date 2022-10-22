@@ -53,13 +53,13 @@ export class AuthAbilityComponent implements OnInit, OnReuseInit {
 
   ngOnInit(): void {
     console.debug('窗体内高', window.innerHeight);
-    this.baseSrv.menuChange('auth');
+    this.baseSrv.menuWebSub.next('auth');
     this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.getData();
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuChange('auth');
+    this.baseSrv.menuWebSub.next('auth');
   }
 
   getData(): void {

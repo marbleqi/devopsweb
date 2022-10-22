@@ -106,11 +106,11 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
   constructor(private readonly baseSrv: BaseService, private readonly userSrv: DingtalkUserService) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuChange('dingtalk');
+    this.baseSrv.menuWebSub.next('dingtalk');
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuChange('dingtalk');
+    this.baseSrv.menuWebSub.next('dingtalk');
     console.debug('页面路由复用初始化');
   }
 

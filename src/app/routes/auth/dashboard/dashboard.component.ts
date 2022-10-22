@@ -12,10 +12,10 @@ export class AuthDashboardComponent implements OnInit {
   constructor(private readonly dashboardSrv: AuthDashboardService, private readonly baseSrv: BaseService) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuChange('auth');
+    this.baseSrv.menuWebSub.next('auth');
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuChange('auth');
+    this.baseSrv.menuWebSub.next('auth');
   }
 }

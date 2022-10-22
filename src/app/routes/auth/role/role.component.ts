@@ -78,13 +78,13 @@ export class AuthRoleComponent implements OnInit, OnReuseInit {
 
   ngOnInit(): void {
     console.debug('窗体内高', window.innerHeight);
-    this.baseSrv.menuChange('auth');
+    this.baseSrv.menuWebSub.next('auth');
     this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.getData();
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuChange('auth');
+    this.baseSrv.menuWebSub.next('auth');
   }
 
   getData(operateId?: number): void {
@@ -109,6 +109,6 @@ export class AuthRoleComponent implements OnInit, OnReuseInit {
         keys: ['roleId'],
         sortData: this.stData.map((item: any) => ({ roleId: item.roleId, roleName: item.roleName }))
       })
-      .subscribe(() => this.getData());
+      .subscribe(() => this.getData(0));
   }
 }

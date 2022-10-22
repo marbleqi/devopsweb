@@ -52,13 +52,13 @@ export class SysSettingComponent implements OnInit, OnReuseInit {
   constructor(private baseSrv: BaseService, private settingSrv: SysSettingService, private msgSrv: NzMessageService) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuChange('sys');
+    this.baseSrv.menuWebSub.next('sys');
     console.debug('页面自身初始化');
     this.reset();
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuChange('sys');
+    this.baseSrv.menuWebSub.next('sys');
     console.debug('页面路由复用初始化');
     this.reset();
   }

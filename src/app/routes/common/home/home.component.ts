@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { BaseService } from '@core';
 import { OnReuseInit } from '@delon/abc/reuse-tab';
 import { ArrayService } from '@delon/util';
-import { io, Socket, SocketOptions } from 'socket.io-client';
 
 @Component({
   selector: 'app-common-home',
@@ -11,18 +10,19 @@ import { io, Socket, SocketOptions } from 'socket.io-client';
 export class CommonHomeComponent implements OnInit, OnReuseInit {
   mainMenu: any[] = [];
   socket: any;
-  constructor(private arrSrv: ArrayService, private baseSrv: BaseService) {}
+  constructor(private arrSrv: ArrayService, private baseSrv: BaseService) {
+    this.baseSrv.menuApiSub.subscribe(() => this.getData());
+  }
 
   ngOnInit(): void {
-    this.getData();
+    this.baseSrv.menuWebSub.next('common');
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuChange('common');
+    this.baseSrv.menuWebSub.next('common');
   }
 
   getData(): void {
-    this.baseSrv.menuChange('common');
     this.mainMenu = this.arrSrv.arrToTree(
       Array.from(this.baseSrv.menuMap.values())
         .filter(item => item.status)

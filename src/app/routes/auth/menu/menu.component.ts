@@ -98,7 +98,7 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
 
   constructor(private baseSrv: BaseService, private menuSrv: AuthMenuService, private arrSrv: ArrayService, private modal: ModalHelper) {
     console.debug('菜单构建函数执行');
-    this.baseSrv.menuChange('auth');
+    this.baseSrv.menuWebSub.next('auth');
     this.menuSubject = new Subject<any[]>();
   }
 
@@ -113,7 +113,7 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuChange('auth');
+    this.baseSrv.menuWebSub.next('auth');
   }
 
   reload() {

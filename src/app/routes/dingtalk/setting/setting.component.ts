@@ -40,12 +40,12 @@ export class DingtalkSettingComponent implements OnInit, OnReuseInit {
   constructor(private baseSrv: BaseService, private settingSrv: DingtalkSettingService, private msgSrv: NzMessageService) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuChange('dingtalk');
+    this.baseSrv.menuWebSub.next('dingtalk');
     this.reset();
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuChange('dingtalk');
+    this.baseSrv.menuWebSub.next('dingtalk');
     console.debug('页面路由复用初始化');
     this.reset();
   }

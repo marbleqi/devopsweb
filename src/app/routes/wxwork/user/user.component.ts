@@ -96,11 +96,11 @@ export class WxworkUserComponent implements OnInit, OnReuseInit {
   constructor(private readonly baseSrv: BaseService, private readonly userSrv: WxworkUserService) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuChange('wxwork');
+    this.baseSrv.menuWebSub.next('wxwork');
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuChange('wxwork');
+    this.baseSrv.menuWebSub.next('wxwork');
   }
 
   departChange(value: number) {

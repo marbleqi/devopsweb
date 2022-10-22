@@ -80,7 +80,7 @@ export class SysQueueComponent implements OnInit {
 
   ngOnInit(): void {
     console.debug('窗体内高', window.innerHeight);
-    this.baseSrv.menuChange('sys');
+    this.baseSrv.menuWebSub.next('sys');
     this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.i = {
       types: ['active', 'completed', 'delayed', 'failed', 'paused', 'waiting'],
@@ -90,7 +90,7 @@ export class SysQueueComponent implements OnInit {
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuChange('sys');
+    this.baseSrv.menuWebSub.next('sys');
   }
 
   getdata(value?: any): void {

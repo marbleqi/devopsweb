@@ -21,12 +21,6 @@ export class AuthRoleService {
   constructor(private client: _HttpClient, private baseSrv: BaseService) {
     this.operateId = 0;
     this.roleMap = new Map<number, any>();
-    this.baseSrv.sortSub.subscribe((res: string) => {
-      console.debug('角色服务收到排序消息', res);
-      if (res === 'role') {
-        this.operateId = 0;
-      }
-    });
   }
 
   /**

@@ -70,12 +70,12 @@ export class WxworkSettingComponent implements OnInit, OnReuseInit {
   constructor(private baseSrv: BaseService, private settingSrv: WxworkSettingService, private msgSrv: NzMessageService) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuChange('wxwork');
+    this.baseSrv.menuWebSub.next('wxwork');
     this.reset();
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuChange('wxwork');
+    this.baseSrv.menuWebSub.next('wxwork');
     console.debug('页面路由复用初始化');
     this.reset();
   }

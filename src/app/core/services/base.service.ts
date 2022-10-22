@@ -2,7 +2,6 @@
 import { Injectable } from '@angular/core';
 import { SFSchemaEnum } from '@delon/form';
 import { _HttpClient, Menu, SettingsService, TitleService } from '@delon/theme';
-import { ArrayService } from '@delon/util';
 import { Result } from '@shared';
 import type { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { Observable, BehaviorSubject, map } from 'rxjs';
@@ -13,24 +12,26 @@ import { io, Socket } from 'socket.io-client';
 export class BaseService {
   /**后端地址 */
   baseUrl: string;
-  /**当前主菜单链接 */
-  link: string;
+  /**菜单对象最新操作ID */
+  private menuOperateId: number;
+  /**缓存的菜单Map */
+  menuMap: Map<number, any>;
+  /**菜单后端更新订阅主体 */
+  menuApiSub: BehaviorSubject<any>;
+  /**菜单前端路由变化订阅主体 */
+  menuWebSub: BehaviorSubject<string>;
+  /**角色对象最新操作ID */
+  private roleOperateId: number;
+  /**角色ID与角色姓名的Map */
+  private roleMap: Map<number, string>;
+  /**角色选项订阅主体 */
+  roleSub: BehaviorSubject<SFSchemaEnum[]>;
   /**用户对象最新操作ID */
   private userOperateId: number;
   /**用户ID与用户姓名的Map */
   private userMap: Map<number, string>;
   /**用户选项订阅主体 */
   userSub: BehaviorSubject<SFSchemaEnum[]>;
-  /**菜单对象最新操作ID */
-  private menuOperateId: number;
-  /**缓存的菜单Map */
-  menuMap: Map<number, any>;
-  /**菜单订阅主体 */
-  menuSub: BehaviorSubject<Menu[]>;
-  /**侧边栏菜单清单 */
-  private menuList: Menu[];
-  /**排序订阅主体 */
-  sortSub: BehaviorSubject<string>;
   /** 长连接对象 */
   socket!: Socket;
 
@@ -38,26 +39,74 @@ export class BaseService {
    * 构建函数
    *
    * @param client 注入的http服务
-   * @param arrSrv 注入的数组服务
    * @param settingSrv 注入的数组服务
    * @param titleSrv 注入的数组服务
    */
-  constructor(
-    private readonly client: _HttpClient,
-    private readonly arrSrv: ArrayService,
-    private readonly settingSrv: SettingsService,
-    private readonly titleSrv: TitleService
-  ) {
+  constructor(private readonly client: _HttpClient, private readonly settingSrv: SettingsService, private readonly titleSrv: TitleService) {
     this.baseUrl = '';
-    this.link = '';
+    this.roleOperateId = 0;
+    this.roleMap = new Map<number, string>();
+    this.roleSub = new BehaviorSubject<SFSchemaEnum[]>([]);
     this.userOperateId = 0;
     this.userMap = new Map<number, string>();
     this.userSub = new BehaviorSubject<SFSchemaEnum[]>([]);
     this.menuOperateId = 0;
     this.menuMap = new Map<number, any>();
-    this.menuSub = new BehaviorSubject<Menu[]>([]);
-    this.menuList = [];
-    this.sortSub = new BehaviorSubject<string>('');
+    this.menuWebSub = new BehaviorSubject<string>('');
+    this.menuApiSub = new BehaviorSubject<any>('init');
+  }
+
+  /**
+   * 初始化菜单数据
+   *
+   * @returns Observable
+   */
+  menuInit(): Observable<void> {
+    console.debug('初始化菜单数据！');
+    return this.client.get('common/init/menu', { operateId: this.menuOperateId }).pipe(
+      map((res: Result) => {
+        console.debug('接口中的菜单数据', res);
+        if (!res.code && res.data.length) {
+          for (const menuItem of res.data) {
+            this.menuMap.set(menuItem.menuId, menuItem);
+            if (this.menuOperateId < menuItem.operateId) {
+              this.menuOperateId = menuItem.operateId;
+            }
+          }
+        }
+      })
+    );
+  }
+
+  /**
+   * 初始化角色数据
+   *
+   * @returns Observable
+   */
+  roleInit(): Observable<void> {
+    console.debug('初始化角色数据！');
+    return this.client.get('common/init/role', { operateId: this.roleOperateId }).pipe(
+      map(res => {
+        console.debug('接口中的角色数据', res);
+        if (!res.code && res.data.length) {
+          for (const roleItem of res.data) {
+            this.roleMap.set(roleItem.roleId, roleItem.roleName);
+            if (this.roleOperateId < roleItem.operateId) {
+              this.roleOperateId = roleItem.operateId;
+            }
+          }
+        }
+        console.debug('完成角色数据初始化！', this.roleMap);
+        const roleList: SFSchemaEnum[] = Array.from(this.roleMap).map(item => ({ value: item[0], label: item[1], title: item[1] }));
+        this.roleSub.next(roleList);
+        console.debug('最新角色清单', roleList);
+      })
+    );
+  }
+
+  /**角色选项列表 */
+  roleList(): SFSchemaEnum[] {
+    return Array.from(this.roleMap).map((item: any) => ({ value: item[0], label: item[1] }));
   }
 
   /**
@@ -96,89 +145,9 @@ export class BaseService {
     return this.userMap.get(userId) || '';
   }
 
+  /**用户选项列表 */
   userList(): SFSchemaEnum[] {
     return Array.from(this.userMap).map((item: any) => ({ value: item[0], label: item[1] }));
-  }
-
-  roleList(): SFSchemaEnum[] {
-    return Array.from(this.userMap).map((item: any) => ({ value: item[0], label: item[1] }));
-  }
-
-  /**
-   * 初始化菜单数据
-   *
-   * @returns Observable
-   */
-  menuInit(): Observable<void> {
-    console.debug('初始化菜单数据！');
-    return this.client.get('common/init/menu', { operateId: this.menuOperateId }).pipe(
-      map((res: Result) => {
-        console.debug('接口中的菜单数据', res);
-        if (!res.code && res.data.length) {
-          for (const menuItem of res.data) {
-            this.menuMap.set(menuItem.menuId, menuItem);
-            if (this.menuOperateId < menuItem.operateId) {
-              this.menuOperateId = menuItem.operateId;
-            }
-          }
-        }
-        this.menuList = this.arrSrv
-          .arrToTree(
-            Array.from(this.menuMap.values())
-              .filter(item => item.status)
-              .sort((a, b) => a.orderId - b.orderId)
-              .map(item => {
-                if (item.pMenuId === 0) {
-                  // 主菜单返回逻辑
-                  return {
-                    menuId: item.menuId,
-                    pMenuId: item.pMenuId,
-                    text: item.config.text,
-                    group: true,
-                    link: item.config.link,
-                    acl: item.abilities.length ? item.abilities : undefined
-                  };
-                } else {
-                  // 子菜单返回逻辑
-                  return {
-                    menuId: item.menuId,
-                    pMenuId: item.pMenuId,
-                    text: item.config.text,
-                    link: item.config.link,
-                    icon: item.config.icon ? `anticon-${item.config.icon}` : null,
-                    reuse: item.config.reuse,
-                    acl: item.abilities.length ? item.abilities : undefined
-                  };
-                }
-              }),
-            { idMapName: 'menuId', parentIdMapName: 'pMenuId', rootParentIdValue: 0 }
-          )
-          .map((item: Menu) => {
-            item.children?.push({ text: '返回', link: 'common/home', icon: 'anticon-left' });
-            return item;
-          });
-        console.debug('完成菜单数据初始化！', this.menuList);
-      })
-    );
-  }
-
-  /**
-   * 触发刷新侧边栏菜单
-   *
-   * @param link 侧边栏菜单的主菜单链接
-   */
-  menuChange(link?: string): void {
-    console.debug('主菜单链接', link);
-    if (link) {
-      this.link = link;
-    }
-    /**侧边栏菜单 */
-    const menuList: Menu[] = this.menuList.filter(item => item.link === this.link);
-    // 弹出菜单栏数据
-    if (menuList.length) {
-      console.debug('发送的菜单', menuList);
-      this.menuSub.next(menuList);
-    }
   }
 
   /**建立通知长连接 */
@@ -207,6 +176,7 @@ export class BaseService {
     this.socket.on('log', (data: any) => {
       console.debug('收到log消息：', data);
     });
+
     this.socket.on('setting', (data: any) => {
       console.debug('收到setting消息：', data);
       if (data === 'sys') {
@@ -218,22 +188,22 @@ export class BaseService {
       }
     });
 
+    // 重新初始化菜单信息
+    this.socket.on('menu', (data: any) => {
+      console.debug('收到menu消息：', data);
+      this.menuInit().subscribe(() => this.menuApiSub.next(data));
+    });
+
+    // 重新初始化角色信息
+    this.socket.on('role', (data: any) => {
+      console.debug('收到role消息：', data);
+      this.roleInit().subscribe();
+    });
+
     // 重新初始化用户信息
     this.socket.on('user', (data: any) => {
       console.debug('收到user消息：', data);
       this.userInit().subscribe();
-    });
-
-    // 重新初始化菜单信息
-    this.socket.on('menu', (data: any) => {
-      console.debug('收到menu消息：', data);
-      this.menuInit().subscribe(() => this.menuChange());
-    });
-
-    // 重新初始化排序信息
-    this.socket.on('sort', (data: any) => {
-      console.debug('收到sort消息：', data);
-      this.sortSub.next(data);
     });
   }
 

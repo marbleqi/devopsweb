@@ -34,7 +34,7 @@ export class SysReqComponent implements OnInit, OnReuseInit {
   }
 
   ngOnInit(): void {
-    this.baseSrv.menuChange('sys');
+    this.baseSrv.menuWebSub.next('sys');
     zip(this.baseSrv.userSub.pipe(first()), this.reqSrv.module()).subscribe(([userList, module]: [SFSchemaEnum[], string[]]) => {
       userList.unshift({ label: '所有用户', value: 0 });
       const moduleList: SFSchemaEnum[] = module.map(item => ({ label: item, value: item }));
@@ -119,7 +119,7 @@ export class SysReqComponent implements OnInit, OnReuseInit {
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuChange('sys');
+    this.baseSrv.menuWebSub.next('sys');
   }
 
   moduleChange(value: string) {
