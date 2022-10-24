@@ -75,7 +75,7 @@ export class DingtalkUserEditComponent implements OnInit {
 
   save(value: any): void {
     this.http
-      .post('wxwork/user/create', {
+      .post('dingtalk/user/save', {
         wxworkid: this.record.wxworkid,
         userid: value.userid,
         update: value.update,

@@ -29,6 +29,7 @@ export class DingtalkUserAddComponent implements OnInit {
         type: 'object',
         properties: {
           avatar: { type: 'string', title: '头像地址' },
+          email: { type: 'string', title: '电子邮箱' },
           pswlogin: { type: 'boolean', title: '允许密码登陆', default: true },
           qrlogin: { type: 'boolean', title: '允许扫码登录', default: true },
           applogin: { type: 'boolean', title: '允许APP登录', default: true }
@@ -42,7 +43,7 @@ export class DingtalkUserAddComponent implements OnInit {
           { label: '禁用', value: 0 }
         ]
       },
-      roles: { type: 'number', title: '角色', enum: this.baseSrv.roleList() }
+      roles: { type: 'number', title: '角色' }
     },
     required: ['loginname', 'status']
   };
@@ -60,8 +61,10 @@ export class DingtalkUserAddComponent implements OnInit {
       widget: 'transfer',
       showSearch: true,
       titles: ['未授权角色', '已授权角色'],
+      operations: ['授予', '没收'],
       grid: { span: 24 },
-      listStyle: { width: '100%', 'height.px': window.innerHeight - 700 }
+      listStyle: { width: '100%', 'height.px': window.innerHeight - 700 },
+      asyncData: () => this.baseSrv.roleSub
     }
   };
 
@@ -75,8 +78,9 @@ export class DingtalkUserAddComponent implements OnInit {
   ngOnInit(): void {
     if (this.record) {
       this.i = {
-        loginname: this.record.mobile,
-        config: { username: this.record.name, pswlogin: false, qrlogin: true, applogin: true },
+        loginName: this.record.userId,
+        userName: this.record.name,
+        config: { pswlogin: false, qrlogin: true, applogin: true },
         status: 1,
         roles: []
       };
@@ -85,7 +89,7 @@ export class DingtalkUserAddComponent implements OnInit {
 
   saveas(value: any): void {
     this.loading = true;
-    this.userSrv.create({ ...value, unionid: this.record.unionid }).subscribe(res => {
+    this.userSrv.create({ ...value, unionId: this.record.unionId }).subscribe(res => {
       if (res.code) {
         this.msgSrv.error(res.msg);
       } else {

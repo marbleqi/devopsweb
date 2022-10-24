@@ -23,17 +23,17 @@ export class WxworkUserAddComponent implements OnInit {
   @ViewChild('sf') private readonly sf!: SFComponent;
   schema: SFSchema = {
     properties: {
-      loginname: { type: 'string', title: '登陆名' },
+      loginName: { type: 'string', title: '登陆名' },
+      userName: { type: 'string', title: '姓名' },
       config: {
         type: 'object',
         properties: {
-          username: { type: 'string', title: '姓名' },
           avatar: { type: 'string', title: '头像地址' },
+          email: { type: 'string', title: '电子邮箱' },
           pswlogin: { type: 'boolean', title: '允许密码登陆', default: true },
           qrlogin: { type: 'boolean', title: '允许扫码登录', default: true },
           applogin: { type: 'boolean', title: '允许APP登录', default: true }
-        },
-        required: ['username']
+        }
       },
       status: {
         type: 'number',
@@ -43,16 +43,14 @@ export class WxworkUserAddComponent implements OnInit {
           { label: '禁用', value: 0 }
         ]
       },
-      roles: { type: 'number', title: '角色', enum: this.baseSrv.roleList() }
+      roles: { type: 'number', title: '角色' }
     },
-    required: ['loginname', 'status']
+    required: ['loginName', 'userName', 'status']
   };
   ui: SFUISchema = {
     '*': { spanLabelFixed: 100, grid: { span: 12 } },
     $config: {
       grid: { span: 24 },
-      $username: { grid: { span: 12 } },
-      $avatar: { grid: { span: 12 } },
       $pswlogin: { grid: { span: 8 } },
       $qrlogin: { grid: { span: 8 } },
       $applogin: { grid: { span: 8 } }
@@ -62,8 +60,10 @@ export class WxworkUserAddComponent implements OnInit {
       widget: 'transfer',
       showSearch: true,
       titles: ['未授权角色', '已授权角色'],
+      operations: ['授予', '没收'],
       grid: { span: 24 },
-      listStyle: { width: '100%', 'height.px': window.innerHeight - 700 }
+      listStyle: { width: '100%', 'height.px': window.innerHeight - 700 },
+      asyncData: () => this.baseSrv.roleSub
     }
   };
 
@@ -77,8 +77,9 @@ export class WxworkUserAddComponent implements OnInit {
   ngOnInit(): void {
     if (this.record) {
       this.i = {
-        loginname: this.record.userid,
-        config: { username: this.record.name, pswlogin: false, qrlogin: true, applogin: true },
+        loginName: this.record.userId,
+        userName: this.record.name,
+        config: { pswlogin: false, qrlogin: true, applogin: true },
         status: 1,
         roles: []
       };
@@ -87,7 +88,7 @@ export class WxworkUserAddComponent implements OnInit {
 
   saveas(value: any): void {
     this.loading = true;
-    this.userSrv.create({ ...value, userid: this.record.userid }).subscribe(res => {
+    this.userSrv.create({ ...value, wxworkId: this.record.userId }).subscribe(res => {
       if (res.code) {
         this.msgSrv.error(res.msg);
       } else {

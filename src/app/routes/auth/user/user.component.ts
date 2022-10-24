@@ -3,6 +3,7 @@ import { BaseService } from '@core';
 import { OnReuseInit } from '@delon/abc/reuse-tab';
 import { STColumn, STData, STColumnTag } from '@delon/abc/st';
 import { ModalHelper } from '@delon/theme';
+import { LogComponent } from '@shared';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { AuthUserService, AuthUserEditComponent, AuthUserResetComponent } from '..';
@@ -73,6 +74,28 @@ export class AuthUserComponent implements OnInit, OnReuseInit {
               tooltip: '重置用户密码',
               click: () => this.getData(),
               modal: { component: AuthUserResetComponent, params: () => ({ copy: false }), size: 'sm' }
+            },
+            {
+              text: '变更历史',
+              icon: 'history',
+              type: 'modal',
+              modal: {
+                component: LogComponent,
+                params: record => ({
+                  title: `查看用户${record.userName}变更历史`,
+                  url: `auth/user/${record.userId}/log`,
+                  columns: [
+                    { title: '角色ID', index: 'userId', width: 100 },
+                    { title: '登陆名', index: 'loginName', width: 150 },
+                    { title: '姓名', index: 'userName', width: 150 },
+                    { title: '状态', index: 'status', width: 100 },
+                    { title: '更新人', index: 'updateUserName', width: 150 },
+                    { title: '更新时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
+                  ]
+                }),
+                size: 1800
+              },
+              click: (record, modal) => this.getData()
             }
           ]
         }

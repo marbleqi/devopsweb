@@ -10,19 +10,6 @@
       </label>
     </nz-radio-group>
   </ng-template>
-  <ng-template sf-template="abilities" let-i let-ui="ui" let-schema="schema">
-    <nz-tree
-      #abilities
-      nzExpandAll
-      nzCheckable
-      nzShowLine
-      nzCheckStrictly
-      [nzVirtualHeight]="height"
-      [nzData]="abilityNodes"
-      [nzCheckedKeys]="i.value"
-      (nzCheckBoxChange)="i.setValue($event.keys)"
-    ></nz-tree>
-  </ng-template>
   <div class="modal-footer">
     <button nz-button type="button" (click)="close()">关闭</button>
     <button *ngIf="updatable" nz-button type="submit" nzType="primary" (click)="save(sf.value)" [disabled]="!sf.valid">保存</button>

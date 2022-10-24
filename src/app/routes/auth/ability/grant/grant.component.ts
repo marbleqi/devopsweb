@@ -46,6 +46,7 @@ export class AuthAbilityGrantComponent implements OnInit {
 
   /**对话框初始化 */
   ngOnInit(): void {
+    // TODO:待优化，去重代码
     console.debug('record', this.record);
     if (this.grantType === 'menu') {
       this.title = `编辑${this.record.name}的授权菜单`;

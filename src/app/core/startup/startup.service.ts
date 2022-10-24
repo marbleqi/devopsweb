@@ -8,7 +8,7 @@ import { SettingsService, TitleService } from '@delon/theme';
 import { ICONS, ICONS_AUTO } from '@src';
 import type { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzIconService } from 'ng-zorro-antd/icon';
-import { Observable, map, mergeMap, catchError, of } from 'rxjs';
+import { Observable, map, mergeMap, catchError, of, zip } from 'rxjs';
 
 /**
  * Used for application startup
@@ -55,8 +55,8 @@ export class StartupService {
                 this.aclSrv.setAbility(res.data.ability);
                 // 连接通用长连接
                 this.baseSrv.connect();
-                // 初始化菜单信息和用户信息
-                return this.baseSrv.menuInit().pipe(mergeMap(() => this.baseSrv.userInit()));
+                // 初始化菜单，角色，用户数据
+                return zip(this.baseSrv.menuInit(), this.baseSrv.roleInit(), this.baseSrv.userInit()).pipe(map(() => {}));
               }
             })
           );

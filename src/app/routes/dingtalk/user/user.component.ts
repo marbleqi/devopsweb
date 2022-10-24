@@ -37,7 +37,7 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
       showLine: true,
       expandChange: (e: NzFormatEmitEvent) => {
         if (e.node?.key) {
-          // return this.depart.index(Number(e.node?.key));
+          return this.userSrv.depart(Number(e.node?.key));
         }
         return of([]);
       },
@@ -57,17 +57,17 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
     {
       title: '关联系统用户',
       children: [
-        { title: '用户ID', index: 'user.userid', width: 100 },
-        { title: '姓名', index: 'user.username', width: 150 },
+        { title: '用户ID', index: 'user.userId', width: 100 },
+        { title: '姓名', index: 'user.userName', width: 150 },
         { title: '状态', index: 'user.status', width: 100, sort: { compare: (a, b) => a.status - b.status }, type: 'tag', tag: statustag },
-        { title: '更新人', index: 'user.update_username', width: 100 },
+        { title: '更新人', index: 'user.updateUserName', width: 100 },
         {
           title: '更新时间',
-          index: 'user.update_at',
+          index: 'user.updateAt',
           type: 'date',
           dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS',
           width: 170,
-          sort: { compare: (a, b) => a.update_at - b.update_at }
+          sort: { compare: (a, b) => a.updateAt - b.updateAt }
         }
       ]
     },
@@ -107,6 +107,7 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
 
   ngOnInit(): void {
     this.baseSrv.menuWebSub.next('dingtalk');
+    this.userSrv.init();
   }
 
   _onReuseInit(): void {
@@ -122,19 +123,17 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
   getdata(value?: any): void {
     console.debug('查询条件', value);
     if (value?.id) {
-      this.userSrv.index().subscribe(() => {
-        this.userSrv.index(value.id).subscribe(res => {
-          console.debug('钉钉用户数据', res);
-          this.stdata = res;
-          this.stdata = res.map((item: any) => {
-            const user = this.userSrv.userMap.get(item.unionid);
-            if (user) {
-              return { ...item, user };
-            }
-            return item;
-          });
-          console.debug('stdata', this.stdata);
+      this.userSrv.index(value.id).subscribe(res => {
+        console.debug('钉钉用户数据', res);
+        this.stdata = res;
+        this.stdata = res.map((item: any) => {
+          const user = this.userSrv.userMap.get(item.unionId);
+          if (user) {
+            return { ...item, user };
+          }
+          return item;
         });
+        console.debug('stdata', this.stdata);
       });
     }
   }

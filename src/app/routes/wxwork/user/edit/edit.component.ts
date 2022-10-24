@@ -15,9 +15,9 @@ export class WxworkUserEditComponent implements OnInit {
   i: any;
   schema: SFSchema = {
     properties: {
-      wxworkid: { type: 'string', title: '企业微信ID' },
+      wxworkId: { type: 'string', title: '企业微信ID' },
       name: { type: 'string', title: '企业微信姓名' },
-      userid: { type: 'number', title: '系统用户', enum: this.baseSrv.userList() },
+      userId: { type: 'number', title: '系统用户' },
       status: {
         type: 'number',
         title: '状态',
@@ -34,9 +34,9 @@ export class WxworkUserEditComponent implements OnInit {
   };
   ui: SFUISchema = {
     '*': { spanLabelFixed: 200, grid: { span: 12 } },
-    $wxworkid: { widget: 'text' },
+    $wxworkId: { widget: 'text' },
     $name: { widget: 'text' },
-    $userid: { widget: 'select', mode: 'default' },
+    $userId: { widget: 'select', mode: 'default', asyncData: () => this.baseSrv.userSub },
     $status: { widget: 'radio', styleType: 'button', buttonStyle: 'solid' },
     $update_username: { widget: 'text' },
     $update_at: { widget: 'text' }
@@ -53,17 +53,17 @@ export class WxworkUserEditComponent implements OnInit {
     console.debug('userlist', this.baseSrv.userList());
     if (this.record.user) {
       this.i = {
-        wxworkid: this.record.userid,
+        wxworkId: this.record.userId,
         name: this.record.name,
-        userid: this.record.user.userid,
+        userId: this.record.user.userId,
         status: this.record.user.status,
         update: true,
-        update_username: this.record.user.update_username,
-        update_at: format(this.record.user.update_at, 'yyyy-MM-dd HH:mm:ss.SSS')
+        updateUserName: this.record.user.updateUserName,
+        updateAt: format(this.record.user.updateAt, 'yyyy-MM-dd HH:mm:ss.SSS')
       };
     } else {
       this.i = {
-        wxworkid: this.record.userid,
+        wxworkid: this.record.userId,
         name: this.record.name,
         userid: 0,
         status: 1,
@@ -74,7 +74,7 @@ export class WxworkUserEditComponent implements OnInit {
 
   save(value: any): void {
     this.client
-      .post('wxwork/user/save', { wxworkid: this.record.userid, userid: value.userid, status: value.status, update: value.update })
+      .post('wxwork/user/save', { wxworkId: this.record.userId, userId: value.userId, status: value.status, update: value.update })
       .subscribe((res: any) => {
         if (res.code === 0) {
           this.msgSrv.success('关联成功');

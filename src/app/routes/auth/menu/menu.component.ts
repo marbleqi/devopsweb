@@ -5,7 +5,7 @@ import { STColumn, STData, STColumnTag } from '@delon/abc/st';
 import { SFSchema, SFSchemaEnum, SFUISchema } from '@delon/form';
 import { ModalHelper } from '@delon/theme';
 import { ArrayService } from '@delon/util';
-import { SortComponent } from '@shared';
+import { LogComponent, SortComponent } from '@shared';
 import { Subject } from 'rxjs';
 
 import { AuthMenuService, AuthMenuEditComponent } from '..';
@@ -82,14 +82,38 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
           text: '编辑',
           icon: 'edit',
           type: 'modal',
-          modal: { component: AuthMenuEditComponent, params: () => ({ copy: false }) },
+          modal: { component: AuthMenuEditComponent, params: () => ({ copy: false }), size: 1800 },
           click: (record, modal) => this.getData(modal)
         },
         {
           text: '复制',
           icon: 'copy',
           type: 'modal',
-          modal: { component: AuthMenuEditComponent, params: () => ({ copy: true }) },
+          modal: { component: AuthMenuEditComponent, params: () => ({ copy: true }), size: 1800 },
+          click: (record, modal) => this.getData(modal)
+        },
+        {
+          text: '变更历史',
+          icon: 'history',
+          type: 'modal',
+          modal: {
+            component: LogComponent,
+            params: record => ({
+              title: `查看菜单${record.config.text}变更历史`,
+              url: `auth/menu/${record.menuId}/log`,
+              columns: [
+                { title: '菜单ID', index: 'menuId', width: 100 },
+                { title: '标题', index: 'config.text', width: 150 },
+                { title: '说明', index: 'config.description', width: 200 },
+                { title: '图标', index: 'config.icon', width: 50 },
+                { title: '链接', index: 'config.link', width: 150 },
+                { title: '状态', index: 'status', width: 100 },
+                { title: '更新人', index: 'updateUserName', width: 150 },
+                { title: '更新时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
+              ]
+            }),
+            size: 1800
+          },
           click: (record, modal) => this.getData(modal)
         }
       ]

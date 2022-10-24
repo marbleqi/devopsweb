@@ -106,7 +106,7 @@ export class BaseService {
 
   /**角色选项列表 */
   roleList(): SFSchemaEnum[] {
-    return Array.from(this.roleMap).map((item: any) => ({ value: item[0], label: item[1] }));
+    return Array.from(this.roleMap).map(item => ({ value: item[0], label: item[1], title: item[1] }));
   }
 
   /**
@@ -147,7 +147,7 @@ export class BaseService {
 
   /**用户选项列表 */
   userList(): SFSchemaEnum[] {
-    return Array.from(this.userMap).map((item: any) => ({ value: item[0], label: item[1] }));
+    return Array.from(this.userMap).map(item => ({ value: item[0], label: item[1], title: item[1] }));
   }
 
   /**建立通知长连接 */

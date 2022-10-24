@@ -110,7 +110,16 @@ export class AuthMenuEditComponent implements OnInit {
       $icon: { widget: 'custom', grid: { span: 24 } }
     },
     $status: { widget: 'radio', styleType: 'button', buttonStyle: 'solid' },
-    $abilities: { widget: 'custom', grid: { span: 24 } },
+    $abilities: {
+      widget: 'transfer',
+      showSearch: true,
+      titles: ['未授权权限点', '已授权权限点'],
+      operations: ['授予', '没收'],
+      grid: { span: 24 },
+      listStyle: { width: '100%', 'height.px': window.innerHeight - 700 },
+      asyncData: () =>
+        this.abilitySrv.index().pipe(map(res => res.map(item => ({ title: `${item.name}——${item.description}`, value: item.id }))))
+    },
     $updateUserName: { widget: 'text' },
     $updateAt: { widget: 'text' },
     $operateId: { widget: 'text' }
@@ -340,7 +349,7 @@ export class AuthMenuEditComponent implements OnInit {
       this.height = `${(window.innerHeight - 500).toString()}px`;
     }
     // 设置权限点备选项
-    this.abilitySrv.index('tree').subscribe(res => {
+    this.abilitySrv.index('list').subscribe(res => {
       this.abilityNodes = res;
     });
     if (this.record) {

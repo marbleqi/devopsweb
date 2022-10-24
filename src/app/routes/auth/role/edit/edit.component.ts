@@ -3,6 +3,7 @@ import { SFSchema, SFUISchema } from '@delon/form';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzTreeComponent, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
+import { map } from 'rxjs/operators';
 
 import { AuthAbilityService, AuthRoleService } from '../..';
 
@@ -53,7 +54,16 @@ export class AuthRoleEditComponent implements OnInit {
   ui: SFUISchema = {
     '*': { spanLabelFixed: 150, grid: { span: 12 } },
     $status: { widget: 'radio', styleType: 'button', buttonStyle: 'solid' },
-    $abilities: { widget: 'custom', grid: { span: 24 } },
+    $abilities: {
+      widget: 'transfer',
+      showSearch: true,
+      titles: ['未授权权限点', '已授权权限点'],
+      operations: ['授予', '没收'],
+      grid: { span: 24 },
+      listStyle: { width: '100%', 'height.px': window.innerHeight - 700 },
+      asyncData: () =>
+        this.abilitySrv.index().pipe(map(res => res.map(item => ({ title: `${item.name}——${item.description}`, value: item.id }))))
+    },
     $createUserName: { widget: 'text' },
     $createAt: { widget: 'text' },
     $updateUserName: { widget: 'text' },

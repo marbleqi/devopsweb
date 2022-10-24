@@ -1,28 +1,74 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from '@core';
+import { SFSchemaEnum } from '@delon/form';
 import { _HttpClient } from '@delon/theme';
+import { ArrayService } from '@delon/util';
 import { Result } from '@shared';
-import { Observable, map } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
 
 /**企业微信用户服务 */
 @Injectable()
 export class WxworkUserService {
+  /**缓存的部门信息 */
+  departList: SFSchemaEnum[];
   /**最新操作ID */
-  private operateid: number;
-  /**企业微信用户ID与姓名的映射关系 */
-  wxworkmap: Map<string, string>;
+  private operateId: number;
   /**企业微信用户ID与系统用户ID的映射关系 */
-  usermap: Map<string, any>;
+  userMap: Map<string, any>;
   /**
    * 构建函数
    *
    * @param client 注入的http服务
    * @param baseSrv 注入的基础服务
    */
-  constructor(private readonly client: _HttpClient, private readonly baseSrv: BaseService) {
-    this.operateid = 0;
-    this.wxworkmap = new Map<string, string>();
-    this.usermap = new Map<string, any>();
+  constructor(private readonly arraySrv: ArrayService, private readonly client: _HttpClient, private readonly baseSrv: BaseService) {
+    this.departList = [];
+    this.operateId = 0;
+    this.userMap = new Map<string, any>();
+  }
+
+  /**
+   * 获取部门列表
+   *
+   * @returns 部门列表
+   */
+  depart(): Observable<SFSchemaEnum[]> {
+    // 如果已缓存过数据，则直接返回缓存
+    if (this.departList.length) {
+      return of(this.departList);
+    }
+    return this.client.get('wxwork/user/depart').pipe(
+      map((res: Result) => {
+        if (res.code) {
+          return [];
+        } else {
+          // 请求到数据后，先进行缓存
+          this.departList = this.arraySrv.arrToTree(
+            res.data.sort((a: any, b: any) => b.orderId - a.orderId),
+            { idMapName: 'key', parentIdMapName: 'parentId' }
+          );
+          return this.departList;
+        }
+      })
+    );
+  }
+
+  /**初始化 */
+  init(): void {
+    this.client.get(`wxwork/user/index`, { operateId: this.operateId }).subscribe((res: Result) => {
+      if (!res.code && res.data.length) {
+        for (const userItem of res.data) {
+          this.userMap.set(userItem['wxworkId'], {
+            ...userItem,
+            userName: this.baseSrv.userName(userItem['userId']),
+            updateUserName: this.baseSrv.userName(userItem['updateUserId'])
+          });
+          if (this.operateId < userItem['operateId']) {
+            this.operateId = userItem['operateId'];
+          }
+        }
+      }
+    });
   }
 
   /**
@@ -31,39 +77,15 @@ export class WxworkUserService {
    * @param id 部门ID
    * @returns 用户列表
    */
-  index(id?: number): Observable<object[]> {
+  index(id: number): Observable<object[]> {
     // 如果有部门ID传入，则返回企业微信中的用户清单
-    if (id) {
-      return this.client.get(`wxwork/user/index/${id}`).pipe(
-        map((res: Result) => {
-          if (res.code) {
-            return [];
-          } else {
-            for (const user of res['data']) {
-              this.wxworkmap.set(user['userid'], user['name']);
-            }
-            return res['data'];
-          }
-        })
-      );
-    }
-    // 如果没有部门ID传入，则返回系统中已关联企业微信的用户
-    return this.client.get(`wxwork/user/index`, { operateid: this.operateid }).pipe(
+    return this.client.get(`wxwork/user/index/${id}`).pipe(
       map((res: Result) => {
-        if (!res.code && res['data'].length) {
-          for (const useritem of res['data']) {
-            this.usermap.set(useritem['wxworkid'], {
-              ...useritem,
-              username: this.baseSrv.userName(useritem['userid']),
-              update_username: this.baseSrv.userName(useritem['update_userid'])
-            });
-            if (this.operateid < useritem['operateid']) {
-              this.operateid = useritem['operateid'];
-            }
-          }
-          return Array.from(this.usermap.values());
+        if (res.code) {
+          return [];
+        } else {
+          return res.data;
         }
-        return [];
       })
     );
   }
@@ -75,6 +97,16 @@ export class WxworkUserService {
    * @returns 后端响应报文
    */
   create(value: any): Observable<Result> {
+    return this.client.post('wxwork/user/create', value);
+  }
+
+  /**
+   * 创建用户
+   *
+   * @param value 表单数据
+   * @returns 后端响应报文
+   */
+  save(value: any): Observable<Result> {
     return this.client.post('wxwork/user/create', value);
   }
 }

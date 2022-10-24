@@ -3,7 +3,7 @@ import { BaseService } from '@core';
 import { OnReuseInit } from '@delon/abc/reuse-tab';
 import { STComponent, STColumn, STData, STColumnTag } from '@delon/abc/st';
 import { ModalHelper } from '@delon/theme';
-import { SortComponent } from '@shared';
+import { LogComponent, SortComponent } from '@shared';
 
 import { AuthRoleService, AuthRoleEditComponent, AuthRoleGrantComponent } from '..';
 
@@ -53,14 +53,14 @@ export class AuthRoleComponent implements OnInit, OnReuseInit {
           text: '编辑',
           icon: 'edit',
           type: 'modal',
-          modal: { component: AuthRoleEditComponent, params: () => ({ copy: false }) },
+          modal: { component: AuthRoleEditComponent, params: () => ({ copy: false }), size: 1800 },
           click: () => this.getData()
         },
         {
           text: '复制',
           icon: 'copy',
           type: 'modal',
-          modal: { component: AuthRoleEditComponent, params: () => ({ copy: true }) },
+          modal: { component: AuthRoleEditComponent, params: () => ({ copy: true }), size: 1800 },
           click: () => this.getData()
         },
         {
@@ -69,6 +69,28 @@ export class AuthRoleComponent implements OnInit, OnReuseInit {
           type: 'modal',
           modal: { component: AuthRoleGrantComponent },
           click: () => this.getData()
+        },
+        {
+          text: '变更历史',
+          icon: 'history',
+          type: 'modal',
+          modal: {
+            component: LogComponent,
+            params: record => ({
+              title: `查看角色${record.roleName}变更历史`,
+              url: `auth/role/${record.roleId}/log`,
+              columns: [
+                { title: '角色ID', index: 'roleId', width: 100 },
+                { title: '角色名', index: 'roleName', width: 150 },
+                { title: '说明', index: 'description' },
+                { title: '状态', index: 'status', width: 100 },
+                { title: '更新人', index: 'updateUserName', width: 150 },
+                { title: '更新时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
+              ]
+            }),
+            size: 1800
+          },
+          click: (record, modal) => this.getData()
         }
       ]
     }
