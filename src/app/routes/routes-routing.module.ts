@@ -44,7 +44,14 @@ const routes: Routes = [
         canActivate: [ACLGuard],
         data: { guard: [400] },
         loadChildren: () => import('./dingtalk/dingtalk.module').then(m => m.DingtalkModule)
-      }
+      },
+      { path: 'alipay', loadChildren: () => import('./alipay/alipay.module').then(m => m.AlipayModule) },
+      { path: 'aliyun', loadChildren: () => import('./aliyun/aliyun.module').then(m => m.AliyunModule) },
+      { path: 'android', loadChildren: () => import('./android/android.module').then(m => m.AndroidModule) },
+      { path: 'kong', loadChildren: () => import('./kong/kong.module').then(m => m.KongModule) },
+      { path: 'kubernetes', loadChildren: () => import('./kubernetes/kubernetes.module').then(m => m.KubernetesModule) },
+      { path: 'nacos', loadChildren: () => import('./nacos/nacos.module').then(m => m.NacosModule) },
+      { path: 'wechat', loadChildren: () => import('./wechat/wechat.module').then(m => m.WechatModule) }
     ]
   },
   // 空白布局

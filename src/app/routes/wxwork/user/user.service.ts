@@ -54,21 +54,23 @@ export class WxworkUserService {
   }
 
   /**初始化 */
-  init(): void {
-    this.client.get(`wxwork/user/index`, { operateId: this.operateId }).subscribe((res: Result) => {
-      if (!res.code && res.data.length) {
-        for (const userItem of res.data) {
-          this.userMap.set(userItem['wxworkId'], {
-            ...userItem,
-            userName: this.baseSrv.userName(userItem['userId']),
-            updateUserName: this.baseSrv.userName(userItem['updateUserId'])
-          });
-          if (this.operateId < userItem['operateId']) {
-            this.operateId = userItem['operateId'];
+  init(): Observable<void> {
+    return this.client.get(`wxwork/user/index`, { operateId: this.operateId }).pipe(
+      map((res: Result) => {
+        if (!res.code && res.data.length) {
+          for (const userItem of res.data) {
+            this.userMap.set(userItem['wxworkId'], {
+              ...userItem,
+              userName: this.baseSrv.userName(userItem['userId']),
+              updateUserName: this.baseSrv.userName(userItem['updateUserId'])
+            });
+            if (this.operateId < userItem['operateId']) {
+              this.operateId = userItem['operateId'];
+            }
           }
         }
-      }
-    });
+      })
+    );
   }
 
   /**

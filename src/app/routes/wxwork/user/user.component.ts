@@ -98,7 +98,7 @@ export class WxworkUserComponent implements OnInit, OnReuseInit {
 
   ngOnInit(): void {
     this.baseSrv.menuWebSub.next('wxwork');
-    this.userSrv.init();
+    this.userSrv.init().subscribe();
   }
 
   _onReuseInit(): void {
@@ -112,13 +112,15 @@ export class WxworkUserComponent implements OnInit, OnReuseInit {
 
   getdata(): void {
     if (this.departId) {
-      this.userSrv.index(this.departId).subscribe(res => {
-        this.stData = res.map((item: any) => {
-          const user = this.userSrv.userMap.get(item.userId);
-          if (user) {
-            return { ...item, user };
-          }
-          return item;
+      this.userSrv.init().subscribe(() => {
+        this.userSrv.index(this.departId).subscribe(res => {
+          this.stData = res.map((item: any) => {
+            const user = this.userSrv.userMap.get(item.userId);
+            if (user) {
+              return { ...item, user };
+            }
+            return item;
+          });
         });
       });
     }

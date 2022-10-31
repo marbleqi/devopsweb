@@ -23,7 +23,7 @@ const statustag: STColumnTag = {
 export class DingtalkUserComponent implements OnInit, OnReuseInit {
   i: any;
   value: any;
-  departid!: number;
+  departid: number;
   @ViewChild('sf') private readonly sf!: SFComponent;
   schema: SFSchema = {
     properties: { id: { type: 'number', title: '部门', enum: [{ key: 1, title: '根部门' }], default: 1 } },
@@ -49,9 +49,9 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
     {
       title: '钉钉用户',
       children: [
-        { title: '手机号', index: 'mobile' },
-        { title: '姓名', index: 'name' },
-        { title: '头像', type: 'img', index: 'avatar' }
+        { title: '手机号', index: 'mobile', width: 100 },
+        { title: '姓名', index: 'name', width: 100 },
+        { title: '头像', type: 'img', index: 'avatar', width: 100 }
       ]
     },
     {
@@ -103,11 +103,13 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
     }
   ];
 
-  constructor(private readonly baseSrv: BaseService, private readonly userSrv: DingtalkUserService) {}
+  constructor(private readonly baseSrv: BaseService, private readonly userSrv: DingtalkUserService) {
+    this.departid = 1;
+  }
 
   ngOnInit(): void {
     this.baseSrv.menuWebSub.next('dingtalk');
-    this.userSrv.init();
+    this.userSrv.init().subscribe();
   }
 
   _onReuseInit(): void {
@@ -123,7 +125,10 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
   getdata(value?: any): void {
     console.debug('查询条件', value);
     if (value?.id) {
-      this.userSrv.index(value.id).subscribe(res => {
+      this.departid = value.id;
+    }
+    this.userSrv.init().subscribe(() => {
+      this.userSrv.index(this.departid).subscribe(res => {
         console.debug('钉钉用户数据', res);
         this.stdata = res;
         this.stdata = res.map((item: any) => {
@@ -135,6 +140,6 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
         });
         console.debug('stdata', this.stdata);
       });
-    }
+    });
   }
 }

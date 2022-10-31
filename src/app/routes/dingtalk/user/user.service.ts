@@ -42,23 +42,26 @@ export class DingtalkUserService {
   }
 
   /**初始化 */
-  init(): void {
-    this.client.get(`dingtalk/user/index`, { operateId: this.operateId }).subscribe((res: Result) => {
-      if (!res.code && res.data.length) {
-        console.debug('res.data', res.data);
-        for (const userItem of res.data) {
-          this.userMap.set(userItem['unionId'], {
-            ...userItem,
-            userName: this.baseSrv.userName(userItem['userId']),
-            updateUserName: this.baseSrv.userName(userItem['updateUserId'])
-          });
-          if (this.operateId < userItem['operateId']) {
-            this.operateId = userItem['operateId'];
+  init(): Observable<void> {
+    return this.client.get(`dingtalk/user/index`, { operateId: this.operateId }).pipe(
+      map((res: Result) => {
+        if (!res.code && res.data.length) {
+          console.debug('res.data', res.data);
+          for (const userItem of res.data) {
+            this.userMap.set(userItem['unionId'], {
+              ...userItem,
+              userName: this.baseSrv.userName(userItem['userId']),
+              updateUserName: this.baseSrv.userName(userItem['updateUserId'])
+            });
+            if (this.operateId < userItem['operateId']) {
+              this.operateId = userItem['operateId'];
+            }
           }
         }
-      }
-    });
+      })
+    );
   }
+
   /**
    * 获取用户记录
    *

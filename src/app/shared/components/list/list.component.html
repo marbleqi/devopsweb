@@ -1,9 +1,1 @@
-<page-header [action]="phActionTpl">
-  <ng-template #phActionTpl>
-    <button nz-button (click)="getdata()">刷新</button>
-    <button nz-button nzType="primary" (click)="add()">新建</button>
-  </ng-template>
-</page-header>
-<nz-card>
-  <st #st class="my-md" [data]="stdata" [columns]="columns" [scroll]="scroll"></st>
-</nz-card>
+<st #st class="my-md" [data]="stdata" [columns]="columns" [scroll]="scroll"></st>
