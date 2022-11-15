@@ -3,7 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { CommonHomeComponent } from '.';
 
-const routes: Routes = [{ path: 'home', component: CommonHomeComponent }];
+const routes: Routes = [
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', component: CommonHomeComponent }
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

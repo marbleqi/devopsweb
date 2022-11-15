@@ -29,6 +29,24 @@ export class AuthAbilityComponent implements OnInit, OnReuseInit {
       filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.description.includes(filter.value) }
     },
     {
+      title: '类型',
+      index: 'type',
+      sort: { compare: (a, b) => a.type.localeCompare(b.type) },
+      filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.description.includes(filter.value) }
+    },
+    {
+      title: '模块',
+      index: 'moduleName',
+      sort: { compare: (a, b) => a.moduleName.localeCompare(b.moduleName) },
+      filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.description.includes(filter.value) }
+    },
+    {
+      title: '对象',
+      index: 'objectName',
+      sort: { compare: (a, b) => a.objectName.localeCompare(b.objectName) },
+      filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.description.includes(filter.value) }
+    },
+    {
       title: '操作',
       buttons: [
         {
@@ -49,22 +67,22 @@ export class AuthAbilityComponent implements OnInit, OnReuseInit {
     }
   ];
 
-  constructor(private abilitySrv: AuthAbilityService, private baseSrv: BaseService) {}
+  constructor(private abilityService: AuthAbilityService, private baseService: BaseService) {}
 
   ngOnInit(): void {
     console.debug('窗体内高', window.innerHeight);
-    this.baseSrv.menuWebSub.next('auth');
+    this.baseService.menuWebSub.next('auth');
     this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.getData();
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuWebSub.next('auth');
+    this.baseService.menuWebSub.next('auth');
   }
 
   getData(): void {
     console.debug('刷新');
-    this.abilitySrv.index().subscribe(res => {
+    this.abilityService.index().subscribe(res => {
       this.stData = res;
     });
   }

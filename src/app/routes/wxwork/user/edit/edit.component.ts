@@ -36,21 +36,21 @@ export class WxworkUserEditComponent implements OnInit {
     '*': { spanLabelFixed: 200, grid: { span: 12 } },
     $wxworkId: { widget: 'text' },
     $name: { widget: 'text' },
-    $userId: { widget: 'select', mode: 'default', asyncData: () => this.baseSrv.userSub },
+    $userId: { widget: 'select', mode: 'default', asyncData: () => this.baseService.userSub },
     $status: { widget: 'radio', styleType: 'button', buttonStyle: 'solid' },
     $update_username: { widget: 'text' },
     $update_at: { widget: 'text' }
   };
 
   constructor(
-    private readonly client: _HttpClient,
-    private readonly baseSrv: BaseService,
+    private readonly clientService: _HttpClient,
+    private readonly baseService: BaseService,
     private readonly modal: NzModalRef,
-    private readonly msgSrv: NzMessageService
+    private readonly msgService: NzMessageService
   ) {}
 
   ngOnInit(): void {
-    console.debug('userlist', this.baseSrv.userList());
+    console.debug('userlist', this.baseService.userList());
     if (this.record.user) {
       this.i = {
         wxworkId: this.record.userId,
@@ -73,11 +73,11 @@ export class WxworkUserEditComponent implements OnInit {
   }
 
   save(value: any): void {
-    this.client
+    this.clientService
       .post('wxwork/user/save', { wxworkId: this.record.userId, userId: value.userId, status: value.status, update: value.update })
       .subscribe((res: any) => {
         if (res.code === 0) {
-          this.msgSrv.success('关联成功');
+          this.msgService.success('关联成功');
           this.modal.close(true);
         }
       });

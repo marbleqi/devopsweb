@@ -18,10 +18,14 @@ export class WxworkUserService {
   /**
    * 构建函数
    *
-   * @param client 注入的http服务
-   * @param baseSrv 注入的基础服务
+   * @param clientService 注入的http服务
+   * @param baseService 注入的基础服务
    */
-  constructor(private readonly arraySrv: ArrayService, private readonly client: _HttpClient, private readonly baseSrv: BaseService) {
+  constructor(
+    private readonly arrayService: ArrayService,
+    private readonly clientService: _HttpClient,
+    private readonly baseService: BaseService
+  ) {
     this.departList = [];
     this.operateId = 0;
     this.userMap = new Map<string, any>();
@@ -37,13 +41,13 @@ export class WxworkUserService {
     if (this.departList.length) {
       return of(this.departList);
     }
-    return this.client.get('wxwork/user/depart').pipe(
+    return this.clientService.get('wxwork/user/depart').pipe(
       map((res: Result) => {
         if (res.code) {
           return [];
         } else {
           // 请求到数据后，先进行缓存
-          this.departList = this.arraySrv.arrToTree(
+          this.departList = this.arrayService.arrToTree(
             res.data.sort((a: any, b: any) => b.orderId - a.orderId),
             { idMapName: 'key', parentIdMapName: 'parentId' }
           );
@@ -55,14 +59,14 @@ export class WxworkUserService {
 
   /**初始化 */
   init(): Observable<void> {
-    return this.client.get(`wxwork/user/index`, { operateId: this.operateId }).pipe(
+    return this.clientService.get(`wxwork/user/index`, { operateId: this.operateId }).pipe(
       map((res: Result) => {
         if (!res.code && res.data.length) {
           for (const userItem of res.data) {
             this.userMap.set(userItem['wxworkId'], {
               ...userItem,
-              userName: this.baseSrv.userName(userItem['userId']),
-              updateUserName: this.baseSrv.userName(userItem['updateUserId'])
+              userName: this.baseService.userName(userItem['userId']),
+              updateUserName: this.baseService.userName(userItem['updateUserId'])
             });
             if (this.operateId < userItem['operateId']) {
               this.operateId = userItem['operateId'];
@@ -81,7 +85,7 @@ export class WxworkUserService {
    */
   index(id: number): Observable<object[]> {
     // 如果有部门ID传入，则返回企业微信中的用户清单
-    return this.client.get(`wxwork/user/index/${id}`).pipe(
+    return this.clientService.get(`wxwork/user/index/${id}`).pipe(
       map((res: Result) => {
         if (res.code) {
           return [];
@@ -99,7 +103,7 @@ export class WxworkUserService {
    * @returns 后端响应报文
    */
   create(value: any): Observable<Result> {
-    return this.client.post('wxwork/user/create', value);
+    return this.clientService.post('wxwork/user/create', value);
   }
 
   /**
@@ -109,6 +113,6 @@ export class WxworkUserService {
    * @returns 后端响应报文
    */
   save(value: any): Observable<Result> {
-    return this.client.post('wxwork/user/create', value);
+    return this.clientService.post('wxwork/user/create', value);
   }
 }

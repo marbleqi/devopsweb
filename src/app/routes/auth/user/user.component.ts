@@ -8,11 +8,6 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { AuthUserService, AuthUserEditComponent, AuthUserResetComponent } from '..';
 
-const statustag: STColumnTag = {
-  0: { text: '停用', color: 'red' },
-  1: { text: '有效', color: 'green' }
-};
-
 @Component({
   selector: 'app-auth-user',
   templateUrl: './user.component.html'
@@ -33,7 +28,17 @@ export class AuthUserComponent implements OnInit, OnReuseInit {
       index: 'userName',
       filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.userName.includes(filter.value) }
     },
-    { title: '状态', index: 'status', width: 100, sort: { compare: (a, b) => a.status - b.status }, type: 'tag', tag: statustag },
+    {
+      title: '状态',
+      index: 'status',
+      width: 100,
+      sort: { compare: (a, b) => a.status - b.status },
+      type: 'tag',
+      tag: {
+        1: { text: '有效', color: 'green' },
+        2: { text: '停用', color: 'red' }
+      } as STColumnTag
+    },
     { title: '更新人', index: 'updateUserName', width: 150 },
     {
       title: '更新时间',
@@ -104,27 +109,27 @@ export class AuthUserComponent implements OnInit, OnReuseInit {
   ];
 
   constructor(
-    private baseSrv: BaseService,
-    private userSrv: AuthUserService,
-    private msgSrv: NzMessageService,
+    private baseService: BaseService,
+    private userService: AuthUserService,
+    private msgService: NzMessageService,
     private modal: ModalHelper
   ) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuWebSub.next('auth');
+    this.baseService.menuWebSub.next('auth');
     console.debug('窗体内高', window.innerHeight);
     this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.getData();
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuWebSub.next('auth');
+    this.baseService.menuWebSub.next('auth');
   }
 
   getData(): void {
     this.loading = true;
     console.debug('获取用户数据');
-    this.userSrv.index().subscribe(res => {
+    this.userService.index().subscribe(res => {
       this.stData = res;
       this.loading = false;
     });
@@ -135,11 +140,11 @@ export class AuthUserComponent implements OnInit, OnReuseInit {
   }
 
   unlock(record: STData): void {
-    this.userSrv.unlock(record['userId']).subscribe(res => {
+    this.userService.unlock(record['userId']).subscribe(res => {
       if (res.code) {
-        this.msgSrv.warning('解锁失败');
+        this.msgService.warning('解锁失败');
       } else {
-        this.msgSrv.success('解锁成功');
+        this.msgService.success('解锁成功');
       }
     });
   }

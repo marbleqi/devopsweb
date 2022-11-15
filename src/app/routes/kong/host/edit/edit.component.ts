@@ -53,7 +53,7 @@ export class KongHostEditComponent implements OnInit {
     $operateId: { widget: 'text' }
   };
 
-  constructor(private hostSrv: KongHostService, private msgSrv: NzMessageService, private modal: NzModalRef) {}
+  constructor(private hostService: KongHostService, private msgService: NzMessageService, private modal: NzModalRef) {}
 
   /**对话框初始化 */
   ngOnInit(): void {
@@ -70,7 +70,7 @@ export class KongHostEditComponent implements OnInit {
         this.updatable = true;
         this.creatable = false;
       }
-      this.hostSrv.show(this.record.hostId).subscribe(res => {
+      this.hostService.show(this.record.hostId).subscribe(res => {
         this.i = res;
       });
     } else {
@@ -88,11 +88,11 @@ export class KongHostEditComponent implements OnInit {
    * @param value 原始表单数据
    */
   saveas(value: any): void {
-    this.hostSrv.create(value).subscribe(res => {
+    this.hostService.create(value).subscribe(res => {
       if (res.code) {
-        this.msgSrv.error(res.msg);
+        this.msgService.error(res.msg);
       } else {
-        this.msgSrv.success('创建成功');
+        this.msgService.success('创建成功');
         this.modal.close(true);
       }
     });
@@ -104,11 +104,11 @@ export class KongHostEditComponent implements OnInit {
    * @param value 原始表单数据
    */
   save(value: any): void {
-    this.hostSrv.update(this.record.hostId, value).subscribe(res => {
+    this.hostService.update(this.record.hostId, value).subscribe(res => {
       if (res.code) {
-        this.msgSrv.error(res.msg);
+        this.msgService.error(res.msg);
       } else {
-        this.msgSrv.success('保存成功');
+        this.msgService.success('保存成功');
         this.modal.close(true);
       }
     });

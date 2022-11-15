@@ -38,12 +38,12 @@ export class AuthMenuEditComponent implements OnInit {
   schema: SFSchema = {
     properties: {
       pMenuId: { type: 'number', title: '上级菜单' },
+      link: { type: 'string', title: '链接' },
       config: {
         type: 'object',
         properties: {
           text: { type: 'string', title: '菜单名' },
           description: { type: 'string', title: '菜单说明' },
-          link: { type: 'string', title: '链接' },
           reuse: { type: 'boolean', title: '路由复用', default: true },
           iconType: {
             type: 'string',
@@ -87,13 +87,13 @@ export class AuthMenuEditComponent implements OnInit {
       defaultExpandAll: true,
       change: (value: number) => this.change(value),
       asyncData: () =>
-        this.menuSrv.index().pipe(
+        this.menuService.index().pipe(
           map(res => {
             let pidList: SFSchemaEnum[] = res
               .filter(item => !item.config.isLeaf)
               .map(item => ({ title: item.config.text, key: item.menuId, pMenuId: item.pMenuId }));
             pidList.unshift({ title: '主菜单', key: 0, expanded: true });
-            pidList = this.arrSrv.arrToTree(pidList, { idMapName: 'key', parentIdMapName: 'pMenuId' });
+            pidList = this.arrService.arrToTree(pidList, { idMapName: 'key', parentIdMapName: 'pMenuId' });
             console.debug('下拉列表获取数据', pidList);
             return pidList;
           })
@@ -118,7 +118,7 @@ export class AuthMenuEditComponent implements OnInit {
       grid: { span: 24 },
       listStyle: { width: '100%', 'height.px': window.innerHeight - 700 },
       asyncData: () =>
-        this.abilitySrv.index().pipe(map(res => res.map(item => ({ title: `${item.name}——${item.description}`, value: item.id }))))
+        this.abilityService.index().pipe(map(res => res.map(item => ({ title: `${item.name}——${item.description}`, value: item.id }))))
     },
     $updateUserName: { widget: 'text' },
     $updateAt: { widget: 'text' },
@@ -126,10 +126,10 @@ export class AuthMenuEditComponent implements OnInit {
   };
 
   constructor(
-    private abilitySrv: AuthAbilityService,
-    private menuSrv: AuthMenuService,
-    private arrSrv: ArrayService,
-    private msgSrv: NzMessageService,
+    private abilityService: AuthAbilityService,
+    private menuService: AuthMenuService,
+    private arrService: ArrayService,
+    private msgService: NzMessageService,
     private modal: NzModalRef
   ) {
     this.pMenuId = 0;
@@ -349,7 +349,7 @@ export class AuthMenuEditComponent implements OnInit {
       this.height = `${(window.innerHeight - 500).toString()}px`;
     }
     // 设置权限点备选项
-    this.abilitySrv.index('list').subscribe(res => {
+    this.abilityService.index('list').subscribe(res => {
       this.abilityNodes = res;
     });
     if (this.record) {
@@ -364,7 +364,7 @@ export class AuthMenuEditComponent implements OnInit {
         this.creatable = false;
         this.buttonName = '';
       }
-      this.menuSrv.show(this.record.menuId).subscribe(res => {
+      this.menuService.show(this.record.menuId).subscribe(res => {
         console.log('菜单编辑窗口', res);
         this.pMenuId = res.pMenuId;
         const iconType = this.iconType(res.config.icon);
@@ -423,11 +423,11 @@ export class AuthMenuEditComponent implements OnInit {
 
   saveas(value: any): void {
     console.debug('value', value);
-    this.menuSrv.create(value).subscribe(res => {
+    this.menuService.create(value).subscribe(res => {
       if (res.code) {
-        this.msgSrv.error(res.msg);
+        this.msgService.error(res.msg);
       } else {
-        this.msgSrv.success('创建成功');
+        this.msgService.success('创建成功');
         this.modal.close(this.pMenuId);
       }
     });
@@ -435,11 +435,11 @@ export class AuthMenuEditComponent implements OnInit {
 
   save(value: any): void {
     console.debug('value', value);
-    this.menuSrv.update(this.record.menuId, value).subscribe(res => {
+    this.menuService.update(this.record.menuId, value).subscribe(res => {
       if (res.code) {
-        this.msgSrv.error(res.msg);
+        this.msgService.error(res.msg);
       } else {
-        this.msgSrv.success('保存成功');
+        this.msgService.success('保存成功');
         this.modal.close(this.pMenuId);
       }
     });

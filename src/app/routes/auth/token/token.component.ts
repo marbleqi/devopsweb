@@ -17,11 +17,11 @@ export class AuthTokenComponent implements OnInit, OnReuseInit {
   scroll!: { x?: string; y?: string };
   columns: STColumn[] = [{}];
 
-  constructor(private tokenSrv: AuthTokenService, private msgSrv: NzMessageService, private baseSrv: BaseService) {}
+  constructor(private tokenService: AuthTokenService, private msgService: NzMessageService, private baseService: BaseService) {}
 
   ngOnInit(): void {
     console.debug('窗体内高', window.innerHeight);
-    this.baseSrv.menuWebSub.next('auth');
+    this.baseService.menuWebSub.next('auth');
     this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.columns = [
       { type: 'checkbox' },
@@ -71,11 +71,11 @@ export class AuthTokenComponent implements OnInit, OnReuseInit {
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuWebSub.next('auth');
+    this.baseService.menuWebSub.next('auth');
   }
 
   getData(): void {
-    this.tokenSrv.index().subscribe((data: STData[]) => {
+    this.tokenService.index().subscribe((data: STData[]) => {
       console.debug('data', data);
       this.stData = data;
     });
@@ -96,11 +96,11 @@ export class AuthTokenComponent implements OnInit, OnReuseInit {
     const allnum = this.checkData.length;
     let curnum = 0;
     for (const item of this.checkData) {
-      this.tokenSrv.destroy(item['token']).subscribe(res => {
+      this.tokenService.destroy(item['token']).subscribe(res => {
         if (res.code) {
-          this.msgSrv.warning(`删除令牌${item['token']}失败`);
+          this.msgService.warning(`删除令牌${item['token']}失败`);
         } else {
-          this.msgSrv.success(`删除令牌${item['token']}成功`);
+          this.msgService.success(`删除令牌${item['token']}成功`);
         }
         curnum++;
         if (allnum === curnum) {

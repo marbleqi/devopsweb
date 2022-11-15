@@ -1,13 +1,30 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 
-import { KongHostService, KongHostEditComponent, KongHostComponent, KongRoutingModule } from '.';
+import {
+  KongHostService,
+  KongProjectService,
+  KongHostEditComponent,
+  KongHostComponent,
+  KongProjectEditComponent,
+  KongProjectComponent,
+  KongServiceComponent,
+  KongNewComponent,
+  KongRoutingModule
+} from '.';
 
-const COMPONENTS: Array<Type<void>> = [KongHostComponent, KongHostEditComponent];
+const COMPONENTS: Array<Type<void>> = [
+  KongHostEditComponent,
+  KongHostComponent,
+  KongNewComponent,
+  KongProjectEditComponent,
+  KongProjectComponent,
+  KongServiceComponent
+];
 
 @NgModule({
   imports: [SharedModule, KongRoutingModule],
   declarations: COMPONENTS,
-  providers: [KongHostService]
+  providers: [KongHostService, KongProjectService]
 })
 export class KongModule {}

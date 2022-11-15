@@ -18,7 +18,7 @@ export class DingtalkUserEditComponent implements OnInit {
     properties: {
       unionid: { type: 'string', title: 'unionid' },
       name: { type: 'string', title: '钉钉姓名' },
-      userid: { type: 'number', title: '系统用户', enum: this.baseSrv.userList() },
+      userid: { type: 'number', title: '系统用户', enum: this.baseService.userList() },
       status: {
         type: 'number',
         title: '状态',
@@ -45,9 +45,9 @@ export class DingtalkUserEditComponent implements OnInit {
 
   constructor(
     private readonly http: _HttpClient,
-    private readonly baseSrv: BaseService,
+    private readonly baseService: BaseService,
     private readonly modal: NzModalRef,
-    private readonly msgSrv: NzMessageService
+    private readonly msgService: NzMessageService
   ) {}
 
   ngOnInit(): void {
@@ -83,7 +83,7 @@ export class DingtalkUserEditComponent implements OnInit {
       })
       .subscribe((res: any) => {
         if (res.code === 0) {
-          this.msgSrv.success('关联成功');
+          this.msgService.success('关联成功');
           this.modal.close(true);
         }
       });

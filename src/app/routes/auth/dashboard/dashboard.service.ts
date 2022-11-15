@@ -3,5 +3,5 @@ import { _HttpClient } from '@delon/theme';
 
 @Injectable()
 export class AuthDashboardService {
-  constructor(private client: _HttpClient) {}
+  constructor(private clientService: _HttpClient) {}
 }

@@ -24,7 +24,7 @@ export class EditComponent implements OnInit {
   schema: SFSchema = { properties: {} };
   ui: SFUISchema = { '*': { spanLabelFixed: 100, grid: { span: 12 } } };
 
-  constructor(private client: _HttpClient, private modal: NzModalRef, private msgSrv: NzMessageService) {}
+  constructor(private readonly clientService: _HttpClient, private modal: NzModalRef, private msgService: NzMessageService) {}
 
   ngOnInit(): void {
     if (this.record) {
@@ -41,7 +41,7 @@ export class EditComponent implements OnInit {
         this.buttonname = '';
         // this.ui.$action = { widget: 'text' };
       }
-      this.client.post('admin/user/show', { userid: this.record.userid }).subscribe((res: any) => {
+      this.clientService.post('admin/user/show', { userid: this.record.userid }).subscribe((res: any) => {
         // console.log(res);
         this.i = {
           ...res.data,
@@ -60,12 +60,12 @@ export class EditComponent implements OnInit {
 
   save(value: any): void {
     this.loading = true;
-    this.client.post('admin/user/update', { ...value, userid: this.record.userid }).subscribe((res: any) => {
+    this.clientService.post('admin/user/update', { ...value, userid: this.record.userid }).subscribe((res: any) => {
       if (res.code === 0) {
-        this.msgSrv.success(res.msg);
+        this.msgService.success(res.msg);
         this.modal.close(true);
       } else {
-        this.msgSrv.error(res.msg);
+        this.msgService.error(res.msg);
       }
       this.loading = false;
     });
@@ -73,12 +73,12 @@ export class EditComponent implements OnInit {
 
   saveas(value: any): void {
     this.loading = true;
-    this.client.post('admin/user/create', value).subscribe((res: any) => {
+    this.clientService.post('admin/user/create', value).subscribe((res: any) => {
       if (res.code === 0) {
-        this.msgSrv.success(res.msg);
+        this.msgService.success(res.msg);
         this.modal.close(true);
       } else {
-        this.msgSrv.error(res.msg);
+        this.msgService.error(res.msg);
       }
       this.loading = false;
     });

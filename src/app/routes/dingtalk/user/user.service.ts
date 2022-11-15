@@ -16,9 +16,9 @@ export class DingtalkUserService {
    * 构建函数
    *
    * @param client http服务
-   * @param baseSrv 基础服务
+   * @param baseService 基础服务
    */
-  constructor(private client: _HttpClient, private readonly baseSrv: BaseService) {
+  constructor(private readonly clientService: _HttpClient, private readonly baseService: BaseService) {
     this.operateId = 0;
     this.userMap = new Map<string, any>();
   }
@@ -30,7 +30,7 @@ export class DingtalkUserService {
    * @returns 用户记录
    */
   depart(id: number): Observable<SFSchemaEnum[]> {
-    return this.client.get(`dingtalk/user/depart/${id}`).pipe(
+    return this.clientService.get(`dingtalk/user/depart/${id}`).pipe(
       map((res: Result) => {
         if (res.code) {
           return [];
@@ -43,15 +43,15 @@ export class DingtalkUserService {
 
   /**初始化 */
   init(): Observable<void> {
-    return this.client.get(`dingtalk/user/index`, { operateId: this.operateId }).pipe(
+    return this.clientService.get(`dingtalk/user/index`, { operateId: this.operateId }).pipe(
       map((res: Result) => {
         if (!res.code && res.data.length) {
           console.debug('res.data', res.data);
           for (const userItem of res.data) {
             this.userMap.set(userItem['unionId'], {
               ...userItem,
-              userName: this.baseSrv.userName(userItem['userId']),
-              updateUserName: this.baseSrv.userName(userItem['updateUserId'])
+              userName: this.baseService.userName(userItem['userId']),
+              updateUserName: this.baseService.userName(userItem['updateUserId'])
             });
             if (this.operateId < userItem['operateId']) {
               this.operateId = userItem['operateId'];
@@ -69,7 +69,7 @@ export class DingtalkUserService {
    * @returns 用户记录
    */
   index(id: number): Observable<object[]> {
-    return this.client.get(`dingtalk/user/index/${id}`).pipe(
+    return this.clientService.get(`dingtalk/user/index/${id}`).pipe(
       map((res: Result) => {
         if (res.code) {
           return [];
@@ -87,6 +87,6 @@ export class DingtalkUserService {
    * @returns 后端响应报文
    */
   create(value: any): Observable<Result> {
-    return this.client.post('dingtalk/user/create', value);
+    return this.clientService.post('dingtalk/user/create', value);
   }
 }

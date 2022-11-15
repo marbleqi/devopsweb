@@ -7,12 +7,6 @@ import { Result } from '@shared';
 import { Observable, map, mergeMap, catchError, of, zip } from 'rxjs';
 
 import { WxworkUserService, WxworkUserEditComponent, WxworkUserAddComponent } from '..';
-
-const statustag: STColumnTag = {
-  0: { text: '禁用', color: 'red' },
-  1: { text: '有效', color: 'green' }
-};
-
 @Component({
   selector: 'app-wxwork-user',
   templateUrl: './user.component.html'
@@ -31,7 +25,7 @@ export class WxworkUserComponent implements OnInit, OnReuseInit {
       showLine: true,
       defaultExpandAll: true,
       change: (value: number) => this.departChange(value),
-      asyncData: () => this.userSrv.depart()
+      asyncData: () => this.userService.depart()
     }
   };
   stData: STData[] = [];
@@ -48,7 +42,17 @@ export class WxworkUserComponent implements OnInit, OnReuseInit {
       children: [
         { title: '用户ID', index: 'user.userId', width: 100 },
         { title: '姓名', index: 'user.userName', width: 150 },
-        { title: '状态', index: 'user.status', width: 100, sort: { compare: (a, b) => a.status - b.status }, type: 'tag', tag: statustag },
+        {
+          title: '状态',
+          index: 'user.status',
+          width: 100,
+          sort: { compare: (a, b) => a.status - b.status },
+          type: 'tag',
+          tag: {
+            0: { text: '禁用', color: 'red' },
+            1: { text: '有效', color: 'green' }
+          } as STColumnTag
+        },
         { title: '更新人', index: 'user.updateUserName', width: 100 },
         {
           title: '更新时间',
@@ -94,15 +98,15 @@ export class WxworkUserComponent implements OnInit, OnReuseInit {
     }
   ];
 
-  constructor(private readonly baseSrv: BaseService, private readonly userSrv: WxworkUserService) {}
+  constructor(private readonly baseService: BaseService, private readonly userService: WxworkUserService) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuWebSub.next('wxwork');
-    this.userSrv.init().subscribe();
+    this.baseService.menuWebSub.next('wxwork');
+    this.userService.init().subscribe();
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuWebSub.next('wxwork');
+    this.baseService.menuWebSub.next('wxwork');
   }
 
   departChange(value: number) {
@@ -112,10 +116,10 @@ export class WxworkUserComponent implements OnInit, OnReuseInit {
 
   getdata(): void {
     if (this.departId) {
-      this.userSrv.init().subscribe(() => {
-        this.userSrv.index(this.departId).subscribe(res => {
+      this.userService.init().subscribe(() => {
+        this.userService.index(this.departId).subscribe(res => {
           this.stData = res.map((item: any) => {
-            const user = this.userSrv.userMap.get(item.userId);
+            const user = this.userService.userMap.get(item.userId);
             if (user) {
               return { ...item, user };
             }

@@ -28,16 +28,16 @@ export class UserLoginComponent implements OnInit {
   info: string = '';
   constructor(
     fb: FormBuilder,
-    private router: Router,
-    private titleSrv: TitleService,
-    private settingSrv: SettingsService,
-    @Optional() @Inject(ReuseTabService) private reuseTabSrv: ReuseTabService,
-    @Inject(DA_SERVICE_TOKEN) private tokenSrv: ITokenService,
-    private socialSrv: SocialService,
-    private startupSrv: StartupService,
-    private client: _HttpClient,
-    private modal: ModalHelper,
-    private cdr: ChangeDetectorRef
+    private readonly router: Router,
+    private readonly titleService: TitleService,
+    private readonly settingService: SettingsService,
+    @Optional() @Inject(ReuseTabService) private readonly reuseTabService: ReuseTabService,
+    @Inject(DA_SERVICE_TOKEN) private readonly tokenService: ITokenService,
+    private readonly socialService: SocialService,
+    private readonly startupService: StartupService,
+    private readonly clientService: _HttpClient,
+    private readonly modal: ModalHelper,
+    private readonly cdr: ChangeDetectorRef
   ) {
     this.form = fb.group({
       userName: [null, [Validators.required]],
@@ -54,14 +54,14 @@ export class UserLoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.titleSrv.setTitle('登录');
-    const app: App = this.settingSrv.getApp();
+    this.titleService.setTitle('登录');
+    const app: App = this.settingService.getApp();
     this.pwd = app?.['password'] || false;
     this.wxwork = app?.['wxwork'] || false;
     this.dingtalk = app?.['dingtalk'] || false;
     // 如果判断用户的企业微信APP访问
     if (navigator.userAgent.includes('wxwork')) {
-      this.client.get('passport/qrurl/wxwork').subscribe(res => {
+      this.clientService.get('passport/qrurl/wxwork').subscribe(res => {
         if (!res.code) {
           let params: object = res.data;
           params = {
@@ -71,7 +71,7 @@ export class UserLoginComponent implements OnInit {
             scope: 'snsapi_base'
           };
           const url = `https://open.weixin.qq.com/connect/oauth2/authorize?${stringify(params)}#wechat_redirect`;
-          this.socialSrv.login(url, '/', { type: 'href' });
+          this.socialService.login(url, '/', { type: 'href' });
         }
       });
     }
@@ -84,7 +84,7 @@ export class UserLoginComponent implements OnInit {
 
   /**页面重定向到钉钉登陆地址 */
   todingtalk(): void {
-    this.client.get('passport/qrurl/dingtalk').subscribe(res => {
+    this.clientService.get('passport/qrurl/dingtalk').subscribe(res => {
       if (!res.code) {
         const params = {
           redirect_uri: `${window.location.origin}/passport/callback/dingtalk`,
@@ -118,7 +118,7 @@ export class UserLoginComponent implements OnInit {
     // 然一般来说登录请求不需要校验，因此可以在请求URL加上：`/login?_allow_anonymous=true` 表示不触发用户 Token 校验
     this.loading = true;
     this.cdr.detectChanges();
-    this.client
+    this.clientService
       .post('passport/login', {
         loginName: this.userName.value,
         loginPsw: this.password.value
@@ -137,14 +137,14 @@ export class UserLoginComponent implements OnInit {
         }
         this.error = '';
         // 清空路由复用信息
-        this.reuseTabSrv.clear();
+        this.reuseTabService.clear();
         // 设置用户Token信息
         const data: ITokenModel = res.data;
-        this.tokenSrv.set(data);
-        console.debug('获取令牌', this.tokenSrv.get());
+        this.tokenService.set(data);
+        console.debug('获取令牌', this.tokenService.get());
         // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
-        this.startupSrv.load().subscribe(() => {
-          let url = this.tokenSrv.referrer!.url || '/';
+        this.startupService.load().subscribe(() => {
+          let url = this.tokenService.referrer!.url || '/';
           if (url.includes('/passport')) {
             url = '/';
           }

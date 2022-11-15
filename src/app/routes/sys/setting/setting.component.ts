@@ -49,32 +49,32 @@ export class SysSettingComponent implements OnInit, OnReuseInit {
     $operateId: { widget: 'text' }
   };
 
-  constructor(private baseSrv: BaseService, private settingSrv: SysSettingService, private msgSrv: NzMessageService) {}
+  constructor(private baseService: BaseService, private settingService: SysSettingService, private msgService: NzMessageService) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuWebSub.next('sys');
+    this.baseService.menuWebSub.next('sys');
     console.debug('页面自身初始化');
     this.reset();
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuWebSub.next('sys');
+    this.baseService.menuWebSub.next('sys');
     console.debug('页面路由复用初始化');
     this.reset();
   }
 
   save(value: any): void {
-    this.settingSrv.set(value.value).subscribe(res => {
+    this.settingService.set(value.value).subscribe(res => {
       if (res.code) {
-        this.msgSrv.warning('修改基础配置失败！');
+        this.msgService.warning('修改基础配置失败！');
       } else {
-        this.msgSrv.success('修改基础配置成功！');
+        this.msgService.success('修改基础配置成功！');
       }
     });
   }
 
   reset(): void {
-    this.settingSrv.get().subscribe((res: any) => {
+    this.settingService.get().subscribe((res: any) => {
       console.debug('重置后的系统配置', res);
       this.i = res;
     });

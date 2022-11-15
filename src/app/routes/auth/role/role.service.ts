@@ -15,10 +15,10 @@ export class AuthRoleService {
   /**
    * 构建函数
    *
-   * @param client 注入的http服务
-   * @param baseSrv 注入的用户服务
+   * @param clientService 注入的http服务
+   * @param baseService 注入的基础服务
    */
-  constructor(private client: _HttpClient, private baseSrv: BaseService) {
+  constructor(private readonly clientService: _HttpClient, private baseService: BaseService) {
     this.operateId = 0;
     this.roleMap = new Map<number, any>();
   }
@@ -32,13 +32,13 @@ export class AuthRoleService {
     if (typeof operateId === 'number') {
       this.operateId = operateId;
     }
-    return this.client.get('auth/role/index', { operateId: this.operateId }).pipe(
+    return this.clientService.get('auth/role/index', { operateId: this.operateId }).pipe(
       map((res: Result) => {
         if (!res.code && res.data.length) {
           for (const roleItem of res.data) {
             this.roleMap.set(roleItem.roleId, {
               ...roleItem,
-              updateUserName: this.baseSrv.userName(roleItem.updateUserId)
+              updateUserName: this.baseService.userName(roleItem.updateUserId)
             });
             if (this.operateId < roleItem.operateId) {
               this.operateId = roleItem.operateId;
@@ -57,16 +57,16 @@ export class AuthRoleService {
    * @returns 角色详情
    */
   show(roleId: number): Observable<any> {
-    return this.client.get(`auth/role/${roleId}/show`).pipe(
+    return this.clientService.get(`auth/role/${roleId}/show`).pipe(
       map((res: Result) => {
         if (res.code) {
           return { roleId, abilities: [] };
         } else {
           return {
             ...res.data,
-            createUserName: this.baseSrv.userName(res.data.createUserId),
+            createUserName: this.baseService.userName(res.data.createUserId),
             createAt: format(res.data.createAt, 'yyyy-MM-dd HH:mm:ss.SSS'),
-            updateUserName: this.baseSrv.userName(res.data.updateUserId),
+            updateUserName: this.baseService.userName(res.data.updateUserId),
             updateAt: format(res.data.updateAt, 'yyyy-MM-dd HH:mm:ss.SSS')
           };
         }
@@ -97,7 +97,7 @@ export class AuthRoleService {
    * @returns 后端响应报文
    */
   create(value: any): Observable<Result> {
-    return this.client.post('auth/role/create', this.params(value));
+    return this.clientService.post('auth/role/create', this.params(value));
   }
 
   /**
@@ -108,7 +108,7 @@ export class AuthRoleService {
    * @returns 后端响应报文
    */
   update(roleId: number, value: any): Observable<Result> {
-    return this.client.post(`auth/role/${roleId}/update`, this.params(value));
+    return this.clientService.post(`auth/role/${roleId}/update`, this.params(value));
   }
 
   /**
@@ -118,7 +118,7 @@ export class AuthRoleService {
    * @returns 用户ID列表
    */
   granted(roleId: number): Observable<number[]> {
-    return this.client.get(`auth/role/${roleId}/grant`).pipe(
+    return this.clientService.get(`auth/role/${roleId}/grant`).pipe(
       map((res: Result) => {
         if (res.code) {
           return [];
@@ -136,6 +136,6 @@ export class AuthRoleService {
    * @returns 后端响应报文
    */
   granting(roleId: number, userList: number[]): Observable<Result> {
-    return this.client.post(`auth/role/${roleId}/grant`, userList);
+    return this.clientService.post(`auth/role/${roleId}/grant`, userList);
   }
 }

@@ -6,11 +6,11 @@ import { format } from 'date-fns';
 import { Observable, map } from 'rxjs';
 
 @Injectable()
-export class AuthMenuService {
+export class KongProjectService {
   /**最新操作ID */
   private operateId: number;
-  /**缓存的菜单列表 */
-  private menuMap: Map<number, any>;
+  /**缓存的对象列表 */
+  private projectMap: Map<string, any>;
 
   /**
    * 构建函数
@@ -20,48 +20,62 @@ export class AuthMenuService {
    */
   constructor(private readonly clientService: _HttpClient, private baseService: BaseService) {
     this.operateId = 0;
-    this.menuMap = new Map<number, any>();
+    this.projectMap = new Map<string, any>();
   }
 
   /**
-   * 获取菜单列表
+   * 同步对象数据
    *
-   * @returns 菜单列表
+   * @param hostId 站点ID
+   * @param project 对象类型
+   * @returns 菜单详情
    */
-  index(operateId?: number): Observable<any[]> {
+  sync(hostId: number, project: string): Observable<any> {
+    return this.clientService.post(`kong/${project}/${hostId}/sync`);
+  }
+
+  /**
+   * 获取对象列表
+   *
+   * @param hostId 站点ID
+   * @param project 对象类型
+   * @param operateId 请求序号
+   * @returns 对象列表
+   */
+  index(hostId: number, project: string, operateId?: number): Observable<any[]> {
     console.debug('菜单服务中', operateId, typeof operateId);
     if (typeof operateId === 'number') {
       this.operateId = operateId;
     }
-    return this.clientService.get('auth/menu/index', { operateId: this.operateId }).pipe(
+    return this.clientService.get(`kong/${project}/${hostId}/index`, { operateId: this.operateId }).pipe(
       map((res: Result) => {
         if (!res.code && res.data.length) {
-          for (const menuItem of res.data) {
-            this.menuMap.set(menuItem.menuId, {
-              ...menuItem,
-              updateUserName: this.baseService.userName(menuItem.updateUserId)
+          for (const projectItem of res.data) {
+            this.projectMap.set(projectItem.id, {
+              ...projectItem,
+              updateUserName: this.baseService.userName(projectItem.updateUserId)
             });
-            if (this.operateId < menuItem.operateId) {
-              this.operateId = menuItem.operateId;
+            if (this.operateId < projectItem.operateId) {
+              this.operateId = projectItem.operateId;
             }
           }
         }
-        return Array.from(this.menuMap.values()).sort((a, b) => a.orderId - b.orderId);
+        return Array.from(this.projectMap.values());
       })
     );
   }
 
   /**
-   * 获取菜单详情
+   * 获取对象详情
    *
    * @param menuId 菜单ID
    * @returns 菜单详情
    */
-  show(menuId: number): Observable<any> {
-    return this.clientService.get(`auth/menu/${menuId}/show`).pipe(
+  show(hostId: number, project: string, id: string): Observable<any> {
+    return this.clientService.get(`kong/${project}/${hostId}/show`).pipe(
       map((res: Result) => {
         if (res.code) {
-          return { menuId, abilities: [] };
+          return { id, abilities: [] };
         } else {
           return {
             ...res.data,

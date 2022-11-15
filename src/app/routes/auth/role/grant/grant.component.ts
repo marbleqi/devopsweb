@@ -23,21 +23,21 @@ export class AuthRoleGrantComponent implements OnInit {
   /**
    * 构造函数
    *
-   * @param baseSrv 注入的基础服务
-   * @param roleSrv 注入的角色服务
-   * @param msgSrv 注入的消息服务
+   * @param baseService 注入的基础服务
+   * @param roleService 注入的角色服务
+   * @param msgService 注入的消息服务
    * @param modal 注入的模式框服务
    */
   constructor(
-    private readonly baseSrv: BaseService,
-    private readonly roleSrv: AuthRoleService,
-    private readonly msgSrv: NzMessageService,
+    private readonly baseService: BaseService,
+    private readonly roleService: AuthRoleService,
+    private readonly msgService: NzMessageService,
     private readonly modal: NzModalRef
   ) {}
 
   /**对话框初始化 */
   ngOnInit(): void {
-    this.baseSrv.userSub.pipe(first()).subscribe((userEnum: SFSchemaEnum[]) => {
+    this.baseService.userSub.pipe(first()).subscribe((userEnum: SFSchemaEnum[]) => {
       if (this.record) {
         this.title = `编辑角色${this.record.roleName}的授权用户`;
         this.schema = {
@@ -60,7 +60,7 @@ export class AuthRoleGrantComponent implements OnInit {
             listStyle: { width: '100%', 'height.px': window.innerHeight - 700 }
           }
         };
-        this.roleSrv.granted(this.record.roleId).subscribe(userList => {
+        this.roleService.granted(this.record.roleId).subscribe(userList => {
           this.i = { roleName: this.record.roleName, description: this.record.description, userList };
           console.debug('i', this.i);
         });
@@ -74,11 +74,11 @@ export class AuthRoleGrantComponent implements OnInit {
    * @param value 原始表单数据
    */
   save(value: any): void {
-    this.roleSrv.granting(this.record.roleId, value.userList).subscribe(res => {
+    this.roleService.granting(this.record.roleId, value.userList).subscribe(res => {
       if (res.code) {
-        this.msgSrv.error(res.msg);
+        this.msgService.error(res.msg);
       } else {
-        this.msgSrv.success(res.msg);
+        this.msgService.success(res.msg);
         this.modal.close(true);
       }
     });

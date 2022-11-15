@@ -76,11 +76,11 @@ export class SysQueueComponent implements OnInit {
     { title: '操作', buttons: [{ text: '查看', icon: 'file', type: 'modal', modal: { component: SysQueueViewComponent } }] }
   ];
 
-  constructor(private queueSrv: SysQueueService, private msgSrv: NzMessageService, private baseSrv: BaseService) {}
+  constructor(private queueService: SysQueueService, private msgService: NzMessageService, private baseService: BaseService) {}
 
   ngOnInit(): void {
     console.debug('窗体内高', window.innerHeight);
-    this.baseSrv.menuWebSub.next('sys');
+    this.baseService.menuWebSub.next('sys');
     this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.i = {
       types: ['active', 'completed', 'delayed', 'failed', 'paused', 'waiting'],
@@ -90,14 +90,14 @@ export class SysQueueComponent implements OnInit {
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuWebSub.next('sys');
+    this.baseService.menuWebSub.next('sys');
   }
 
   getdata(value?: any): void {
     if (value) {
       this.value = value;
     }
-    this.queueSrv.index(this.value).subscribe((data: STData[]) => {
+    this.queueService.index(this.value).subscribe((data: STData[]) => {
       console.debug('data', data);
       this.stData = data;
     });
@@ -115,22 +115,22 @@ export class SysQueueComponent implements OnInit {
     if (record) {
       this.checkData = [record];
     }
-    this.queueSrv.remove({ idlist: this.checkData.map(item => item['id']) }).subscribe(res => {
+    this.queueService.remove({ idlist: this.checkData.map(item => item['id']) }).subscribe(res => {
       if (res.code) {
-        this.msgSrv.warning(`删除任务失败`);
+        this.msgService.warning(`删除任务失败`);
       } else {
-        this.msgSrv.success(`删除任务成功`);
+        this.msgService.success(`删除任务成功`);
         this.getdata();
       }
     });
   }
 
   clean(): void {
-    this.queueSrv.clean().subscribe(res => {
+    this.queueService.clean().subscribe(res => {
       if (res.code) {
-        this.msgSrv.warning(`清理任务失败`);
+        this.msgService.warning(`清理任务失败`);
       } else {
-        this.msgSrv.success(`清理任务成功`);
+        this.msgService.success(`清理任务成功`);
         this.getdata();
       }
     });

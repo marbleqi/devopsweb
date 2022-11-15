@@ -15,10 +15,10 @@ export class AuthUserService {
   /**
    * 构建函数
    *
-   * @param client 注入的http服务
-   * @param baseSrv 注入的用户服务
+   * @param clientService 注入的http服务
+   * @param baseService 注入的基础服务
    */
-  constructor(private client: _HttpClient, private baseSrv: BaseService) {
+  constructor(private readonly clientService: _HttpClient, private baseService: BaseService) {
     this.operateId = 0;
     this.userMap = new Map<number, any>();
   }
@@ -29,13 +29,13 @@ export class AuthUserService {
    * @returns 用户列表
    */
   index(): Observable<any[]> {
-    return this.client.get('auth/user/index', { operateId: this.operateId }).pipe(
+    return this.clientService.get('auth/user/index', { operateId: this.operateId }).pipe(
       map((res: Result) => {
         if (!res.code && res.data.length) {
           for (const userItem of res.data) {
             this.userMap.set(userItem.userId, {
               ...userItem,
-              updateUserName: this.baseSrv.userName(userItem.updateUserId)
+              updateUserName: this.baseService.userName(userItem.updateUserId)
             });
             if (this.operateId < userItem.operateId) {
               this.operateId = userItem.operateId;
@@ -54,16 +54,16 @@ export class AuthUserService {
    * @returns 用户详情
    */
   show(id: number): Observable<any> {
-    return this.client.get(`auth/user/${id}/show`).pipe(
+    return this.clientService.get(`auth/user/${id}/show`).pipe(
       map((res: Result) => {
         if (res.code) {
           return { userid: id, roles: [] };
         } else {
           return {
             ...res.data,
-            createUserName: this.baseSrv.userName(res.data.createUserId),
+            createUserName: this.baseService.userName(res.data.createUserId),
             createAt: format(res.data.createAt, 'yyyy-MM-dd HH:mm:ss.SSS'),
-            updateUserName: this.baseSrv.userName(res.data.updateUserId),
+            updateUserName: this.baseService.userName(res.data.updateUserId),
             updateAt: format(res.data.updateAt, 'yyyy-MM-dd HH:mm:ss.SSS'),
             firstLoginAt: res.data.firstLoginAt ? format(res.data.firstLoginAt, 'yyyy-MM-dd HH:mm:ss.SSS') : 0,
             lastLoginAt: res.data.lastLoginAt ? format(res.data.lastLoginAt, 'yyyy-MM-dd HH:mm:ss.SSS') : 0,
@@ -97,7 +97,7 @@ export class AuthUserService {
    * @returns 后端响应报文
    */
   create(value: any): Observable<Result> {
-    return this.client.post('auth/user/create', this.params(value));
+    return this.clientService.post('auth/user/create', this.params(value));
   }
 
   /**
@@ -108,7 +108,7 @@ export class AuthUserService {
    * @returns 后端响应报文
    */
   update(userId: number, value: any): Observable<Result> {
-    return this.client.post(`auth/user/${userId}/update`, this.params(value));
+    return this.clientService.post(`auth/user/${userId}/update`, this.params(value));
   }
 
   /**
@@ -118,7 +118,7 @@ export class AuthUserService {
    * @returns 后端响应报文
    */
   unlock(userId: number): Observable<Result> {
-    return this.client.post(`auth/user/${userId}/unlock`);
+    return this.clientService.post(`auth/user/${userId}/unlock`);
   }
 
   /**
@@ -129,6 +129,6 @@ export class AuthUserService {
    * @returns 后端响应报文
    */
   resetpsw(userId: number, value: any): Observable<Result> {
-    return this.client.post(`auth/user/${userId}/resetpsw`, value);
+    return this.clientService.post(`auth/user/${userId}/resetpsw`, value);
   }
 }

@@ -11,10 +11,10 @@ import { stringify } from 'qs';
 export class LoginWxworkComponent implements OnInit {
   wxworkqr!: SafeResourceUrl;
 
-  constructor(private modal: NzModalRef, private sanitizer: DomSanitizer, public client: _HttpClient) {}
+  constructor(private modal: NzModalRef, private sanitizer: DomSanitizer, public clientService: _HttpClient) {}
 
   ngOnInit(): void {
-    this.client.get('passport/qrurl/wxwork').subscribe(res => {
+    this.clientService.get('passport/qrurl/wxwork').subscribe(res => {
       if (!res.code) {
         let params: object = res.data;
         params = {

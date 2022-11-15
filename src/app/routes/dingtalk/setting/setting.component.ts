@@ -37,31 +37,31 @@ export class DingtalkSettingComponent implements OnInit, OnReuseInit {
     $operateId: { widget: 'text' }
   };
 
-  constructor(private baseSrv: BaseService, private settingSrv: DingtalkSettingService, private msgSrv: NzMessageService) {}
+  constructor(private baseService: BaseService, private settingService: DingtalkSettingService, private msgService: NzMessageService) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuWebSub.next('dingtalk');
+    this.baseService.menuWebSub.next('dingtalk');
     this.reset();
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuWebSub.next('dingtalk');
+    this.baseService.menuWebSub.next('dingtalk');
     console.debug('页面路由复用初始化');
     this.reset();
   }
 
   save(value: any): void {
-    this.settingSrv.set(value.value).subscribe((res: any) => {
+    this.settingService.set(value.value).subscribe((res: any) => {
       if (res.code) {
-        this.msgSrv.warning('修改钉钉配置失败！');
+        this.msgService.warning('修改钉钉配置失败！');
       } else {
-        this.msgSrv.success('修改钉钉配置成功！');
+        this.msgService.success('修改钉钉配置成功！');
       }
     });
   }
 
   reset(): void {
-    this.settingSrv.get().subscribe((res: any) => {
+    this.settingService.get().subscribe((res: any) => {
       console.debug('重置后的钉钉配置', res);
       this.i = res;
     });

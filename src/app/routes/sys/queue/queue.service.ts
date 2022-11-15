@@ -8,16 +8,16 @@ export class SysQueueService {
   /**
    * 构建函数
    *
-   * @param client 注入的http服务
+   * @param clientService 注入的http服务
    */
-  constructor(private client: _HttpClient) {}
+  constructor(private clientService: _HttpClient) {}
   /**
    * 获取任务列表
    *
    * @returns 任务列表
    */
   index(value: any): Observable<any[]> {
-    return this.client.get('sys/queue/index', value).pipe(
+    return this.clientService.get('sys/queue/index', value).pipe(
       map((res: Result) => {
         if (res.code) {
           return [];
@@ -36,7 +36,7 @@ export class SysQueueService {
    * @returns 响应报文
    */
   remove(value: any): Observable<Result> {
-    return this.client.post('sys/queue/remove', value);
+    return this.clientService.post('sys/queue/remove', value);
   }
 
   /**
@@ -45,6 +45,6 @@ export class SysQueueService {
    * @returns 响应报文
    */
   clean(): Observable<Result> {
-    return this.client.post('sys/queue/clean');
+    return this.clientService.post('sys/queue/clean');
   }
 }

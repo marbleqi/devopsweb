@@ -10,11 +10,6 @@ import { Subject } from 'rxjs';
 
 import { AuthMenuService, AuthMenuEditComponent } from '..';
 
-const statustag: STColumnTag = {
-  1: { text: '有效', color: 'green' },
-  2: { text: '停用', color: 'red' }
-};
-
 @Component({
   selector: 'app-auth-menu',
   templateUrl: './menu.component.html'
@@ -60,12 +55,22 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
     { title: '图标', render: 'icon', width: 50 },
     {
       title: '链接',
-      index: 'config.link',
+      index: 'link',
       width: 150,
       sort: { compare: (a, b) => a.config.link.localeCompare(b.config.link) },
       filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.config.link.includes(filter.value) }
     },
-    { title: '状态', index: 'status', width: 100, sort: { compare: (a, b) => a.status - b.status }, type: 'tag', tag: statustag },
+    {
+      title: '状态',
+      index: 'status',
+      width: 100,
+      sort: { compare: (a, b) => a.status - b.status },
+      type: 'tag',
+      tag: {
+        1: { text: '有效', color: 'green' },
+        2: { text: '停用', color: 'red' }
+      } as STColumnTag
+    },
     { title: '更新人', index: 'updateUserName', width: 150 },
     {
       title: '更新时间',
@@ -120,9 +125,14 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
     }
   ];
 
-  constructor(private baseSrv: BaseService, private menuSrv: AuthMenuService, private arrSrv: ArrayService, private modal: ModalHelper) {
+  constructor(
+    private baseService: BaseService,
+    private menuService: AuthMenuService,
+    private arrService: ArrayService,
+    private modal: ModalHelper
+  ) {
     console.debug('菜单构建函数执行');
-    this.baseSrv.menuWebSub.next('auth');
+    this.baseService.menuWebSub.next('auth');
     this.menuSubject = new Subject<any[]>();
   }
 
@@ -137,17 +147,17 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuWebSub.next('auth');
+    this.baseService.menuWebSub.next('auth');
   }
 
   reload() {
-    this.menuSrv.index().subscribe(res => {
+    this.menuService.index().subscribe(res => {
       console.debug('获取的所有菜单数据', res);
       let pidlist: SFSchemaEnum[] = res
         .filter(item => !item.config.isLeaf)
         .map(item => ({ title: item.config.text, key: item.menuId, pMenuId: item.pMenuId }));
       pidlist.unshift({ title: '主菜单', key: 0, expanded: true });
-      pidlist = this.arrSrv.arrToTree(pidlist, { idMapName: 'key', parentIdMapName: 'pMenuId' });
+      pidlist = this.arrService.arrToTree(pidlist, { idMapName: 'key', parentIdMapName: 'pMenuId' });
       console.debug('下拉列表获取数据', pidlist);
       this.menuSubject.next(pidlist);
     });
@@ -155,7 +165,7 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
 
   getData(pMenuId: number, operateId?: number): void {
     this.pMenuId = pMenuId;
-    this.menuSrv.index(operateId).subscribe(res => {
+    this.menuService.index(operateId).subscribe(res => {
       console.debug('获取的所有菜单数据', res);
       this.stData = res.filter(item => item.pMenuId === this.pMenuId);
       console.debug('数据列表获取数据', this.stData);

@@ -16,18 +16,18 @@ export class LayoutPassportComponent implements OnInit {
 
   constructor(
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
-    private titleSrv: TitleService,
-    private settingSrv: SettingsService
+    private titleService: TitleService,
+    private settingService: SettingsService
   ) {}
 
   ngOnInit(): void {
     this.tokenService.clear();
-    const app: App = this.settingSrv.getApp();
+    const app: App = this.settingService.getApp();
     this.name = app?.name || '运维平台';
     this.description = app?.description || '平台在手，天下我有';
     this.company = app?.['company'] || '***公司';
     this.domain = app?.['domain'] || '***.com';
     this.icp = app?.['icp'] || '*ICP备*号-*';
-    this.titleSrv.suffix = app?.['title'] || '管理平台';
+    this.titleService.suffix = app?.['title'] || '管理平台';
   }
 }

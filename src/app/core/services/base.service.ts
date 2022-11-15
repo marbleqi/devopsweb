@@ -38,11 +38,15 @@ export class BaseService {
   /**
    * 构建函数
    *
-   * @param client 注入的http服务
-   * @param settingSrv 注入的数组服务
-   * @param titleSrv 注入的数组服务
+   * @param clientService 注入的http服务
+   * @param settingService 注入的数组服务
+   * @param titleService 注入的数组服务
    */
-  constructor(private readonly client: _HttpClient, private readonly settingSrv: SettingsService, private readonly titleSrv: TitleService) {
+  constructor(
+    private readonly clientService: _HttpClient,
+    private readonly settingService: SettingsService,
+    private readonly titleService: TitleService
+  ) {
     this.baseUrl = '';
     this.roleOperateId = 0;
     this.roleMap = new Map<number, string>();
@@ -63,7 +67,7 @@ export class BaseService {
    */
   menuInit(): Observable<void> {
     console.debug('初始化菜单数据！');
-    return this.client.get('common/init/menu', { operateId: this.menuOperateId }).pipe(
+    return this.clientService.get('common/init/menu', { operateId: this.menuOperateId }).pipe(
       map((res: Result) => {
         console.debug('接口中的菜单数据', res);
         if (!res.code && res.data.length) {
@@ -85,7 +89,7 @@ export class BaseService {
    */
   roleInit(): Observable<void> {
     console.debug('初始化角色数据！');
-    return this.client.get('common/init/role', { operateId: this.roleOperateId }).pipe(
+    return this.clientService.get('common/init/role', { operateId: this.roleOperateId }).pipe(
       map(res => {
         console.debug('接口中的角色数据', res);
         if (!res.code && res.data.length) {
@@ -116,7 +120,7 @@ export class BaseService {
    */
   userInit(): Observable<void> {
     console.debug('初始化用户数据！');
-    return this.client.get('common/init/user', { operateId: this.userOperateId }).pipe(
+    return this.clientService.get('common/init/user', { operateId: this.userOperateId }).pipe(
       map(res => {
         console.debug('接口中的用户数据', res);
         if (!res.code && res.data.length) {
@@ -180,9 +184,9 @@ export class BaseService {
     this.socket.on('setting', (data: any) => {
       console.debug('收到setting消息：', data);
       if (data === 'sys') {
-        this.client.get('common/init/sys').subscribe((res: NzSafeAny) => {
-          this.settingSrv.setApp(res.data);
-          this.titleSrv.suffix = res.data.title;
+        this.clientService.get('common/init/sys').subscribe((res: NzSafeAny) => {
+          this.settingService.setApp(res.data);
+          this.titleService.suffix = res.data.title;
           console.debug('系统配置已实时更新');
         });
       }

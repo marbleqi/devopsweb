@@ -7,11 +7,6 @@ import { LogComponent, SortComponent } from '@shared';
 
 import { AuthRoleService, AuthRoleEditComponent, AuthRoleGrantComponent } from '..';
 
-const statusTag: STColumnTag = {
-  0: { text: '禁用', color: 'red' },
-  1: { text: '有效', color: 'green' }
-};
-
 @Component({
   selector: 'app-auth-role',
   templateUrl: './role.component.html'
@@ -36,7 +31,17 @@ export class AuthRoleComponent implements OnInit, OnReuseInit {
       sort: { compare: (a, b) => a.description.localeCompare(b.description) },
       filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.description.includes(filter.value) }
     },
-    { title: '状态', index: 'status', width: 100, sort: { compare: (a, b) => a.status - b.status }, type: 'tag', tag: statusTag },
+    {
+      title: '状态',
+      index: 'status',
+      width: 100,
+      sort: { compare: (a, b) => a.status - b.status },
+      type: 'tag',
+      tag: {
+        1: { text: '有效', color: 'green' },
+        2: { text: '停用', color: 'red' }
+      } as STColumnTag
+    },
     { title: '更新人', index: 'updateUserName', width: 150 },
     {
       title: '更新时间',
@@ -96,21 +101,21 @@ export class AuthRoleComponent implements OnInit, OnReuseInit {
     }
   ];
 
-  constructor(private baseSrv: BaseService, private roleSrv: AuthRoleService, private modal: ModalHelper) {}
+  constructor(private baseService: BaseService, private roleService: AuthRoleService, private modal: ModalHelper) {}
 
   ngOnInit(): void {
     console.debug('窗体内高', window.innerHeight);
-    this.baseSrv.menuWebSub.next('auth');
+    this.baseService.menuWebSub.next('auth');
     this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.getData();
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuWebSub.next('auth');
+    this.baseService.menuWebSub.next('auth');
   }
 
   getData(operateId?: number): void {
-    this.roleSrv.index(operateId).subscribe(roleList => {
+    this.roleService.index(operateId).subscribe(roleList => {
       console.debug('res', roleList);
       this.stData = roleList;
       this.dissort = this.stData.length < 2;

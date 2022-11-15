@@ -11,11 +11,6 @@ import { BehaviorSubject, of } from 'rxjs';
 
 import { DingtalkUserService, DingtalkUserAddComponent, DingtalkUserEditComponent } from '..';
 
-const statustag: STColumnTag = {
-  0: { text: '禁用', color: 'red' },
-  1: { text: '有效', color: 'green' }
-};
-
 @Component({
   selector: 'app-dingtalk-user',
   templateUrl: './user.component.html'
@@ -37,7 +32,7 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
       showLine: true,
       expandChange: (e: NzFormatEmitEvent) => {
         if (e.node?.key) {
-          return this.userSrv.depart(Number(e.node?.key));
+          return this.userService.depart(Number(e.node?.key));
         }
         return of([]);
       },
@@ -59,7 +54,17 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
       children: [
         { title: '用户ID', index: 'user.userId', width: 100 },
         { title: '姓名', index: 'user.userName', width: 150 },
-        { title: '状态', index: 'user.status', width: 100, sort: { compare: (a, b) => a.status - b.status }, type: 'tag', tag: statustag },
+        {
+          title: '状态',
+          index: 'user.status',
+          width: 100,
+          sort: { compare: (a, b) => a.status - b.status },
+          type: 'tag',
+          tag: {
+            0: { text: '禁用', color: 'red' },
+            1: { text: '有效', color: 'green' }
+          } as STColumnTag
+        },
         { title: '更新人', index: 'user.updateUserName', width: 100 },
         {
           title: '更新时间',
@@ -103,17 +108,17 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
     }
   ];
 
-  constructor(private readonly baseSrv: BaseService, private readonly userSrv: DingtalkUserService) {
+  constructor(private readonly baseService: BaseService, private readonly userService: DingtalkUserService) {
     this.departid = 1;
   }
 
   ngOnInit(): void {
-    this.baseSrv.menuWebSub.next('dingtalk');
-    this.userSrv.init().subscribe();
+    this.baseService.menuWebSub.next('dingtalk');
+    this.userService.init().subscribe();
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuWebSub.next('dingtalk');
+    this.baseService.menuWebSub.next('dingtalk');
     console.debug('页面路由复用初始化');
   }
 
@@ -127,12 +132,12 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
     if (value?.id) {
       this.departid = value.id;
     }
-    this.userSrv.init().subscribe(() => {
-      this.userSrv.index(this.departid).subscribe(res => {
+    this.userService.init().subscribe(() => {
+      this.userService.index(this.departid).subscribe(res => {
         console.debug('钉钉用户数据', res);
         this.stdata = res;
         this.stdata = res.map((item: any) => {
-          const user = this.userSrv.userMap.get(item.unionId);
+          const user = this.userService.userMap.get(item.unionId);
           if (user) {
             return { ...item, user };
           }

@@ -7,7 +7,7 @@ import { Observable, map } from 'rxjs';
 
 @Injectable()
 export class SysReqService {
-  constructor(private readonly client: _HttpClient, private readonly baseSrv: BaseService) {}
+  constructor(private readonly clientService: _HttpClient, private readonly baseService: BaseService) {}
 
   /**
    * 获取模块备选项
@@ -15,7 +15,7 @@ export class SysReqService {
    * @returns 模块列表
    */
   module(): Observable<string[]> {
-    return this.client.get('sys/req/module').pipe(
+    return this.clientService.get('sys/req/module').pipe(
       map((res: Result) => {
         if (res.code) {
           return [];
@@ -33,7 +33,7 @@ export class SysReqService {
    * @returns 控制器列表
    */
   controller(module: string): Observable<string[]> {
-    return this.client.get('sys/req/controller', { module }).pipe(
+    return this.clientService.get('sys/req/controller', { module }).pipe(
       map((res: Result) => {
         if (res.code) {
           return [];
@@ -52,7 +52,7 @@ export class SysReqService {
    * @returns 操作列表
    */
   action(module: string, controller: string): Observable<string[]> {
-    return this.client.get('sys/req/action', { module, controller }).pipe(
+    return this.clientService.get('sys/req/action', { module, controller }).pipe(
       map((res: Result) => {
         if (res.code) {
           return [];
@@ -69,7 +69,7 @@ export class SysReqService {
    * @returns 任务列表
    */
   index(value: any): Observable<any[]> {
-    return this.client.get('sys/req/index', value).pipe(
+    return this.clientService.get('sys/req/index', value).pipe(
       map((res: Result) => {
         if (res.code) {
           return [];
@@ -77,7 +77,7 @@ export class SysReqService {
           return res.data
             .map((item: any) => ({
               ...item,
-              userName: this.baseSrv.userName(item.userId)
+              userName: this.baseService.userName(item.userId)
             }))
             .sort((a: any, b: any) => b.reqId - a.reqId);
         }
@@ -92,7 +92,7 @@ export class SysReqService {
    * @returns 任务详情
    */
   show(reqId: number): Observable<any> {
-    return this.client.get(`sys/req/${reqId}/show`).pipe(
+    return this.clientService.get(`sys/req/${reqId}/show`).pipe(
       map((res: Result) => {
         if (res.code) {
           return null;
@@ -106,7 +106,7 @@ export class SysReqService {
               body: JSON.stringify(res.data.request.body, null, 2)
             },
             result: { ...res.data.result, data: JSON.stringify(res.data.result.data, null, 2) },
-            userName: this.baseSrv.userName(res.data.userId),
+            userName: this.baseService.userName(res.data.userId),
             startAt: format(res.data.startAt, 'yyyy-MM-dd HH:mm:ss.SSS'),
             endAt: format(res.data.endAt, 'yyyy-MM-dd HH:mm:ss.SSS')
           };

@@ -49,7 +49,7 @@ export class DefaultInterceptor implements HttpInterceptor {
   /**暂存刷新token期间的后端请求 */
   private refreshToken$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(private injector: Injector, private baseSrv: BaseService) {
+  constructor(private injector: Injector, private baseService: BaseService) {
     if (this.refreshTokenType === 'auth-refresh') {
       this.buildAuthRefresh();
     }
@@ -59,11 +59,11 @@ export class DefaultInterceptor implements HttpInterceptor {
     return this.injector.get(NzNotificationService);
   }
 
-  private get tokenSrv(): ITokenService {
+  private get tokenService(): ITokenService {
     return this.injector.get(DA_SERVICE_TOKEN);
   }
 
-  private get client(): _HttpClient {
+  private get clientService(): _HttpClient {
     return this.injector.get(_HttpClient);
   }
 
@@ -84,10 +84,10 @@ export class DefaultInterceptor implements HttpInterceptor {
    * 刷新 Token 请求
    */
   private refreshTokenRequest(): Observable<any> {
-    return this.client.get('common/init/refresh').pipe(
+    return this.clientService.get('common/init/refresh').pipe(
       map((res: Result) => {
         if (res.code) {
-          this.baseSrv.disconnet();
+          this.baseService.disconnet();
           throw '刷新令牌失败';
         }
         return res.data;
@@ -121,7 +121,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         this.refreshToking = false;
         this.refreshToken$.next(res);
         // 重新保存新 token
-        this.tokenSrv.set(res);
+        this.tokenService.set(res);
         // 重新发起请求
         return next.handle(this.reAttachToken(req));
       }),
@@ -140,7 +140,7 @@ export class DefaultInterceptor implements HttpInterceptor {
    */
   private reAttachToken(req: HttpRequest<any>): HttpRequest<any> {
     // 以下示例是以 NG-ALAIN 默认使用 `SimpleInterceptor`
-    const token = this.tokenSrv.get()?.token;
+    const token = this.tokenService.get()?.token;
     return req.clone({
       setHeaders: {
         token: `Bearer ${token}`
@@ -156,7 +156,7 @@ export class DefaultInterceptor implements HttpInterceptor {
     if (!this.refreshTokenEnabled) {
       return;
     }
-    this.tokenSrv.refresh
+    this.tokenService.refresh
       .pipe(
         filter(() => !this.refreshToking),
         switchMap(res => {
@@ -168,7 +168,7 @@ export class DefaultInterceptor implements HttpInterceptor {
       .subscribe({
         next: res => {
           this.refreshToking = false;
-          this.tokenSrv.set(res);
+          this.tokenService.set(res);
         },
         error: () => this.toLogin()
       });
@@ -178,7 +178,7 @@ export class DefaultInterceptor implements HttpInterceptor {
 
   private toLogin(): void {
     this.notification.error(`令牌过期`, `您的令牌已过期，请重新登录！`);
-    this.goTo(this.tokenSrv.login_url!);
+    this.goTo(this.tokenService.login_url!);
   }
 
   private handleData(ev: HttpResponseBase, req: HttpRequest<any>, next: HttpHandler): Observable<any> {
@@ -251,7 +251,7 @@ export class DefaultInterceptor implements HttpInterceptor {
     // 统一加上服务端前缀
     let url = req.url;
     if (!req.context.get(IGNORE_BASE_URL) && !url.startsWith('https://') && !url.startsWith('http://') && !url.startsWith('assets')) {
-      url = this.baseSrv.baseUrl + (this.baseSrv.baseUrl.endsWith('/') && url.startsWith('/') ? url.substring(1) : url);
+      url = this.baseService.baseUrl + (this.baseService.baseUrl.endsWith('/') && url.startsWith('/') ? url.substring(1) : url);
     }
     const newReq = req.clone({ url, setHeaders: this.getAdditionalHeaders(req.headers) });
     return next.handle(newReq).pipe(

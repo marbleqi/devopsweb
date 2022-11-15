@@ -64,15 +64,15 @@ export class DingtalkUserAddComponent implements OnInit {
       operations: ['授予', '没收'],
       grid: { span: 24 },
       listStyle: { width: '100%', 'height.px': window.innerHeight - 700 },
-      asyncData: () => this.baseSrv.roleSub
+      asyncData: () => this.baseService.roleSub
     }
   };
 
   constructor(
-    private readonly baseSrv: BaseService,
-    private readonly userSrv: DingtalkUserService,
+    private readonly baseService: BaseService,
+    private readonly userService: DingtalkUserService,
     private readonly modal: NzModalRef,
-    private readonly msgSrv: NzMessageService
+    private readonly msgService: NzMessageService
   ) {}
 
   ngOnInit(): void {
@@ -89,11 +89,11 @@ export class DingtalkUserAddComponent implements OnInit {
 
   saveas(value: any): void {
     this.loading = true;
-    this.userSrv.create({ ...value, unionId: this.record.unionId }).subscribe(res => {
+    this.userService.create({ ...value, unionId: this.record.unionId }).subscribe(res => {
       if (res.code) {
-        this.msgSrv.error(res.msg);
+        this.msgService.error(res.msg);
       } else {
-        this.msgSrv.success(res.msg);
+        this.msgService.success(res.msg);
         this.modal.close(true);
       }
       this.loading = false;

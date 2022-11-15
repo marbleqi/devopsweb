@@ -62,7 +62,7 @@ export class AuthRoleEditComponent implements OnInit {
       grid: { span: 24 },
       listStyle: { width: '100%', 'height.px': window.innerHeight - 700 },
       asyncData: () =>
-        this.abilitySrv.index().pipe(map(res => res.map(item => ({ title: `${item.name}——${item.description}`, value: item.id }))))
+        this.abilityService.index().pipe(map(res => res.map(item => ({ title: `${item.name}——${item.description}`, value: item.id }))))
     },
     $createUserName: { widget: 'text' },
     $createAt: { widget: 'text' },
@@ -72,9 +72,9 @@ export class AuthRoleEditComponent implements OnInit {
   };
 
   constructor(
-    private abilitySrv: AuthAbilityService,
-    private roleSrv: AuthRoleService,
-    private msgSrv: NzMessageService,
+    private abilityService: AuthAbilityService,
+    private roleService: AuthRoleService,
+    private msgService: NzMessageService,
     private modal: NzModalRef
   ) {}
 
@@ -83,7 +83,7 @@ export class AuthRoleEditComponent implements OnInit {
     // 设置权限点树形组件的高度
     this.height = `${(window.innerHeight - 500).toString()}px`;
     // 设置权限点备选项
-    this.abilitySrv.index('tree').subscribe((res: any) => {
+    this.abilityService.index('tree').subscribe((res: any) => {
       this.abilityNodes = res;
     });
     // 初始化数据
@@ -98,7 +98,7 @@ export class AuthRoleEditComponent implements OnInit {
         this.updatable = true;
         this.creatable = false;
       }
-      this.roleSrv.show(this.record.roleId).subscribe(res => {
+      this.roleService.show(this.record.roleId).subscribe(res => {
         this.i = res;
       });
     } else {
@@ -116,11 +116,11 @@ export class AuthRoleEditComponent implements OnInit {
    * @param value 原始表单数据
    */
   saveas(value: any): void {
-    this.roleSrv.create(value).subscribe(res => {
+    this.roleService.create(value).subscribe(res => {
       if (res.code) {
-        this.msgSrv.error(res.msg);
+        this.msgService.error(res.msg);
       } else {
-        this.msgSrv.success('创建成功');
+        this.msgService.success('创建成功');
         this.modal.close(true);
       }
     });
@@ -132,11 +132,11 @@ export class AuthRoleEditComponent implements OnInit {
    * @param value 原始表单数据
    */
   save(value: any): void {
-    this.roleSrv.update(this.record.roleId, value).subscribe(res => {
+    this.roleService.update(this.record.roleId, value).subscribe(res => {
       if (res.code) {
-        this.msgSrv.error(res.msg);
+        this.msgService.error(res.msg);
       } else {
-        this.msgSrv.success('保存成功');
+        this.msgService.success('保存成功');
         this.modal.close(true);
       }
     });

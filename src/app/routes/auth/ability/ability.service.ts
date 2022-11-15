@@ -14,10 +14,10 @@ export class AuthAbilityService {
   /**
    * 构建函数
    *
-   * @param client 注入的http服务
-   * @param arrSrv 注入的数组服务
+   * @param clientService 注入的http服务
+   * @param arrService 注入的数组服务
    */
-  constructor(private client: _HttpClient, private arrSrv: ArrayService) {
+  constructor(private readonly clientService: _HttpClient, private arrService: ArrayService) {
     this.abilityList = [];
     this.abilityTree = [];
   }
@@ -36,13 +36,13 @@ export class AuthAbilityService {
         return of(this.abilityTree);
       }
     } else {
-      return this.client.get(`auth/ability/index`).pipe(
+      return this.clientService.get(`auth/ability/index`).pipe(
         map((res: Result) => {
           if (res.code) {
             return [];
           } else {
             this.abilityList = res.data.sort((a: any, b: any) => a.id - b.id);
-            this.abilityTree = this.arrSrv.arrToTree(
+            this.abilityTree = this.arrService.arrToTree(
               this.abilityList.map((item: any) => ({
                 key: item.id,
                 pid: item.pid,
@@ -69,7 +69,7 @@ export class AuthAbilityService {
    * @returns 对象ID列表
    */
   granted(type: 'menu' | 'role', id: number): Observable<number[]> {
-    return this.client.get(`auth/ability/${id}/${type}`).pipe(
+    return this.clientService.get(`auth/ability/${id}/${type}`).pipe(
       map((res: Result) => {
         if (res.code) {
           return [];
@@ -88,6 +88,6 @@ export class AuthAbilityService {
    * @returns 后端响应报文
    */
   granting(type: 'menu' | 'role', id: number, objectlist: number[]): Observable<Result> {
-    return this.client.post(`auth/ability/${id}/${type}`, { objectlist });
+    return this.clientService.post(`auth/ability/${id}/${type}`, { objectlist });
   }
 }

@@ -9,10 +9,10 @@ export class AuthTokenService {
   /**
    * 构建函数
    *
-   * @param client 注入的http服务
-   * @param baseSrv 注入的用户服务
+   * @param clientService 注入的http服务
+   * @param baseService 注入的基础服务
    */
-  constructor(private client: _HttpClient, private baseSrv: BaseService) {}
+  constructor(private readonly clientService: _HttpClient, private baseService: BaseService) {}
 
   /**
    * 获取令牌列表
@@ -20,7 +20,7 @@ export class AuthTokenService {
    * @returns 令牌列表
    */
   index(): Observable<any[]> {
-    return this.client.get('auth/token').pipe(
+    return this.clientService.get('auth/token').pipe(
       map((res: Result) => {
         if (res.code) {
           return [];
@@ -31,7 +31,7 @@ export class AuthTokenService {
               const expired = Number(item.expired);
               const createAt = Number(item.createAt);
               const updateAt = Number(item.updateAt);
-              return { ...item, userId, userName: this.baseSrv.userName(userId), expired, createAt, updateAt };
+              return { ...item, userId, userName: this.baseService.userName(userId), expired, createAt, updateAt };
             })
             .sort((a: any, b: any) => b.createAt - a.createAt);
         }
@@ -46,6 +46,6 @@ export class AuthTokenService {
    * @returns 后端响应报文
    */
   destroy(token: string): Observable<Result> {
-    return this.client.delete(`auth/token/${token}`);
+    return this.clientService.delete(`auth/token/${token}`);
   }
 }

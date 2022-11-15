@@ -11,7 +11,7 @@ export class KongHostService {
   private operateId: number;
   /**缓存的菜单列表 */
   private hostMap: Map<number, any>;
-  constructor(private client: _HttpClient, private baseSrv: BaseService) {
+  constructor(private readonly clientService: _HttpClient, private baseService: BaseService) {
     this.operateId = 0;
     this.hostMap = new Map<number, any>();
   }
@@ -25,13 +25,13 @@ export class KongHostService {
     if (typeof operateId === 'number') {
       this.operateId = operateId;
     }
-    return this.client.get('kong/host/index', { operateId: this.operateId }).pipe(
+    return this.clientService.get('kong/host/index', { operateId: this.operateId }).pipe(
       map((res: Result) => {
         if (!res.code && res.data.length) {
           for (const hostItem of res.data) {
-            this.hostMap.set(hostItem.menuId, {
+            this.hostMap.set(hostItem.hostId, {
               ...hostItem,
-              updateUserName: this.baseSrv.userName(hostItem.updateUserId)
+              updateUserName: this.baseService.userName(hostItem.updateUserId)
             });
             if (this.operateId < hostItem.operateId) {
               this.operateId = hostItem.operateId;
@@ -50,16 +50,16 @@ export class KongHostService {
    * @returns 站点详情
    */
   show(hostId: number): Observable<any> {
-    return this.client.get(`kong/host/${hostId}/show`).pipe(
+    return this.clientService.get(`kong/host/${hostId}/show`).pipe(
       map((res: Result) => {
         if (res.code) {
           return { hostId, abilities: [] };
         } else {
           return {
             ...res.data,
-            createUserName: this.baseSrv.userName(res.data.createUserId),
+            createUserName: this.baseService.userName(res.data.createUserId),
             createAt: format(res.data.createAt, 'yyyy-MM-dd HH:mm:ss.SSS'),
-            updateUserName: this.baseSrv.userName(res.data.updateUserId),
+            updateUserName: this.baseService.userName(res.data.updateUserId),
             updateAt: format(res.data.updateAt, 'yyyy-MM-dd HH:mm:ss.SSS')
           };
         }
@@ -89,7 +89,7 @@ export class KongHostService {
    * @returns 后端响应报文
    */
   create(value: any): Observable<Result> {
-    return this.client.post('kong/host/create', this.params(value));
+    return this.clientService.post('kong/host/create', this.params(value));
   }
 
   /**
@@ -100,6 +100,6 @@ export class KongHostService {
    * @returns 后端响应报文
    */
   update(hostId: number, value: any): Observable<Result> {
-    return this.client.post(`kong/host/${hostId}/update`, this.params(value));
+    return this.clientService.post(`kong/host/${hostId}/update`, this.params(value));
   }
 }

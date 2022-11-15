@@ -55,18 +55,18 @@ export class AuthUserResetComponent implements OnInit {
     }
   };
 
-  constructor(private userSrv: AuthUserService, private modal: NzModalRef, private msgSrv: NzMessageService) {}
+  constructor(private userService: AuthUserService, private modal: NzModalRef, private msgService: NzMessageService) {}
 
   ngOnInit(): void {
     this.title = '重置用户密码';
   }
 
   save(value: any): void {
-    this.userSrv.resetpsw(this.record.userId, { newPassword: value.newPassword }).subscribe(res => {
+    this.userService.resetpsw(this.record.userId, { newPassword: value.newPassword }).subscribe(res => {
       if (res.code) {
-        this.msgSrv.warning('重置失败');
+        this.msgService.warning('重置失败');
       } else {
-        this.msgSrv.success('重置成功');
+        this.msgService.success('重置成功');
         this.modal.close(true);
       }
     });

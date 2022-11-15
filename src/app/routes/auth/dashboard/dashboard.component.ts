@@ -9,13 +9,13 @@ import { AuthDashboardService } from '..';
   templateUrl: './dashboard.component.html'
 })
 export class AuthDashboardComponent implements OnInit {
-  constructor(private readonly dashboardSrv: AuthDashboardService, private readonly baseSrv: BaseService) {}
+  constructor(private readonly dashboardService: AuthDashboardService, private readonly baseService: BaseService) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuWebSub.next('auth');
+    this.baseService.menuWebSub.next('auth');
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuWebSub.next('auth');
+    this.baseService.menuWebSub.next('auth');
   }
 }

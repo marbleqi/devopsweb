@@ -11,9 +11,10 @@ import { Observable } from 'rxjs';
 export const startPageGuard: CanActivateFn = (_, state): boolean | Observable<boolean> => {
   // Re-jump according to the first item of the menu, you can re-customize the logic
   // 以下代码是根据菜单的第一项进行重新跳转，你可以重新定制逻辑
-  // const menuSrv = inject(MenuService);
-  // if (menuSrv.find({ url: state.url }) == null) {
-  //   inject(Router).navigateByUrl(menuSrv.menus[0].link!);
+  console.debug(state.url);
+  // const menuService = inject(MenuService);
+  // if (menuService.find({ url: state.url }) == null) {
+  //   inject(Router).navigateByUrl('common/home');
   //   return false;
   // }
   return true;

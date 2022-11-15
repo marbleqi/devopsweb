@@ -17,13 +17,13 @@ export class ListComponent implements OnInit, OnReuseInit {
   @Input('main-menu') mainMenu!: string;
   @Input('sd-data') stData: STData[] = [];
 
-  constructor(private readonly baseSrv: BaseService, private msgSrv: NzMessageService, private modal: ModalHelper) {}
+  constructor(private readonly baseService: BaseService, private msgService: NzMessageService, private modal: ModalHelper) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuWebSub.next(this.mainMenu);
+    this.baseService.menuWebSub.next(this.mainMenu);
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuWebSub.next(this.mainMenu);
+    this.baseService.menuWebSub.next(this.mainMenu);
   }
 }

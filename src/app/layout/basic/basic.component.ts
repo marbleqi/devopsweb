@@ -16,26 +16,26 @@ export class LayoutBasicComponent implements OnInit {
   // 当前显示的主菜单，当发生路由变化时，可以比对判断变化，然后刷新
   link: string = '';
 
-  constructor(private readonly arraySrv: ArrayService, private menuSrv: MenuService, private baseSrv: BaseService) {}
+  constructor(private readonly arrayService: ArrayService, private menuService: MenuService, private baseService: BaseService) {}
 
   ngOnInit(): void {
-    this.baseSrv.menuWebSub.subscribe(link => {
+    this.baseService.menuWebSub.subscribe(link => {
       console.debug('收到前端菜单切换消息');
       if (this.link !== link) {
         this.link = link;
         this.fresh();
       }
     });
-    this.baseSrv.menuApiSub.subscribe(() => {
+    this.baseService.menuApiSub.subscribe(() => {
       console.debug('收到后端菜单更新消息');
       this.fresh();
     });
   }
 
   fresh() {
-    const menuList = this.arraySrv
+    const menuList = this.arrayService
       .arrToTree(
-        Array.from(this.baseSrv.menuMap.values())
+        Array.from(this.baseService.menuMap.values())
           .filter(item => item.status)
           .sort((a, b) => a.orderId - b.orderId)
           .map(item => {
@@ -44,9 +44,9 @@ export class LayoutBasicComponent implements OnInit {
               return {
                 menuId: item.menuId,
                 pMenuId: item.pMenuId,
+                link: item.link,
                 text: item.config.text,
                 group: true,
-                link: item.config.link,
                 acl: item.abilities.length ? item.abilities : undefined
               };
             } else {
@@ -54,8 +54,8 @@ export class LayoutBasicComponent implements OnInit {
               return {
                 menuId: item.menuId,
                 pMenuId: item.pMenuId,
+                link: item.link,
                 text: item.config.text,
-                link: item.config.link,
                 icon: item.config.icon ? `anticon-${item.config.icon}` : null,
                 reuse: item.config.reuse,
                 acl: item.abilities.length ? item.abilities : undefined
@@ -70,7 +70,7 @@ export class LayoutBasicComponent implements OnInit {
       })
       .filter(item => item.link === this.link);
     console.debug('完成菜单数据初始化！', menuList);
-    this.menuSrv.clear();
-    this.menuSrv.add(menuList);
+    this.menuService.clear();
+    this.menuService.add(menuList);
   }
 }

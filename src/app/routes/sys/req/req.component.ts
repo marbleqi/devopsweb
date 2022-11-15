@@ -25,7 +25,7 @@ export class SysReqComponent implements OnInit, OnReuseInit {
   stData: STData[] = [];
   columns: STColumn[] = [{}];
 
-  constructor(private readonly baseSrv: BaseService, private readonly reqSrv: SysReqService, private modal: ModalHelper) {
+  constructor(private readonly baseService: BaseService, private readonly reqService: SysReqService, private modal: ModalHelper) {
     this.controllerSub = new BehaviorSubject<SFSchemaEnum[]>([]);
     this.actionSub = new BehaviorSubject<SFSchemaEnum[]>([]);
     this.module = '';
@@ -34,8 +34,8 @@ export class SysReqComponent implements OnInit, OnReuseInit {
   }
 
   ngOnInit(): void {
-    this.baseSrv.menuWebSub.next('sys');
-    zip(this.baseSrv.userSub.pipe(first()), this.reqSrv.module()).subscribe(([userList, module]: [SFSchemaEnum[], string[]]) => {
+    this.baseService.menuWebSub.next('sys');
+    zip(this.baseService.userSub.pipe(first()), this.reqService.module()).subscribe(([userList, module]: [SFSchemaEnum[], string[]]) => {
       userList.unshift({ label: '所有用户', value: 0 });
       const moduleList: SFSchemaEnum[] = module.map(item => ({ label: item, value: item }));
       moduleList.unshift({ label: '所有模块', value: '' });
@@ -119,13 +119,13 @@ export class SysReqComponent implements OnInit, OnReuseInit {
   }
 
   _onReuseInit(): void {
-    this.baseSrv.menuWebSub.next('sys');
+    this.baseService.menuWebSub.next('sys');
   }
 
   moduleChange(value: string) {
     this.module = value;
     if (this.module) {
-      this.reqSrv.controller(this.module).subscribe(controller => {
+      this.reqService.controller(this.module).subscribe(controller => {
         const controllerlist: SFSchemaEnum[] = controller.map(item => ({ label: item, value: item }));
         controllerlist.unshift({ label: '所有对象', value: '' });
         this.controllerSub.next(controllerlist);
@@ -142,7 +142,7 @@ export class SysReqComponent implements OnInit, OnReuseInit {
   controllerChange(value: string) {
     this.controller = value;
     if (this.controller) {
-      this.reqSrv.action(this.module, this.controller).subscribe(action => {
+      this.reqService.action(this.module, this.controller).subscribe(action => {
         const actionlist: SFSchemaEnum[] = action.map(item => ({ label: item, value: item }));
         actionlist.unshift({ label: '所有操作', value: '' });
         this.actionSub.next(actionlist);
@@ -186,7 +186,7 @@ export class SysReqComponent implements OnInit, OnReuseInit {
     if (this.value.startAt) {
       params['startAt'] = this.value.startAt;
     }
-    this.reqSrv.index(params).subscribe((data: STData[]) => {
+    this.reqService.index(params).subscribe((data: STData[]) => {
       console.debug('data', data);
       this.stData = data;
     });

@@ -73,7 +73,7 @@ export class AuthUserEditComponent implements OnInit {
       operations: ['授予', '没收'],
       grid: { span: 24 },
       listStyle: { width: '100%', 'height.px': window.innerHeight - 700 },
-      asyncData: () => this.baseSrv.roleSub
+      asyncData: () => this.baseService.roleSub
     },
     $createUserName: { widget: 'text' },
     $createAt: { widget: 'text' },
@@ -88,10 +88,10 @@ export class AuthUserEditComponent implements OnInit {
   };
 
   constructor(
-    private baseSrv: BaseService,
-    private userSrv: AuthUserService,
+    private baseService: BaseService,
+    private userService: AuthUserService,
     private modal: NzModalRef,
-    private msgSrv: NzMessageService
+    private msgService: NzMessageService
   ) {}
 
   ngOnInit(): void {
@@ -107,7 +107,7 @@ export class AuthUserEditComponent implements OnInit {
         this.creatable = false;
         this.buttonName = '';
       }
-      this.userSrv.show(this.record.userId).subscribe(res => {
+      this.userService.show(this.record.userId).subscribe(res => {
         this.i = res;
       });
     } else {
@@ -121,11 +121,11 @@ export class AuthUserEditComponent implements OnInit {
 
   saveas(value: any): void {
     this.loading = true;
-    this.userSrv.create(value).subscribe(res => {
+    this.userService.create(value).subscribe(res => {
       if (res.code) {
-        this.msgSrv.error(res.msg);
+        this.msgService.error(res.msg);
       } else {
-        this.msgSrv.success(res.msg);
+        this.msgService.success(res.msg);
         this.modal.close(true);
       }
       this.loading = false;
@@ -134,11 +134,11 @@ export class AuthUserEditComponent implements OnInit {
 
   save(value: any): void {
     this.loading = true;
-    this.userSrv.update(this.record.userId, value).subscribe((res: Result) => {
+    this.userService.update(this.record.userId, value).subscribe((res: Result) => {
       if (res.code) {
-        this.msgSrv.error(res.msg);
+        this.msgService.error(res.msg);
       } else {
-        this.msgSrv.success(res.msg);
+        this.msgService.success(res.msg);
         this.modal.close(true);
       }
       this.loading = false;

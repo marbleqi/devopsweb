@@ -17,59 +17,59 @@ import { Observable, map, mergeMap, catchError, of, zip } from 'rxjs';
 @Injectable()
 export class StartupService {
   constructor(
-    private iconSrv: NzIconService,
-    private settingSrv: SettingsService,
-    private aclSrv: ACLService,
-    private titleSrv: TitleService,
-    @Inject(DA_SERVICE_TOKEN) private tokenSrv: ITokenService,
-    private client: HttpClient,
+    private iconService: NzIconService,
+    private settingService: SettingsService,
+    private aclService: ACLService,
+    private titleService: TitleService,
+    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+    private clientService: HttpClient,
     private router: Router,
-    private baseSrv: BaseService
+    private baseService: BaseService
   ) {
-    this.iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
+    this.iconService.addIcon(...ICONS_AUTO, ...ICONS);
   }
 
   load(): Observable<void> {
-    return this.client.get('assets/config/api.json').pipe(
+    return this.clientService.get('assets/config/api.json').pipe(
       mergeMap((res: NzSafeAny) => {
         console.debug(`获取API配置`, res.baseUrl, typeof res.baseUrl, typeof res.baseUrl !== 'string');
         if (typeof res.baseUrl !== 'string') {
           throw '未配置有效后端地址！';
         }
-        this.baseSrv.baseUrl = res.baseUrl;
-        console.debug(`获取token`, this.tokenSrv.get());
-        const token = this.tokenSrv.get()?.token;
+        this.baseService.baseUrl = res.baseUrl;
+        console.debug(`获取token`, this.tokenService.get());
+        const token = this.tokenService.get()?.token;
         if (token) {
-          return this.client.get('common/init/startup').pipe(
+          return this.clientService.get('common/init/startup').pipe(
             mergeMap((res: NzSafeAny) => {
               // 设置应用信息：包括应用名称，说明等
-              this.settingSrv.setApp(res.data.app);
+              this.settingService.setApp(res.data.app);
               // 设置浏览器标题栏后缀
-              this.titleSrv.suffix = res.data.app.title || '管理平台';
+              this.titleService.suffix = res.data.app.title || '管理平台';
               if (res.code) {
                 throw res.msg;
               } else {
                 // 设置用户信息：包括姓名，头像
-                this.settingSrv.setUser(res.data.user);
+                this.settingService.setUser(res.data.user);
                 // 设置用户权限点
-                this.aclSrv.setAbility(res.data.ability);
+                this.aclService.setAbility(res.data.ability);
                 // 连接通用长连接
-                this.baseSrv.connect();
+                this.baseService.connect();
                 // 初始化菜单，角色，用户数据
-                return zip(this.baseSrv.menuInit(), this.baseSrv.roleInit(), this.baseSrv.userInit()).pipe(map(() => {}));
+                return zip(this.baseService.menuInit(), this.baseService.roleInit(), this.baseService.userInit()).pipe(map(() => {}));
               }
             })
           );
         } else {
-          return this.client.get('passport/startup').pipe(
+          return this.clientService.get('passport/startup').pipe(
             map((res: NzSafeAny) => {
               if (res.code) {
                 throw res.msg;
               } else {
                 // 设置应用信息：包括应用名称，说明等
-                this.settingSrv.setApp(res.data.app || {});
+                this.settingService.setApp(res.data.app || {});
                 // 设置浏览器标题栏后缀
-                this.titleSrv.suffix = res.data.app.title || '管理平台';
+                this.titleService.suffix = res.data.app.title || '管理平台';
               }
             })
           );
@@ -77,7 +77,7 @@ export class StartupService {
       }),
       catchError(err => {
         console.warn('发生异常：', err);
-        this.router.navigateByUrl(this.tokenSrv.login_url!);
+        this.router.navigateByUrl(this.tokenService.login_url!);
         return of();
       })
     );

@@ -17,7 +17,7 @@ const routes: Routes = [
     component: LayoutBasicComponent,
     canActivate: [startPageGuard, SimpleGuard],
     children: [
-      { path: '', redirectTo: 'sys', pathMatch: 'full' },
+      { path: '', redirectTo: 'common/home', pathMatch: 'full' },
       { path: 'exception', loadChildren: () => import('./exception/exception.module').then(m => m.ExceptionModule) },
       // 业务子模块
       { path: 'common', loadChildren: () => import('./common/common.module').then(m => m.CommonModule) },

@@ -17,13 +17,18 @@ export class LogComponent implements OnInit {
   stData!: STData[];
   columns!: STColumn[];
 
-  constructor(private client: _HttpClient, private baseSrv: BaseService, private modal: NzModalRef, private msgSrv: NzMessageService) {}
+  constructor(
+    private readonly clientService: _HttpClient,
+    private baseService: BaseService,
+    private modal: NzModalRef,
+    private msgService: NzMessageService
+  ) {}
 
   ngOnInit(): void {
-    this.client.get(this.url).subscribe(res => {
+    this.clientService.get(this.url).subscribe(res => {
       this.stData = res.data.map((item: any) => ({
         ...item,
-        updateUserName: this.baseSrv.userName(item.updateUserId),
+        updateUserName: this.baseService.userName(item.updateUserId),
         updateAt: format(item.updateAt, 'yyyy-MM-dd HH:mm:ss.SSS')
       }));
     });
