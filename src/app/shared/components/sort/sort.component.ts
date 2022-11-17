@@ -16,7 +16,7 @@ export class SortComponent implements OnInit {
   url!: string;
   keys!: string[];
   sortData!: any[];
-  constructor(private readonly clientService: _HttpClient, private modal: NzModalRef, private msgService: NzMessageService) {}
+  constructor(private clientService: _HttpClient, private modal: NzModalRef, private messageService: NzMessageService) {}
 
   ngOnInit(): void {
     let i = 1;
@@ -40,7 +40,7 @@ export class SortComponent implements OnInit {
     });
     this.clientService.post(this.url, params).subscribe(res => {
       if (res.code === 0) {
-        this.msgService.success('保存成功');
+        this.messageService.success('保存成功');
         this.modal.close(true);
       }
     });

@@ -4,7 +4,7 @@ import { _HttpClient } from '@delon/theme';
 import { format } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
-import { map, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs';
 
 @Component({
   selector: 'app-edit',
@@ -20,11 +20,11 @@ export class EditComponent implements OnInit {
   buttonname!: string;
   record: any = {};
   i: any;
-  @ViewChild('sf') private readonly sf!: SFComponent;
+  @ViewChild('sf') private sf!: SFComponent;
   schema: SFSchema = { properties: {} };
   ui: SFUISchema = { '*': { spanLabelFixed: 100, grid: { span: 12 } } };
 
-  constructor(private readonly clientService: _HttpClient, private modal: NzModalRef, private msgService: NzMessageService) {}
+  constructor(private clientService: _HttpClient, private modal: NzModalRef, private messageService: NzMessageService) {}
 
   ngOnInit(): void {
     if (this.record) {
@@ -62,10 +62,10 @@ export class EditComponent implements OnInit {
     this.loading = true;
     this.clientService.post('admin/user/update', { ...value, userid: this.record.userid }).subscribe((res: any) => {
       if (res.code === 0) {
-        this.msgService.success(res.msg);
+        this.messageService.success(res.msg);
         this.modal.close(true);
       } else {
-        this.msgService.error(res.msg);
+        this.messageService.error(res.msg);
       }
       this.loading = false;
     });
@@ -75,10 +75,10 @@ export class EditComponent implements OnInit {
     this.loading = true;
     this.clientService.post('admin/user/create', value).subscribe((res: any) => {
       if (res.code === 0) {
-        this.msgService.success(res.msg);
+        this.messageService.success(res.msg);
         this.modal.close(true);
       } else {
-        this.msgService.error(res.msg);
+        this.messageService.error(res.msg);
       }
       this.loading = false;
     });

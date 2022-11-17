@@ -25,7 +25,7 @@ export class AuthUserComponent implements OnInit, OnReuseInit {
     },
     {
       title: '姓名',
-      index: 'userName',
+      render: 'name',
       filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.userName.includes(filter.value) }
     },
     {
@@ -36,7 +36,7 @@ export class AuthUserComponent implements OnInit, OnReuseInit {
       type: 'tag',
       tag: {
         1: { text: '有效', color: 'green' },
-        2: { text: '停用', color: 'red' }
+        0: { text: '停用', color: 'red' }
       } as STColumnTag
     },
     { title: '更新人', index: 'updateUserName', width: 150 },
@@ -111,7 +111,7 @@ export class AuthUserComponent implements OnInit, OnReuseInit {
   constructor(
     private baseService: BaseService,
     private userService: AuthUserService,
-    private msgService: NzMessageService,
+    private messageService: NzMessageService,
     private modal: ModalHelper
   ) {}
 
@@ -139,12 +139,41 @@ export class AuthUserComponent implements OnInit, OnReuseInit {
     this.modal.createStatic(AuthUserEditComponent, { record: false }, { size: 'xl' }).subscribe(() => this.getData());
   }
 
+  edit(record: any, copy: boolean): void {
+    this.modal.createStatic(AuthUserEditComponent, { record, copy }, { size: 'xl' }).subscribe(() => this.getData());
+  }
+
+  reset(record: any): void {
+    this.modal.createStatic(AuthUserResetComponent, { record }, { size: 'xl' }).subscribe(() => this.getData());
+  }
+
+  log(record: any): void {
+    this.modal
+      .createStatic(
+        LogComponent,
+        {
+          title: `查看用户${record.userName}变更历史`,
+          url: `auth/user/${record.userId}/log`,
+          columns: [
+            { title: '角色ID', index: 'userId', width: 100 },
+            { title: '登陆名', index: 'loginName', width: 150 },
+            { title: '姓名', index: 'userName', width: 150 },
+            { title: '状态', index: 'status', width: 100 },
+            { title: '更新人', index: 'updateUserName', width: 150 },
+            { title: '更新时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
+          ] as STColumn[]
+        },
+        { size: 'xl' }
+      )
+      .subscribe(() => this.getData());
+  }
+
   unlock(record: STData): void {
     this.userService.unlock(record['userId']).subscribe(res => {
       if (res.code) {
-        this.msgService.warning('解锁失败');
+        this.messageService.warning('解锁失败');
       } else {
-        this.msgService.success('解锁成功');
+        this.messageService.success('解锁成功');
       }
     });
   }

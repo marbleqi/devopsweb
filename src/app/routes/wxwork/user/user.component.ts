@@ -49,8 +49,8 @@ export class WxworkUserComponent implements OnInit, OnReuseInit {
           sort: { compare: (a, b) => a.status - b.status },
           type: 'tag',
           tag: {
-            0: { text: '禁用', color: 'red' },
-            1: { text: '有效', color: 'green' }
+            1: { text: '有效', color: 'green' },
+            0: { text: '禁用', color: 'red' }
           } as STColumnTag
         },
         { title: '更新人', index: 'user.updateUserName', width: 100 },
@@ -73,7 +73,7 @@ export class WxworkUserComponent implements OnInit, OnReuseInit {
           type: 'modal',
           tooltip: '修改用户信息',
           iif: record => !record?.user,
-          click: () => this.getdata(),
+          click: () => this.getData(),
           modal: { component: WxworkUserEditComponent }
         },
         {
@@ -82,7 +82,7 @@ export class WxworkUserComponent implements OnInit, OnReuseInit {
           type: 'modal',
           tooltip: '修改用户信息',
           iif: record => !record?.user,
-          click: () => this.getdata(),
+          click: () => this.getData(),
           modal: { component: WxworkUserAddComponent }
         },
         {
@@ -91,14 +91,14 @@ export class WxworkUserComponent implements OnInit, OnReuseInit {
           type: 'modal',
           tooltip: '修改用户信息',
           iif: record => !!record?.user,
-          click: () => this.getdata(),
+          click: () => this.getData(),
           modal: { component: WxworkUserEditComponent }
         }
       ]
     }
   ];
 
-  constructor(private readonly baseService: BaseService, private readonly userService: WxworkUserService) {}
+  constructor(private baseService: BaseService, private userService: WxworkUserService) {}
 
   ngOnInit(): void {
     this.baseService.menuWebSub.next('wxwork');
@@ -111,10 +111,10 @@ export class WxworkUserComponent implements OnInit, OnReuseInit {
 
   departChange(value: number) {
     this.departId = value;
-    this.getdata();
+    this.getData();
   }
 
-  getdata(): void {
+  getData(): void {
     if (this.departId) {
       this.userService.init().subscribe(() => {
         this.userService.index(this.departId).subscribe(res => {

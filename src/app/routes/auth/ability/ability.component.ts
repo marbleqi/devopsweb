@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BaseService } from '@core';
 import { OnReuseInit } from '@delon/abc/reuse-tab';
 import { STColumn, STData } from '@delon/abc/st';
+import { ModalHelper } from '@delon/theme';
 
 import { AuthAbilityService, AuthAbilityGrantComponent } from '..';
 
@@ -11,13 +12,12 @@ import { AuthAbilityService, AuthAbilityGrantComponent } from '..';
 })
 export class AuthAbilityComponent implements OnInit, OnReuseInit {
   stData: STData[] = [];
-  scroll!: { x?: string; y?: string };
   columns: STColumn[] = [
     { title: '权限点ID', index: 'id', width: 100, sort: { compare: (a, b) => a.id - b.id } },
     { title: '上级权限点ID', index: 'pid', width: 150, sort: { compare: (a, b) => a.pid - b.pid } },
     {
       title: '权限',
-      index: 'name',
+      render: 'name',
       width: 150,
       sort: { compare: (a, b) => a.name.localeCompare(b.name) },
       filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.name.includes(filter.value) }
@@ -67,12 +67,10 @@ export class AuthAbilityComponent implements OnInit, OnReuseInit {
     }
   ];
 
-  constructor(private abilityService: AuthAbilityService, private baseService: BaseService) {}
+  constructor(private abilityService: AuthAbilityService, private baseService: BaseService, private modal: ModalHelper) {}
 
   ngOnInit(): void {
-    console.debug('窗体内高', window.innerHeight);
     this.baseService.menuWebSub.next('auth');
-    this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.getData();
   }
 
@@ -85,5 +83,9 @@ export class AuthAbilityComponent implements OnInit, OnReuseInit {
     this.abilityService.index().subscribe(res => {
       this.stData = res;
     });
+  }
+
+  edit(record: any, grantType: string): void {
+    this.modal.createStatic(AuthAbilityGrantComponent, { record, grantType }, { size: 'xl' }).subscribe(() => this.getData());
   }
 }

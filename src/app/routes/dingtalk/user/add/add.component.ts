@@ -20,7 +20,7 @@ export class DingtalkUserAddComponent implements OnInit {
   record: any = {};
   gettimes: number = 0;
   i: any;
-  @ViewChild('sf') private readonly sf!: SFComponent;
+  @ViewChild('sf') private sf!: SFComponent;
   schema: SFSchema = {
     properties: {
       loginName: { type: 'string', title: '登陆名' },
@@ -69,10 +69,10 @@ export class DingtalkUserAddComponent implements OnInit {
   };
 
   constructor(
-    private readonly baseService: BaseService,
-    private readonly userService: DingtalkUserService,
-    private readonly modal: NzModalRef,
-    private readonly msgService: NzMessageService
+    private baseService: BaseService,
+    private userService: DingtalkUserService,
+    private modal: NzModalRef,
+    private messageService: NzMessageService
   ) {}
 
   ngOnInit(): void {
@@ -91,9 +91,9 @@ export class DingtalkUserAddComponent implements OnInit {
     this.loading = true;
     this.userService.create({ ...value, unionId: this.record.unionId }).subscribe(res => {
       if (res.code) {
-        this.msgService.error(res.msg);
+        this.messageService.error(res.msg);
       } else {
-        this.msgService.success(res.msg);
+        this.messageService.success(res.msg);
         this.modal.close(true);
       }
       this.loading = false;

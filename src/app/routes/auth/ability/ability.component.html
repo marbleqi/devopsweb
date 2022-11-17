@@ -3,4 +3,14 @@
     <button nz-button (click)="getData()">刷新</button>
   </ng-template>
 </page-header>
-<st #st [data]="stData" [columns]="columns"></st>
+<st #st [data]="stData" [columns]="columns">
+  <ng-template st-row="name" let-item>
+    <a nz-button nzType="link" nz-popover nzPopoverTrigger="click" [nzPopoverContent]="editButton">
+      {{ item.name }}
+    </a>
+    <ng-template #editButton>
+      <a nz-button nzType="link" (click)="edit(item, 'menu')">菜单授权</a>
+      <a nz-button nzType="link" (click)="edit(item, 'role')">角色授权</a>
+    </ng-template>
+  </ng-template>
+</st>

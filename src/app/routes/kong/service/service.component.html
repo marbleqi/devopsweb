@@ -1,11 +1,24 @@
 <app-kong-project
   title="服务"
   project="service"
-  [data]="data"
-  [columns]="columns"
+  [disremove]="disremove"
   (hostChange)="hostChange($event)"
-  (getdata)="getdata()"
+  (getData)="getData()"
   (sync)="sync()"
   (add)="add()"
   (remove)="remove($event)"
-></app-kong-project>
+>
+  <st #st [data]="data" [columns]="columns" (change)="change($event)">
+    <ng-template st-row="name" let-item>
+      <a nz-button nzType="link" nz-popover nzPopoverTrigger="click" [nzPopoverContent]="editButton">
+        {{ item.config.name }}
+      </a>
+      <ng-template #editButton>
+        <a *ngIf="item.status" nz-button nzType="link" (click)="edit(item.id, false)">编辑</a>
+        <a nz-button nzType="link" (click)="edit(item.id, true)">复制</a>
+        <a *ngIf="item.status" nz-button nzType="link" (click)="remove(item)">删除</a>
+        <a nz-button nzType="link" (click)="log(item)">变更历史</a>
+      </ng-template>
+    </ng-template>
+  </st>
+</app-kong-project>

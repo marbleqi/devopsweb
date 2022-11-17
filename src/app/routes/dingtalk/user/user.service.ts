@@ -18,7 +18,7 @@ export class DingtalkUserService {
    * @param client http服务
    * @param baseService 基础服务
    */
-  constructor(private readonly clientService: _HttpClient, private readonly baseService: BaseService) {
+  constructor(private clientService: _HttpClient, private baseService: BaseService) {
     this.operateId = 0;
     this.userMap = new Map<string, any>();
   }

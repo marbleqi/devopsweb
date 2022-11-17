@@ -3,7 +3,7 @@ import { SFSchema, SFUISchema } from '@delon/form';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzTreeComponent, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
-import { map } from 'rxjs/operators';
+import { map } from 'rxjs';
 
 import { AuthAbilityService, AuthRoleService } from '../..';
 
@@ -18,15 +18,6 @@ export class AuthRoleEditComponent implements OnInit {
   updatable!: boolean;
   creatable!: boolean;
   buttonName!: string;
-  @ViewChild('abilities') private readonly abilities!: NzTreeComponent;
-  /**树型组件高度 */
-  height!: string;
-  /**权限点节点树 */
-  abilityNodes!: NzTreeNodeOptions[];
-  /**已选权限点 */
-  checkedAbilities!: number[];
-  /**已展开权限点 */
-  expandAbilities!: number[];
   record: any = {};
   i: any;
   schema: SFSchema = {
@@ -74,18 +65,12 @@ export class AuthRoleEditComponent implements OnInit {
   constructor(
     private abilityService: AuthAbilityService,
     private roleService: AuthRoleService,
-    private msgService: NzMessageService,
+    private messageService: NzMessageService,
     private modal: NzModalRef
   ) {}
 
   /**对话框初始化 */
   ngOnInit(): void {
-    // 设置权限点树形组件的高度
-    this.height = `${(window.innerHeight - 500).toString()}px`;
-    // 设置权限点备选项
-    this.abilityService.index('tree').subscribe((res: any) => {
-      this.abilityNodes = res;
-    });
     // 初始化数据
     if (this.record) {
       if (this.copy) {
@@ -118,9 +103,9 @@ export class AuthRoleEditComponent implements OnInit {
   saveas(value: any): void {
     this.roleService.create(value).subscribe(res => {
       if (res.code) {
-        this.msgService.error(res.msg);
+        this.messageService.error(res.msg);
       } else {
-        this.msgService.success('创建成功');
+        this.messageService.success('创建成功');
         this.modal.close(true);
       }
     });
@@ -134,9 +119,9 @@ export class AuthRoleEditComponent implements OnInit {
   save(value: any): void {
     this.roleService.update(this.record.roleId, value).subscribe(res => {
       if (res.code) {
-        this.msgService.error(res.msg);
+        this.messageService.error(res.msg);
       } else {
-        this.msgService.success('保存成功');
+        this.messageService.success('保存成功');
         this.modal.close(true);
       }
     });

@@ -11,13 +11,12 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   styles: []
 })
 export class ListComponent implements OnInit, OnReuseInit {
-  stdata: STData[] = [];
+  stData: STData[] = [];
   scroll!: { x?: string; y?: string };
   @Input('columns') columns!: STColumn[];
   @Input('main-menu') mainMenu!: string;
-  @Input('sd-data') stData: STData[] = [];
 
-  constructor(private readonly baseService: BaseService, private msgService: NzMessageService, private modal: ModalHelper) {}
+  constructor(private baseService: BaseService, private messageService: NzMessageService, private modal: ModalHelper) {}
 
   ngOnInit(): void {
     this.baseService.menuWebSub.next(this.mainMenu);

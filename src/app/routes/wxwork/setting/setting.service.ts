@@ -13,7 +13,7 @@ export class WxworkSettingService {
    * @param clientService 注入的http服务
    * @param baseService 注入的基础服务
    */
-  constructor(private readonly clientService: _HttpClient, private baseService: BaseService) {}
+  constructor(private clientService: _HttpClient, private baseService: BaseService) {}
 
   /**
    * 设置企业微信配置

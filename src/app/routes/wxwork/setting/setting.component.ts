@@ -67,7 +67,7 @@ export class WxworkSettingComponent implements OnInit, OnReuseInit {
     $operateId: { widget: 'text' }
   };
 
-  constructor(private baseService: BaseService, private settingService: WxworkSettingService, private msgService: NzMessageService) {}
+  constructor(private baseService: BaseService, private settingService: WxworkSettingService, private messageService: NzMessageService) {}
 
   ngOnInit(): void {
     this.baseService.menuWebSub.next('wxwork');
@@ -83,9 +83,9 @@ export class WxworkSettingComponent implements OnInit, OnReuseInit {
   save(value: any): void {
     this.settingService.set(value.value).subscribe((res: any) => {
       if (res.code) {
-        this.msgService.warning('修改企业微信配置失败！');
+        this.messageService.warning('修改企业微信配置失败！');
       } else {
-        this.msgService.success('修改企业微信配置成功！');
+        this.messageService.success('修改企业微信配置成功！');
       }
     });
   }

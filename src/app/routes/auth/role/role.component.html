@@ -5,4 +5,16 @@
     <button nz-button nzType="primary" (click)="sort()" [disabled]="dissort">排序</button>
   </ng-template>
 </page-header>
-<st #st [data]="stData" [columns]="columns"></st>
+<st #st [data]="stData" [columns]="columns">
+  <ng-template st-row="name" let-item>
+    <a nz-button nzType="link" nz-popover nzPopoverTrigger="click" [nzPopoverContent]="editButton">
+      {{ item.roleName }}
+    </a>
+    <ng-template #editButton>
+      <a nz-button nzType="link" (click)="edit(item, false)">编辑</a>
+      <a nz-button nzType="link" (click)="edit(item, true)">复制</a>
+      <a nz-button nzType="link" (click)="grant(item)">授权</a>
+      <a nz-button nzType="link" (click)="log(item)">变更历史</a>
+    </ng-template>
+  </ng-template>
+</st>

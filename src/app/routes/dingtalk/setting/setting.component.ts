@@ -37,7 +37,7 @@ export class DingtalkSettingComponent implements OnInit, OnReuseInit {
     $operateId: { widget: 'text' }
   };
 
-  constructor(private baseService: BaseService, private settingService: DingtalkSettingService, private msgService: NzMessageService) {}
+  constructor(private baseService: BaseService, private settingService: DingtalkSettingService, private messageService: NzMessageService) {}
 
   ngOnInit(): void {
     this.baseService.menuWebSub.next('dingtalk');
@@ -53,9 +53,9 @@ export class DingtalkSettingComponent implements OnInit, OnReuseInit {
   save(value: any): void {
     this.settingService.set(value.value).subscribe((res: any) => {
       if (res.code) {
-        this.msgService.warning('修改钉钉配置失败！');
+        this.messageService.warning('修改钉钉配置失败！');
       } else {
-        this.msgService.success('修改钉钉配置成功！');
+        this.messageService.success('修改钉钉配置成功！');
       }
     });
   }

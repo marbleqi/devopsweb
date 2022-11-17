@@ -5,7 +5,7 @@ import { _HttpClient } from '@delon/theme';
 import { format } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
-import { map, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs';
 
 @Component({
   selector: 'app-dingtalk-user-edit',
@@ -44,10 +44,10 @@ export class DingtalkUserEditComponent implements OnInit {
   };
 
   constructor(
-    private readonly http: _HttpClient,
-    private readonly baseService: BaseService,
-    private readonly modal: NzModalRef,
-    private readonly msgService: NzMessageService
+    private http: _HttpClient,
+    private baseService: BaseService,
+    private modal: NzModalRef,
+    private messageService: NzMessageService
   ) {}
 
   ngOnInit(): void {
@@ -83,7 +83,7 @@ export class DingtalkUserEditComponent implements OnInit {
       })
       .subscribe((res: any) => {
         if (res.code === 0) {
-          this.msgService.success('关联成功');
+          this.messageService.success('关联成功');
           this.modal.close(true);
         }
       });

@@ -40,7 +40,7 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
     { title: '菜单ID', index: 'menuId', width: 100, sort: { compare: (a, b) => a.menuId - b.menuId } },
     {
       title: '标题',
-      index: 'config.text',
+      render: 'name',
       width: 150,
       sort: { compare: (a, b) => a.config.text.localeCompare(b.config.text) },
       filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.config.text.includes(filter.value) }
@@ -68,7 +68,7 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
       type: 'tag',
       tag: {
         1: { text: '有效', color: 'green' },
-        2: { text: '停用', color: 'red' }
+        0: { text: '停用', color: 'red' }
       } as STColumnTag
     },
     { title: '更新人', index: 'updateUserName', width: 150 },
@@ -171,6 +171,33 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
       console.debug('数据列表获取数据', this.stData);
       this.dissort = this.stData.length <= 1;
     });
+  }
+
+  edit(record: any, copy: boolean): void {
+    this.modal.createStatic(AuthMenuEditComponent, { record, copy }, { size: 'xl' }).subscribe(modal => this.getData(modal));
+  }
+
+  log(record: any): void {
+    this.modal
+      .createStatic(
+        LogComponent,
+        {
+          title: `查看菜单${record.config.text}变更历史`,
+          url: `auth/menu/${record.menuId}/log`,
+          columns: [
+            { title: '菜单ID', index: 'menuId', width: 100 },
+            { title: '标题', index: 'config.text', width: 150 },
+            { title: '说明', index: 'config.description', width: 200 },
+            { title: '图标', index: 'config.icon', width: 50 },
+            { title: '链接', index: 'config.link', width: 150 },
+            { title: '状态', index: 'status', width: 100 },
+            { title: '更新人', index: 'updateUserName', width: 150 },
+            { title: '更新时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
+          ] as STColumn[]
+        },
+        { size: 'xl' }
+      )
+      .subscribe(modal => this.getData(modal));
   }
 
   add(): void {

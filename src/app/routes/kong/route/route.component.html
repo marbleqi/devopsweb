@@ -1,0 +1,38 @@
+<app-kong-project
+  title="路由"
+  project="route"
+  [disremove]="disremove"
+  (hostChange)="hostChange($event)"
+  (getData)="getData()"
+  (sync)="sync()"
+  (add)="add()"
+  (remove)="remove($event)"
+>
+  <st #st [data]="data" [columns]="columns" (change)="change($event)">
+    <ng-template st-row="route" let-item>
+      <a nz-button nzType="link" nz-popover nzPopoverTrigger="click" [nzPopoverContent]="editButton">
+        {{ item.config.name }}
+      </a>
+      <ng-template #editButton>
+        <a *ngIf="item.status" nz-button nzType="link" (click)="edit('route', item, false)">编辑</a>
+        <a nz-button nzType="link" (click)="edit('route', item, true)">复制</a>
+        <a *ngIf="item.status" nz-button nzType="link" (click)="remove(item, 'route')">删除</a>
+        <a nz-button nzType="link" (click)="log('route', item)">变更历史</a>
+      </ng-template>
+    </ng-template>
+    <ng-template st-row="service" let-item>
+      <a *ngIf="item.serviceName" nz-button nzType="link" nz-popover nzPopoverTrigger="click" [nzPopoverContent]="editButton">
+        {{ item.serviceName }}
+      </a>
+      <ng-template #editButton>
+        <a nz-button nzType="link" (click)="edit('service', item, false)">编辑</a>
+        <a nz-button nzType="link" (click)="edit('service', item, true)">复制</a>
+        <a nz-button nzType="link" (click)="remove(item, 'service')">删除</a>
+        <a nz-button nzType="link" (click)="log('service', item)">变更历史</a>
+      </ng-template>
+    </ng-template>
+    <ng-template st-row="hosts" let-item>
+      <ellipsis length="20" tooltip>{{ item.config.hosts.join() }}</ellipsis>
+    </ng-template>
+  </st>
+</app-kong-project>

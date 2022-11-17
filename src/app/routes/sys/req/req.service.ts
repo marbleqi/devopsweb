@@ -7,7 +7,7 @@ import { Observable, map } from 'rxjs';
 
 @Injectable()
 export class SysReqService {
-  constructor(private readonly clientService: _HttpClient, private readonly baseService: BaseService) {}
+  constructor(private clientService: _HttpClient, private baseService: BaseService) {}
 
   /**
    * 获取模块备选项

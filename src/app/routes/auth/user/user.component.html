@@ -4,4 +4,17 @@
     <button nz-button nzType="primary" (click)="add()">新建</button>
   </ng-template>
 </page-header>
-<st #st [data]="stData" [columns]="columns" [loading]="loading"></st>
+<st #st [data]="stData" [columns]="columns" [loading]="loading">
+  <ng-template st-row="name" let-item>
+    <a nz-button nzType="link" nz-popover nzPopoverTrigger="click" [nzPopoverContent]="editButton">
+      {{ item.userName }}
+    </a>
+    <ng-template #editButton>
+      <a nz-button nzType="link" (click)="edit(item, false)">编辑</a>
+      <a nz-button nzType="link" (click)="edit(item, true)">复制</a>
+      <a nz-button nzType="link" (click)="unlock(item)">解锁</a>
+      <a nz-button nzType="link" (click)="reset(item)">重置密码</a>
+      <a nz-button nzType="link" (click)="log(item)">变更历史</a>
+    </ng-template>
+  </ng-template>
+</st>

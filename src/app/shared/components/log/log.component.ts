@@ -18,10 +18,10 @@ export class LogComponent implements OnInit {
   columns!: STColumn[];
 
   constructor(
-    private readonly clientService: _HttpClient,
+    private clientService: _HttpClient,
     private baseService: BaseService,
     private modal: NzModalRef,
-    private msgService: NzMessageService
+    private messageService: NzMessageService
   ) {}
 
   ngOnInit(): void {

@@ -21,7 +21,7 @@ export class AuthUserEditComponent implements OnInit {
   record: any = {};
   gettimes: number = 0;
   i: any;
-  @ViewChild('sf') private readonly sf!: SFComponent;
+  @ViewChild('sf') private sf!: SFComponent;
   schema: SFSchema = {
     properties: {
       userId: { type: 'number', title: '用户ID' },
@@ -91,7 +91,7 @@ export class AuthUserEditComponent implements OnInit {
     private baseService: BaseService,
     private userService: AuthUserService,
     private modal: NzModalRef,
-    private msgService: NzMessageService
+    private messageService: NzMessageService
   ) {}
 
   ngOnInit(): void {
@@ -123,9 +123,9 @@ export class AuthUserEditComponent implements OnInit {
     this.loading = true;
     this.userService.create(value).subscribe(res => {
       if (res.code) {
-        this.msgService.error(res.msg);
+        this.messageService.error(res.msg);
       } else {
-        this.msgService.success(res.msg);
+        this.messageService.success(res.msg);
         this.modal.close(true);
       }
       this.loading = false;
@@ -136,9 +136,9 @@ export class AuthUserEditComponent implements OnInit {
     this.loading = true;
     this.userService.update(this.record.userId, value).subscribe((res: Result) => {
       if (res.code) {
-        this.msgService.error(res.msg);
+        this.messageService.error(res.msg);
       } else {
-        this.msgService.success(res.msg);
+        this.messageService.success(res.msg);
         this.modal.close(true);
       }
       this.loading = false;

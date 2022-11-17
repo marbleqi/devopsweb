@@ -81,7 +81,7 @@ export class SysReqViewComponent implements OnInit {
     $operateId: { widget: 'text', grid: { span: 8 } }
   };
 
-  constructor(private readonly reqService: SysReqService, private modal: NzModalRef) {}
+  constructor(private reqService: SysReqService, private modal: NzModalRef) {}
 
   ngOnInit(): void {
     this.reqService.show(this.record.reqId).subscribe(res => {

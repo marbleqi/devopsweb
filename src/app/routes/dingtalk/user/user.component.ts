@@ -19,7 +19,7 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
   i: any;
   value: any;
   departid: number;
-  @ViewChild('sf') private readonly sf!: SFComponent;
+  @ViewChild('sf') private sf!: SFComponent;
   schema: SFSchema = {
     properties: { id: { type: 'number', title: '部门', enum: [{ key: 1, title: '根部门' }], default: 1 } },
     required: ['id']
@@ -39,7 +39,7 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
       change: (value: number) => this.departChange(value)
     }
   };
-  stdata: STData[] = [];
+  stData: STData[] = [];
   columns: STColumn[] = [
     {
       title: '钉钉用户',
@@ -61,8 +61,8 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
           sort: { compare: (a, b) => a.status - b.status },
           type: 'tag',
           tag: {
-            0: { text: '禁用', color: 'red' },
-            1: { text: '有效', color: 'green' }
+            1: { text: '有效', color: 'green' },
+            0: { text: '禁用', color: 'red' }
           } as STColumnTag
         },
         { title: '更新人', index: 'user.updateUserName', width: 100 },
@@ -85,7 +85,7 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
           type: 'modal',
           iif: record => !record?.user,
           modal: { component: DingtalkUserEditComponent },
-          click: () => this.getdata()
+          click: () => this.getData()
         },
         {
           text: '新建用户并关联',
@@ -93,7 +93,7 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
           type: 'modal',
           tooltip: '修改用户信息',
           iif: record => !record?.user,
-          click: () => this.getdata(),
+          click: () => this.getData(),
           modal: { component: DingtalkUserAddComponent }
         },
         {
@@ -102,13 +102,13 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
           type: 'modal',
           iif: record => !!record?.user,
           modal: { component: DingtalkUserEditComponent },
-          click: () => this.getdata()
+          click: () => this.getData()
         }
       ]
     }
   ];
 
-  constructor(private readonly baseService: BaseService, private readonly userService: DingtalkUserService) {
+  constructor(private baseService: BaseService, private userService: DingtalkUserService) {
     this.departid = 1;
   }
 
@@ -127,7 +127,7 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
     this.departid = value;
   }
 
-  getdata(value?: any): void {
+  getData(value?: any): void {
     console.debug('查询条件', value);
     if (value?.id) {
       this.departid = value.id;
@@ -135,15 +135,15 @@ export class DingtalkUserComponent implements OnInit, OnReuseInit {
     this.userService.init().subscribe(() => {
       this.userService.index(this.departid).subscribe(res => {
         console.debug('钉钉用户数据', res);
-        this.stdata = res;
-        this.stdata = res.map((item: any) => {
+        this.stData = res;
+        this.stData = res.map((item: any) => {
           const user = this.userService.userMap.get(item.unionId);
           if (user) {
             return { ...item, user };
           }
           return item;
         });
-        console.debug('stdata', this.stdata);
+        console.debug('stData', this.stData);
       });
     });
   }

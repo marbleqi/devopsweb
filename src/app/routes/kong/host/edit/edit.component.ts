@@ -3,7 +3,7 @@ import { SFSchema, SFUISchema } from '@delon/form';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzTreeComponent, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
-import { map } from 'rxjs/operators';
+import { map } from 'rxjs';
 
 import { KongHostService } from '../..';
 
@@ -53,7 +53,7 @@ export class KongHostEditComponent implements OnInit {
     $operateId: { widget: 'text' }
   };
 
-  constructor(private hostService: KongHostService, private msgService: NzMessageService, private modal: NzModalRef) {}
+  constructor(private hostService: KongHostService, private messageService: NzMessageService, private modal: NzModalRef) {}
 
   /**对话框初始化 */
   ngOnInit(): void {
@@ -90,9 +90,9 @@ export class KongHostEditComponent implements OnInit {
   saveas(value: any): void {
     this.hostService.create(value).subscribe(res => {
       if (res.code) {
-        this.msgService.error(res.msg);
+        this.messageService.error(res.msg);
       } else {
-        this.msgService.success('创建成功');
+        this.messageService.success('创建成功');
         this.modal.close(true);
       }
     });
@@ -106,9 +106,9 @@ export class KongHostEditComponent implements OnInit {
   save(value: any): void {
     this.hostService.update(this.record.hostId, value).subscribe(res => {
       if (res.code) {
-        this.msgService.error(res.msg);
+        this.messageService.error(res.msg);
       } else {
-        this.msgService.success('保存成功');
+        this.messageService.success('保存成功');
         this.modal.close(true);
       }
     });

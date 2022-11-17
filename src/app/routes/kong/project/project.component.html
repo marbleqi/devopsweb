@@ -1,6 +1,6 @@
 <page-header [title]="title" [action]="phActionTpl">
   <ng-template #phActionTpl>
-    <button nz-button [disabled]="disfresh" (click)="getdata.emit()">刷新</button>
+    <button nz-button [disabled]="disfresh" (click)="getData.emit()">刷新</button>
     <button nz-button [disabled]="dissync" (click)="sync.emit()">同步</button>
     <button nz-button nzType="primary" [disabled]="discreate" (click)="add.emit()">新建</button>
   </ng-template>
@@ -9,10 +9,6 @@
   <button nz-button nzType="text" (click)="reload()">
     <i nz-icon nzType="reload" nz-popover nzPopoverContent="刷新站点"></i>
   </button>
-  <button nz-button [disabled]="disremove" nz-popconfirm nzPopconfirmTitle="你确认删除吗？" (nzOnConfirm)="remove.emit(checkRecords)">
-    删除
-  </button>
+  <button nz-button [disabled]="disremove" nz-popconfirm nzPopconfirmTitle="你确认删除吗？" (nzOnConfirm)="remove.emit()">删除</button>
 </sf>
-<st #st [data]="data" [columns]="columns" (change)="change($event)">
-  <ng-content></ng-content>
-</st>
+<ng-content></ng-content>

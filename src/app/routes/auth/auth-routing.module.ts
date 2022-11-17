@@ -13,12 +13,12 @@ import {
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: 'dashboard', canActivate: [ACLGuard], data: { guard: [200] }, component: AuthDashboardComponent },
-  { path: 'ability', canActivate: [ACLGuard], data: { guard: [210] }, component: AuthAbilityComponent },
-  { path: 'menu', canActivate: [ACLGuard], data: { guard: [210] }, component: AuthMenuComponent },
-  { path: 'role', canActivate: [ACLGuard], data: { guard: [210] }, component: AuthRoleComponent },
-  { path: 'user', canActivate: [ACLGuard], data: { guard: [210] }, component: AuthUserComponent },
-  { path: 'token', canActivate: [ACLGuard], data: { guard: [210] }, component: AuthTokenComponent }
+  { path: 'dashboard', canActivate: [ACLGuard], data: { guard: [100] }, component: AuthDashboardComponent },
+  { path: 'ability', canActivate: [ACLGuard], data: { guard: [110] }, component: AuthAbilityComponent },
+  { path: 'menu', canActivate: [ACLGuard], data: { guard: [120] }, component: AuthMenuComponent },
+  { path: 'role', canActivate: [ACLGuard], data: { guard: [130] }, component: AuthRoleComponent },
+  { path: 'user', canActivate: [ACLGuard], data: { guard: [140] }, component: AuthUserComponent },
+  { path: 'token', canActivate: [ACLGuard], data: { guard: [150] }, component: AuthTokenComponent }
 ];
 
 @NgModule({

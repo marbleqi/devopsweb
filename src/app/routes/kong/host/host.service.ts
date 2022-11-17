@@ -7,11 +7,21 @@ import { Observable, map } from 'rxjs';
 
 @Injectable()
 export class KongHostService {
+  /**在站点服务中保存当前选中的站点ID */
+  hostId: number;
   /**最新操作ID */
   private operateId: number;
   /**缓存的菜单列表 */
   private hostMap: Map<number, any>;
-  constructor(private readonly clientService: _HttpClient, private baseService: BaseService) {
+
+  /**
+   * 构建函数
+   *
+   * @param clientService 客户端服务
+   * @param baseService 基础服务
+   */
+  constructor(private clientService: _HttpClient, private baseService: BaseService) {
+    this.hostId = 0;
     this.operateId = 0;
     this.hostMap = new Map<number, any>();
   }

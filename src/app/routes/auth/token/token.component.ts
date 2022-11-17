@@ -17,7 +17,7 @@ export class AuthTokenComponent implements OnInit, OnReuseInit {
   scroll!: { x?: string; y?: string };
   columns: STColumn[] = [{}];
 
-  constructor(private tokenService: AuthTokenService, private msgService: NzMessageService, private baseService: BaseService) {}
+  constructor(private tokenService: AuthTokenService, private messageService: NzMessageService, private baseService: BaseService) {}
 
   ngOnInit(): void {
     console.debug('窗体内高', window.innerHeight);
@@ -98,9 +98,9 @@ export class AuthTokenComponent implements OnInit, OnReuseInit {
     for (const item of this.checkData) {
       this.tokenService.destroy(item['token']).subscribe(res => {
         if (res.code) {
-          this.msgService.warning(`删除令牌${item['token']}失败`);
+          this.messageService.warning(`删除令牌${item['token']}失败`);
         } else {
-          this.msgService.success(`删除令牌${item['token']}成功`);
+          this.messageService.success(`删除令牌${item['token']}成功`);
         }
         curnum++;
         if (allnum === curnum) {

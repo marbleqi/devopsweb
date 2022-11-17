@@ -11,6 +11,16 @@
   </button>
 </sf>
 <st #st [data]="stData" [columns]="columns" [scroll]="scroll">
+  <ng-template st-row="name" let-item>
+    <a nz-button nzType="link" nz-popover nzPopoverTrigger="click" [nzPopoverContent]="editButton">
+      {{ item.config.text }}
+    </a>
+    <ng-template #editButton>
+      <a nz-button nzType="link" (click)="edit(item, false)">编辑</a>
+      <a nz-button nzType="link" (click)="edit(item, true)">复制</a>
+      <a nz-button nzType="link" (click)="log(item)">变更历史</a>
+    </ng-template>
+  </ng-template>
   <ng-template st-row="icon" let-item let-index="index">
     <ng-container *ngIf="!item.config.icon">无</ng-container>
     <ng-container *ngIf="item.config.icon">

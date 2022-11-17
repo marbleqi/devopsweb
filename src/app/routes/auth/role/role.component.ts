@@ -13,14 +13,14 @@ import { AuthRoleService, AuthRoleEditComponent, AuthRoleGrantComponent } from '
 })
 export class AuthRoleComponent implements OnInit, OnReuseInit {
   dissort = true;
-  @ViewChild('st') private readonly st!: STComponent;
+  @ViewChild('st') private st!: STComponent;
   stData: STData[] = [];
   scroll!: { x?: string; y?: string };
   columns: STColumn[] = [
     { title: '角色ID', index: 'roleId', width: 100, sort: { compare: (a, b) => a.roleId - b.roleId } },
     {
       title: '角色名',
-      index: 'roleName',
+      render: 'name',
       width: 150,
       sort: { compare: (a, b) => a.roleName.localeCompare(b.roleName) },
       filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.roleName.includes(filter.value) }
@@ -39,7 +39,7 @@ export class AuthRoleComponent implements OnInit, OnReuseInit {
       type: 'tag',
       tag: {
         1: { text: '有效', color: 'green' },
-        2: { text: '停用', color: 'red' }
+        0: { text: '停用', color: 'red' }
       } as STColumnTag
     },
     { title: '更新人', index: 'updateUserName', width: 150 },
@@ -124,6 +124,35 @@ export class AuthRoleComponent implements OnInit, OnReuseInit {
 
   add(): void {
     this.modal.createStatic(AuthRoleEditComponent, { record: false }, { size: 'xl' }).subscribe(() => this.getData());
+  }
+
+  edit(record: any, copy: boolean): void {
+    this.modal.createStatic(AuthRoleEditComponent, { record, copy }, { size: 'xl' }).subscribe(() => this.getData());
+  }
+
+  grant(record: any): void {
+    this.modal.createStatic(AuthRoleGrantComponent, { record }, { size: 'xl' }).subscribe(() => this.getData());
+  }
+
+  log(record: any): void {
+    this.modal
+      .createStatic(
+        LogComponent,
+        {
+          title: `查看角色${record.roleName}变更历史`,
+          url: `auth/role/${record.roleId}/log`,
+          columns: [
+            { title: '角色ID', index: 'roleId', width: 100 },
+            { title: '角色名', index: 'roleName', width: 150 },
+            { title: '说明', index: 'description' },
+            { title: '状态', index: 'status', width: 100 },
+            { title: '更新人', index: 'updateUserName', width: 150 },
+            { title: '更新时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
+          ] as STColumn[]
+        },
+        { size: 'xl' }
+      )
+      .subscribe(modal => this.getData(modal));
   }
 
   sort(): void {

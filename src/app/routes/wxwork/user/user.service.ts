@@ -21,11 +21,7 @@ export class WxworkUserService {
    * @param clientService 注入的http服务
    * @param baseService 注入的基础服务
    */
-  constructor(
-    private readonly arrayService: ArrayService,
-    private readonly clientService: _HttpClient,
-    private readonly baseService: BaseService
-  ) {
+  constructor(private arrayService: ArrayService, private clientService: _HttpClient, private baseService: BaseService) {
     this.departList = [];
     this.operateId = 0;
     this.userMap = new Map<string, any>();

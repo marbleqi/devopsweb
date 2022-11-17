@@ -18,7 +18,7 @@ export class AuthUserService {
    * @param clientService 注入的http服务
    * @param baseService 注入的基础服务
    */
-  constructor(private readonly clientService: _HttpClient, private baseService: BaseService) {
+  constructor(private clientService: _HttpClient, private baseService: BaseService) {
     this.operateId = 0;
     this.userMap = new Map<number, any>();
   }

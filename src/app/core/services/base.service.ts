@@ -42,11 +42,7 @@ export class BaseService {
    * @param settingService 注入的数组服务
    * @param titleService 注入的数组服务
    */
-  constructor(
-    private readonly clientService: _HttpClient,
-    private readonly settingService: SettingsService,
-    private readonly titleService: TitleService
-  ) {
+  constructor(private clientService: _HttpClient, private settingService: SettingsService, private titleService: TitleService) {
     this.baseUrl = '';
     this.roleOperateId = 0;
     this.roleMap = new Map<number, string>();

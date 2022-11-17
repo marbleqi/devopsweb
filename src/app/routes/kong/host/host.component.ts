@@ -12,7 +12,7 @@ import { KongHostService, KongHostEditComponent } from '..';
 })
 export class KongHostComponent implements OnInit, OnReuseInit {
   dissort = true;
-  @ViewChild('st') private readonly st!: STComponent;
+  @ViewChild('st') private st!: STComponent;
   stData: STData[] = [];
   scroll!: { x?: string; y?: string };
   columns: STColumn[] = [
@@ -37,8 +37,8 @@ export class KongHostComponent implements OnInit, OnReuseInit {
       sort: { compare: (a, b) => a.status - b.status },
       type: 'tag',
       tag: {
-        0: { text: '禁用', color: 'red' },
-        1: { text: '有效', color: 'green' }
+        1: { text: '有效', color: 'green' },
+        0: { text: '禁用', color: 'red' }
       } as STColumnTag
     },
     { title: '更新人', index: 'updateUserName', width: 150 },

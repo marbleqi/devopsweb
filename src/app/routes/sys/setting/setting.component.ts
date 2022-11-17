@@ -49,7 +49,7 @@ export class SysSettingComponent implements OnInit, OnReuseInit {
     $operateId: { widget: 'text' }
   };
 
-  constructor(private baseService: BaseService, private settingService: SysSettingService, private msgService: NzMessageService) {}
+  constructor(private baseService: BaseService, private settingService: SysSettingService, private messageService: NzMessageService) {}
 
   ngOnInit(): void {
     this.baseService.menuWebSub.next('sys');
@@ -66,9 +66,9 @@ export class SysSettingComponent implements OnInit, OnReuseInit {
   save(value: any): void {
     this.settingService.set(value.value).subscribe(res => {
       if (res.code) {
-        this.msgService.warning('修改基础配置失败！');
+        this.messageService.warning('修改基础配置失败！');
       } else {
-        this.msgService.success('修改基础配置成功！');
+        this.messageService.success('修改基础配置成功！');
       }
     });
   }

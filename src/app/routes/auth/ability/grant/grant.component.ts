@@ -32,16 +32,16 @@ export class AuthAbilityGrantComponent implements OnInit {
    * @param abilityService 注入的权限服务
    * @param menuService 注入的菜单服务
    * @param roleService 注入的角色服务
-   * @param msgService 注入的消息服务
+   * @param messageService 注入的消息服务
    * @param modal 注入的模式框服务
    */
   constructor(
-    private readonly arrayService: ArrayService,
-    private readonly abilityService: AuthAbilityService,
-    private readonly menuService: AuthMenuService,
-    private readonly roleService: AuthRoleService,
-    private readonly msgService: NzMessageService,
-    private readonly modal: NzModalRef
+    private arrayService: ArrayService,
+    private abilityService: AuthAbilityService,
+    private menuService: AuthMenuService,
+    private roleService: AuthRoleService,
+    private messageService: NzMessageService,
+    private modal: NzModalRef
   ) {}
 
   /**对话框初始化 */
@@ -121,9 +121,9 @@ export class AuthAbilityGrantComponent implements OnInit {
     const objectList: number[] = this.grantType === 'menu' ? value.menuList : value.roleList;
     this.abilityService.granting(this.grantType, this.record.id, objectList).subscribe(res => {
       if (res.code) {
-        this.msgService.error(res.msg);
+        this.messageService.error(res.msg);
       } else {
-        this.msgService.success(res.msg);
+        this.messageService.success(res.msg);
         this.modal.close(true);
       }
     });

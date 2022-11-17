@@ -16,7 +16,7 @@ export class LayoutBasicComponent implements OnInit {
   // 当前显示的主菜单，当发生路由变化时，可以比对判断变化，然后刷新
   link: string = '';
 
-  constructor(private readonly arrayService: ArrayService, private menuService: MenuService, private baseService: BaseService) {}
+  constructor(private arrayService: ArrayService, private menuService: MenuService, private baseService: BaseService) {}
 
   ngOnInit(): void {
     this.baseService.menuWebSub.subscribe(link => {

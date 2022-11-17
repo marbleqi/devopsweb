@@ -17,7 +17,7 @@ export class AuthAbilityService {
    * @param clientService 注入的http服务
    * @param arrService 注入的数组服务
    */
-  constructor(private readonly clientService: _HttpClient, private arrService: ArrayService) {
+  constructor(private clientService: _HttpClient, private arrService: ArrayService) {
     this.abilityList = [];
     this.abilityTree = [];
   }

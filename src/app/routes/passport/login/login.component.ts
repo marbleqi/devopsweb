@@ -28,16 +28,16 @@ export class UserLoginComponent implements OnInit {
   info: string = '';
   constructor(
     fb: FormBuilder,
-    private readonly router: Router,
-    private readonly titleService: TitleService,
-    private readonly settingService: SettingsService,
-    @Optional() @Inject(ReuseTabService) private readonly reuseTabService: ReuseTabService,
-    @Inject(DA_SERVICE_TOKEN) private readonly tokenService: ITokenService,
-    private readonly socialService: SocialService,
-    private readonly startupService: StartupService,
-    private readonly clientService: _HttpClient,
-    private readonly modal: ModalHelper,
-    private readonly cdr: ChangeDetectorRef
+    private router: Router,
+    private titleService: TitleService,
+    private settingService: SettingsService,
+    @Optional() @Inject(ReuseTabService) private reuseTabService: ReuseTabService,
+    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+    private socialService: SocialService,
+    private startupService: StartupService,
+    private clientService: _HttpClient,
+    private modal: ModalHelper,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = fb.group({
       userName: [null, [Validators.required]],

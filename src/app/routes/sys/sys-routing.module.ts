@@ -6,9 +6,9 @@ import { SysSettingComponent, SysReqComponent, SysQueueComponent } from '.';
 
 const routes: Routes = [
   { path: '', redirectTo: 'setting', pathMatch: 'full' },
-  { path: 'setting', canActivate: [ACLGuard], data: { guard: [110] }, component: SysSettingComponent },
-  { path: 'req', canActivate: [ACLGuard], data: { guard: [120] }, component: SysReqComponent },
-  { path: 'queue', canActivate: [ACLGuard], data: { guard: [130] }, component: SysQueueComponent }
+  { path: 'setting', canActivate: [ACLGuard], data: { guard: [210] }, component: SysSettingComponent },
+  { path: 'req', canActivate: [ACLGuard], data: { guard: [220] }, component: SysReqComponent },
+  { path: 'queue', canActivate: [ACLGuard], data: { guard: [230] }, component: SysQueueComponent }
 ];
 
 @NgModule({

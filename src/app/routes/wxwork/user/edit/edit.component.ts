@@ -43,10 +43,10 @@ export class WxworkUserEditComponent implements OnInit {
   };
 
   constructor(
-    private readonly clientService: _HttpClient,
-    private readonly baseService: BaseService,
-    private readonly modal: NzModalRef,
-    private readonly msgService: NzMessageService
+    private clientService: _HttpClient,
+    private baseService: BaseService,
+    private modal: NzModalRef,
+    private messageService: NzMessageService
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +77,7 @@ export class WxworkUserEditComponent implements OnInit {
       .post('wxwork/user/save', { wxworkId: this.record.userId, userId: value.userId, status: value.status, update: value.update })
       .subscribe((res: any) => {
         if (res.code === 0) {
-          this.msgService.success('关联成功');
+          this.messageService.success('关联成功');
           this.modal.close(true);
         }
       });

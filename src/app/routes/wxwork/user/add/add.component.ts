@@ -20,7 +20,7 @@ export class WxworkUserAddComponent implements OnInit {
   record: any = {};
   gettimes: number = 0;
   i: any;
-  @ViewChild('sf') private readonly sf!: SFComponent;
+  @ViewChild('sf') private sf!: SFComponent;
   schema: SFSchema = {
     properties: {
       loginName: { type: 'string', title: '登陆名' },
@@ -68,10 +68,10 @@ export class WxworkUserAddComponent implements OnInit {
   };
 
   constructor(
-    private readonly baseService: BaseService,
-    private readonly userService: WxworkUserService,
-    private readonly modal: NzModalRef,
-    private readonly msgService: NzMessageService
+    private baseService: BaseService,
+    private userService: WxworkUserService,
+    private modal: NzModalRef,
+    private messageService: NzMessageService
   ) {}
 
   ngOnInit(): void {
@@ -90,9 +90,9 @@ export class WxworkUserAddComponent implements OnInit {
     this.loading = true;
     this.userService.create({ ...value, wxworkId: this.record.userId }).subscribe(res => {
       if (res.code) {
-        this.msgService.error(res.msg);
+        this.messageService.error(res.msg);
       } else {
-        this.msgService.success(res.msg);
+        this.messageService.success(res.msg);
         this.modal.close(true);
       }
       this.loading = false;

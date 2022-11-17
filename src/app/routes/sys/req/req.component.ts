@@ -25,7 +25,7 @@ export class SysReqComponent implements OnInit, OnReuseInit {
   stData: STData[] = [];
   columns: STColumn[] = [{}];
 
-  constructor(private readonly baseService: BaseService, private readonly reqService: SysReqService, private modal: ModalHelper) {
+  constructor(private baseService: BaseService, private reqService: SysReqService, private modal: ModalHelper) {
     this.controllerSub = new BehaviorSubject<SFSchemaEnum[]>([]);
     this.actionSub = new BehaviorSubject<SFSchemaEnum[]>([]);
     this.module = '';
@@ -109,7 +109,7 @@ export class SysReqComponent implements OnInit, OnReuseInit {
               icon: 'file',
               type: 'modal',
               modal: { component: SysReqViewComponent },
-              click: () => this.getdata()
+              click: () => this.getData()
             }
           ]
         }
@@ -162,7 +162,7 @@ export class SysReqComponent implements OnInit, OnReuseInit {
     this.i.startAt = [Date.now() - 86400000, Date.now()];
   }
 
-  getdata(value?: any): void {
+  getData(value?: any): void {
     if (value) {
       this.value = value;
     }

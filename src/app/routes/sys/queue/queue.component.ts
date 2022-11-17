@@ -76,7 +76,7 @@ export class SysQueueComponent implements OnInit {
     { title: '操作', buttons: [{ text: '查看', icon: 'file', type: 'modal', modal: { component: SysQueueViewComponent } }] }
   ];
 
-  constructor(private queueService: SysQueueService, private msgService: NzMessageService, private baseService: BaseService) {}
+  constructor(private queueService: SysQueueService, private messageService: NzMessageService, private baseService: BaseService) {}
 
   ngOnInit(): void {
     console.debug('窗体内高', window.innerHeight);
@@ -93,7 +93,7 @@ export class SysQueueComponent implements OnInit {
     this.baseService.menuWebSub.next('sys');
   }
 
-  getdata(value?: any): void {
+  getData(value?: any): void {
     if (value) {
       this.value = value;
     }
@@ -117,10 +117,10 @@ export class SysQueueComponent implements OnInit {
     }
     this.queueService.remove({ idlist: this.checkData.map(item => item['id']) }).subscribe(res => {
       if (res.code) {
-        this.msgService.warning(`删除任务失败`);
+        this.messageService.warning(`删除任务失败`);
       } else {
-        this.msgService.success(`删除任务成功`);
-        this.getdata();
+        this.messageService.success(`删除任务成功`);
+        this.getData();
       }
     });
   }
@@ -128,10 +128,10 @@ export class SysQueueComponent implements OnInit {
   clean(): void {
     this.queueService.clean().subscribe(res => {
       if (res.code) {
-        this.msgService.warning(`清理任务失败`);
+        this.messageService.warning(`清理任务失败`);
       } else {
-        this.msgService.success(`清理任务成功`);
-        this.getdata();
+        this.messageService.success(`清理任务成功`);
+        this.getData();
       }
     });
   }

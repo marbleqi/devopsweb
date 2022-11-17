@@ -5,7 +5,7 @@ import { ArrayService } from '@delon/util';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzTreeComponent, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
-import { map } from 'rxjs/operators';
+import { map } from 'rxjs';
 
 import { AuthAbilityService, AuthMenuService } from '../..';
 
@@ -28,12 +28,6 @@ export class AuthMenuEditComponent implements OnInit {
   other: string[];
   iconList: string[] = [];
   record: any = {};
-  @ViewChild('sf') private readonly sf!: SFComponent;
-  @ViewChild('abilities') private readonly abilities!: NzTreeComponent;
-  /**树型组件高度 */
-  height!: string;
-  /**权限点节点树 */
-  abilityNodes!: NzTreeNodeOptions[];
   i: any;
   schema: SFSchema = {
     properties: {
@@ -129,7 +123,7 @@ export class AuthMenuEditComponent implements OnInit {
     private abilityService: AuthAbilityService,
     private menuService: AuthMenuService,
     private arrService: ArrayService,
-    private msgService: NzMessageService,
+    private messageService: NzMessageService,
     private modal: NzModalRef
   ) {
     this.pMenuId = 0;
@@ -342,16 +336,6 @@ export class AuthMenuEditComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // 设置权限点树形组件的高度
-    if (window.innerHeight > 1500) {
-      this.height = `${(window.innerHeight - 1000).toString()}px`;
-    } else {
-      this.height = `${(window.innerHeight - 500).toString()}px`;
-    }
-    // 设置权限点备选项
-    this.abilityService.index('list').subscribe(res => {
-      this.abilityNodes = res;
-    });
     if (this.record) {
       if (this.copy) {
         this.title = '菜单另存为';
@@ -425,9 +409,9 @@ export class AuthMenuEditComponent implements OnInit {
     console.debug('value', value);
     this.menuService.create(value).subscribe(res => {
       if (res.code) {
-        this.msgService.error(res.msg);
+        this.messageService.error(res.msg);
       } else {
-        this.msgService.success('创建成功');
+        this.messageService.success('创建成功');
         this.modal.close(this.pMenuId);
       }
     });
@@ -437,9 +421,9 @@ export class AuthMenuEditComponent implements OnInit {
     console.debug('value', value);
     this.menuService.update(this.record.menuId, value).subscribe(res => {
       if (res.code) {
-        this.msgService.error(res.msg);
+        this.messageService.error(res.msg);
       } else {
-        this.msgService.success('保存成功');
+        this.messageService.success('保存成功');
         this.modal.close(this.pMenuId);
       }
     });
