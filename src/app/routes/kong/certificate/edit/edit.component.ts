@@ -77,7 +77,6 @@ export class KongCertificateEditComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.debug('初始化数据', this.hostId, this.id);
     // 根据传入的操作方式，初始化标题及按钮
     if (this.id) {
       if (this.copy) {

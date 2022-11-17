@@ -133,8 +133,8 @@ export class KongCertificateComponent {
             { title: '日志ID', index: 'logId', width: 100 },
             { title: '域名', format: item => item.config.snis.join() },
             { title: '状态', index: 'status', width: 150 },
-            { title: '更新人', index: 'updateUserName', width: 150 },
-            { title: '更新时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
+            { title: '同步操作人', index: 'updateUserName', width: 150 },
+            { title: '同步时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
           ] as STColumn[]
         },
         { size: 'xl' }

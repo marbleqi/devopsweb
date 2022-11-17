@@ -87,6 +87,11 @@ export class KongServiceComponent {
   sync(): void {
     this.kongProjectService.sync(this.hostId, 'service').subscribe(res => {
       console.debug('同步结果', res);
+      if (res.code) {
+        this.messageService.warning(res.msg);
+      } else {
+        this.getData();
+      }
     });
   }
 
@@ -123,8 +128,8 @@ export class KongServiceComponent {
             { title: '日志ID', index: 'logId', width: 100 },
             { title: '名称', index: 'config.name', width: 100 },
             { title: '状态', index: 'status', width: 150 },
-            { title: '更新人', index: 'updateUserName', width: 150 },
-            { title: '更新时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
+            { title: '同步操作人', index: 'updateUserName', width: 150 },
+            { title: '同步时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
           ] as STColumn[]
         },
         { size: 'xl' }

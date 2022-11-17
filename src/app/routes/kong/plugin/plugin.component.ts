@@ -4,8 +4,9 @@ import { ModalHelper, _HttpClient } from '@delon/theme';
 import { Result, LogComponent } from '@shared';
 import { format, fromUnixTime } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { zip } from 'rxjs';
 
-import { KongHostService, KongProjectService, KongPluginService, KongPluginEditComponent } from '..';
+import { KongHostService, KongProjectService, KongRouteService, KongPluginService, KongPluginEditComponent } from '..';
 
 @Component({
   selector: 'app-kong-plugin',
@@ -18,13 +19,35 @@ export class KongPluginComponent {
   columns: STColumn[] = [
     { type: 'checkbox' },
     {
-      title: '域名',
-      render: 'snis',
-      sort: { compare: (a, b) => a.config.snis.join().localeCompare(b.config.snis.join()) },
-      filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.config.snis.join().indexOf(filter.value) !== -1 }
+      title: '名称',
+      render: 'name',
+      sort: { compare: (a, b) => a.config.name.localeCompare(b.config.name) },
+      filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.config.name.indexOf(filter.value) !== -1 }
     },
-    { title: '域名个数', format: item => item.config.snis.length.toString() },
-    { title: '标签', index: 'config.tags' },
+    {
+      title: '路由',
+      index: 'routeName',
+      sort: { compare: (a, b) => a.routeName.localeCompare(b.routeName) },
+      filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.routeName.indexOf(filter.value) !== -1 }
+    },
+    { title: '协议', index: 'config.protocols' },
+    {
+      title: '状态',
+      index: 'config.enabled',
+      type: 'tag',
+      tag: {
+        true: { text: '启用', color: 'green' },
+        false: { text: '停用', color: 'red' }
+      } as STColumnTag,
+      filter: {
+        menus: [
+          { value: true, text: '启用' },
+          { value: false, text: '停用' }
+        ],
+        multiple: true,
+        fn: (filter, record) => filter.value === null || filter.value === record.config.enabled
+      }
+    },
     {
       title: '状态',
       index: 'status',
@@ -33,12 +56,12 @@ export class KongPluginComponent {
       type: 'tag',
       tag: {
         1: { text: '有效', color: 'green' },
-        0: { text: '停用', color: 'red' }
+        0: { text: '删除', color: 'red' }
       } as STColumnTag,
       filter: {
         menus: [
           { value: 1, text: '有效' },
-          { value: 0, text: '停用' }
+          { value: 0, text: '删除' }
         ],
         multiple: true,
         fn: (filter, record) => filter.value === null || filter.value === record.status
@@ -71,13 +94,14 @@ export class KongPluginComponent {
    * 构造函数
    *
    * @param kongProjectService 对象服务
-   * @param kongCertificateService 上游服务
+   * @param kongPluginService 插件服务
    * @param messageService 消息服务
    * @param modal 模式对话框
    */
   constructor(
     private kongHostService: KongHostService,
     private kongProjectService: KongProjectService,
+    private kongRouteService: KongRouteService,
     private kongPluginService: KongPluginService,
     private messageService: NzMessageService,
     private modal: ModalHelper
@@ -90,7 +114,7 @@ export class KongPluginComponent {
   }
 
   sync(): void {
-    this.kongProjectService.sync(this.hostId, 'certificate').subscribe((res: Result) => {
+    this.kongProjectService.sync(this.hostId, 'plugin').subscribe((res: Result) => {
       console.debug('同步结果', res);
       if (res.code) {
         this.messageService.warning(res.msg);
@@ -101,10 +125,18 @@ export class KongPluginComponent {
   }
 
   getData(): void {
-    this.kongPluginService.index(this.hostId).subscribe((data: any[]) => {
-      console.debug('获得数据', data);
-      this.data = data;
-    });
+    zip(this.kongPluginService.index(this.hostId), this.kongRouteService.index(this.hostId)).subscribe(
+      ([pluginList, routeList]: [any[], any[]]) => {
+        console.debug('处理前的数据', pluginList, routeList);
+        this.data = pluginList.map(item => {
+          return {
+            ...item,
+            routeName: item.config.route ? this.kongRouteService.routeMap.get(item.config.route.id).config.name : ''
+          };
+        });
+        console.debug('处理后的数据', this.data);
+      }
+    );
   }
 
   change(e: STChange): void {
@@ -115,11 +147,11 @@ export class KongPluginComponent {
   }
 
   add(): void {
-    this.modal.createStatic(KongPluginEditComponent, { hostId: this.hostId }).subscribe(() => this.getData());
+    this.modal.createStatic(KongPluginEditComponent, { hostId: this.hostId }, { size: 1800 }).subscribe(() => this.getData());
   }
 
   edit(id: string, copy: boolean): void {
-    this.modal.createStatic(KongPluginEditComponent, { hostId: this.hostId, id, copy }).subscribe(() => this.getData());
+    this.modal.createStatic(KongPluginEditComponent, { hostId: this.hostId, id, copy }, { size: 1800 }).subscribe(() => this.getData());
   }
 
   log(record: any): void {
@@ -127,14 +159,17 @@ export class KongPluginComponent {
       .createStatic(
         LogComponent,
         {
-          title: `查看证书${record.config.name}变更历史`,
-          url: `kong/certificate/${this.hostId}/${record.id}/log`,
+          title: `查看插件${record.config.name}变更历史`,
+          url: `kong/plugin/${this.hostId}/${record.id}/log`,
           columns: [
             { title: '日志ID', index: 'logId', width: 100 },
-            { title: '域名', format: item => item.config.snis.join() },
+            { title: '名称', index: 'config.name' },
+            { title: '路由', index: 'config.route?.id' },
+            { title: '协议', index: 'config.protocols' },
+            { title: '状态', index: 'config.enabled' },
             { title: '状态', index: 'status', width: 150 },
-            { title: '更新人', index: 'updateUserName', width: 150 },
-            { title: '更新时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
+            { title: '同步操作人', index: 'updateUserName', width: 150 },
+            { title: '同步时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
           ] as STColumn[]
         },
         { size: 'xl' }
@@ -145,9 +180,9 @@ export class KongPluginComponent {
   remove(id?: string): void {
     console.debug('删除ID', id);
     if (id) {
-      this.kongProjectService.remove(this.hostId, 'certificate', id).subscribe((res: any) => {
+      this.kongProjectService.remove(this.hostId, 'plugin', id).subscribe((res: any) => {
         if (res.code === 0) {
-          this.messageService.success(`删除证书${id}成功！`);
+          this.messageService.success(`删除插件${id}成功！`);
           this.getData();
         }
       });
@@ -155,9 +190,9 @@ export class KongPluginComponent {
       const allnum = this.checkRecords.length;
       let curnum = 0;
       for (const item of this.checkRecords) {
-        this.kongProjectService.remove(this.hostId, 'certificate', item['id']).subscribe((res: any) => {
+        this.kongProjectService.remove(this.hostId, 'plugin', item['id']).subscribe((res: any) => {
           if (res.code === 0) {
-            this.messageService.success(`删除证书${item['id']}成功！`);
+            this.messageService.success(`删除插件${item['id']}成功！`);
           }
           curnum++;
           if (allnum === curnum) {

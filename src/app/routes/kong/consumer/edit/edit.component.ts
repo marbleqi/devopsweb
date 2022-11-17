@@ -128,7 +128,7 @@ export class KongConsumerEditComponent implements OnInit {
   }
 
   params(value: any): any {
-    return { snis: value.config.snis, tags: value.config.tags, key: value.config.key, cert: value.config.cert };
+    return { custom_id: value.config.custom_id, username: value.config.username, tags: value.config.tags };
   }
 
   saveas(value: any): void {

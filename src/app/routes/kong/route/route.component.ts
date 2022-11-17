@@ -4,7 +4,7 @@ import { ModalHelper, _HttpClient } from '@delon/theme';
 import { Result, LogComponent } from '@shared';
 import { format, fromUnixTime } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { Observable, zip } from 'rxjs';
+import { zip } from 'rxjs';
 
 import {
   KongHostService,
@@ -50,7 +50,7 @@ export class KongRouteComponent {
     { title: '域名个数', format: item => item.config.hosts.length.toString() },
     {
       title: '路径',
-      index: 'paths',
+      index: 'config.paths',
       sort: { compare: (a, b) => a.config.paths.join().localeCompare(b.config.paths.join()) },
       filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.config.paths.join().indexOf(filter.value) !== -1 }
     },
@@ -106,6 +106,11 @@ export class KongRouteComponent {
   sync(): void {
     this.kongProjectService.sync(this.hostId, 'route').subscribe(res => {
       console.debug('同步结果', res);
+      if (res.code) {
+        this.messageService.warning(res.msg);
+      } else {
+        this.getData();
+      }
     });
   }
 
@@ -157,8 +162,8 @@ export class KongRouteComponent {
               { title: '日志ID', index: 'logId', width: 100 },
               { title: '名称', index: 'config.name', width: 100 },
               { title: '状态', index: 'status', width: 150 },
-              { title: '更新人', index: 'updateUserName', width: 150 },
-              { title: '更新时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
+              { title: '同步操作人', index: 'updateUserName', width: 150 },
+              { title: '同步时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
             ] as STColumn[]
           },
           { size: 'xl' }

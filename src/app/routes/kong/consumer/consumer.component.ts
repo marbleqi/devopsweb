@@ -19,12 +19,12 @@ export class KongConsumerComponent {
     { type: 'checkbox' },
     {
       title: '登录名',
-      render: 'consumers',
+      index: 'config.custom_id',
       filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.config.custom_id.indexOf(filter.value) !== -1 }
     },
     {
       title: '用户名',
-      index: 'username',
+      render: 'name',
       filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.config.username.indexOf(filter.value) !== -1 }
     },
     {
@@ -73,7 +73,7 @@ export class KongConsumerComponent {
    * 构造函数
    *
    * @param kongProjectService 对象服务
-   * @param kongUpstreamService 上游服务
+   * @param kongConsumerService 用户服务
    * @param messageService 消息服务
    * @param modal 模式对话框
    */
@@ -129,14 +129,15 @@ export class KongConsumerComponent {
       .createStatic(
         LogComponent,
         {
-          title: `查看用户${record.config.name}变更历史`,
+          title: `查看用户${record.config.username}变更历史`,
           url: `kong/consumer/${this.hostId}/${record.id}/log`,
           columns: [
             { title: '日志ID', index: 'logId', width: 100 },
-            { title: '名称', index: 'config.name', width: 100 },
+            { title: '登录名', index: 'config.custom_id', width: 100 },
+            { title: '姓名', index: 'config.username', width: 100 },
             { title: '状态', index: 'status', width: 150 },
-            { title: '更新人', index: 'updateUserName', width: 150 },
-            { title: '更新时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
+            { title: '同步操作人', index: 'updateUserName', width: 150 },
+            { title: '同步时间', index: 'updateAt', type: 'date', dateFormat: 'yyyy-MM-dd HH:mm:ss.SSS', width: 170 }
           ] as STColumn[]
         },
         { size: 'xl' }
@@ -147,7 +148,7 @@ export class KongConsumerComponent {
   remove(id?: string): void {
     console.debug('删除ID', id);
     if (id) {
-      this.kongProjectService.remove(this.hostId, 'upstream', id).subscribe((res: any) => {
+      this.kongProjectService.remove(this.hostId, 'consumer', id).subscribe((res: any) => {
         if (res.code === 0) {
           this.messageService.success(`删除用户${id}成功！`);
           this.getData();
@@ -157,7 +158,7 @@ export class KongConsumerComponent {
       const allNum = this.checkRecords.length;
       let curNum = 0;
       for (const item of this.checkRecords) {
-        this.kongProjectService.remove(this.hostId, 'upstream', item['id']).subscribe((res: any) => {
+        this.kongProjectService.remove(this.hostId, 'consumer', item['id']).subscribe((res: any) => {
           if (res.code === 0) {
             this.messageService.success(`删除用户${item['id']}成功！`);
           }

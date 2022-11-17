@@ -182,35 +182,23 @@ export class KongRouteEditComponent implements OnInit {
   }
 
   params(value: any): any {
-    if (value.config.type === 'upstream') {
-      return {
-        name: value.config.name,
-        retries: value.config.retries,
-        host: value.config.host,
-        protocol: 'http',
-        port: 80,
-        path: '/',
-        tags: value.config.tags,
-        connect_timeout: value.config.connect_timeout,
-        write_timeout: value.config.write_timeout,
-        read_timeout: value.config.read_timeout
-      };
-    } else {
-      return {
-        name: value.config.name,
-        retries: value.config.retries,
-        url: value.config.url,
-        tags: value.config.tags,
-        connect_timeout: value.config.connect_timeout,
-        write_timeout: value.config.write_timeout,
-        read_timeout: value.config.read_timeout
-      };
-    }
+    return {
+      name: value.config.name,
+      protocols: value.config.protocols,
+      methods: value.config.methods,
+      hosts: value.config.hosts,
+      paths: value.config.paths,
+      regex_priority: value.config.regex_priority,
+      strip_path: value.config.strip_path,
+      preserve_host: value.config.preserve_host,
+      service: value.config.service,
+      tags: value.config.tags
+    };
   }
 
   saveas(value: any): void {
     this.loading = true;
-    this.kongProjectService.create(value.hostId, 'service', this.params(value)).subscribe(res => {
+    this.kongProjectService.create(value.hostId, 'route', this.params(value)).subscribe(res => {
       if (res.code) {
         this.messageService.error(res.msg);
       } else {
@@ -223,7 +211,7 @@ export class KongRouteEditComponent implements OnInit {
 
   save(value: any): void {
     this.loading = true;
-    this.kongProjectService.update(value.hostId, 'service', this.id, this.params(value)).subscribe(res => {
+    this.kongProjectService.update(value.hostId, 'route', this.id, this.params(value)).subscribe(res => {
       if (res.code) {
         this.messageService.error(res.msg);
       } else {

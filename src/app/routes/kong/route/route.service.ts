@@ -11,7 +11,7 @@ export class KongRouteService {
   /**操作序号 */
   private operateId: number;
   /**缓存的路由列表 */
-  private routeMap: Map<string, any>;
+  routeMap: Map<string, any>;
 
   /**
    * 构建函数

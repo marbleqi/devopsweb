@@ -26,6 +26,24 @@ export class KongPluginService {
   }
 
   /**
+   * 可用的插件类型
+   *
+   * @param hostId 站点ID
+   * @returns 插件列表
+   */
+  plugin(hostId: number): Observable<string[]> {
+    return this.clientService.get(`kong/plugin/${hostId}/plugin`).pipe(
+      map((res: Result) => {
+        if (res.code) {
+          return [];
+        } else {
+          return res.data.sort((a: string, b: string) => a.localeCompare(b));
+        }
+      })
+    );
+  }
+
+  /**
    * 获取插件列表
    *
    * @param hostId 站点ID
