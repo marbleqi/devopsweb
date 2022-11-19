@@ -33,12 +33,12 @@ export class KongCertificateComponent {
       type: 'tag',
       tag: {
         1: { text: '有效', color: 'green' },
-        0: { text: '停用', color: 'red' }
+        0: { text: '已删除', color: 'red' }
       } as STColumnTag,
       filter: {
         menus: [
           { value: 1, text: '有效' },
-          { value: 0, text: '停用' }
+          { value: 0, text: '已删除' }
         ],
         multiple: true,
         fn: (filter, record) => filter.value === null || filter.value === record.status

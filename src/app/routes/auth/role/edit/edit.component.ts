@@ -29,7 +29,7 @@ export class AuthRoleEditComponent implements OnInit {
         title: '状态',
         default: 1,
         enum: [
-          { value: 1, label: '启用' },
+          { value: 1, label: '有效' },
           { value: 0, label: '禁用' }
         ]
       },

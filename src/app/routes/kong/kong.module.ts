@@ -11,6 +11,7 @@ import {
   KongRouteService,
   KongConsumerService,
   KongPluginService,
+  KongGrantService,
   KongHostEditComponent,
   KongHostComponent,
   KongProjectComponent,
@@ -28,6 +29,7 @@ import {
   KongConsumerComponent,
   KongPluginEditComponent,
   KongPluginComponent,
+  KongGrantComponent,
   KongNewComponent,
   KongRoutingModule
 } from '.';
@@ -50,7 +52,8 @@ const COMPONENTS: Array<Type<void>> = [
   KongTargetEditComponent,
   KongUpstreamEditComponent,
   KongCertificateEditComponent,
-  KongConsumerEditComponent
+  KongConsumerEditComponent,
+  KongGrantComponent
 ];
 
 @NgModule({
@@ -65,7 +68,8 @@ const COMPONENTS: Array<Type<void>> = [
     KongCertificateService,
     KongUpstreamService,
     KongTargetService,
-    KongPluginService
+    KongPluginService,
+    KongGrantService
   ]
 })
 export class KongModule {}

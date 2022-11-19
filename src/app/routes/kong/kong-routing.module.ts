@@ -11,7 +11,8 @@ import {
   KongRouteComponent,
   KongConsumerComponent,
   KongPluginComponent,
-  KongNewComponent
+  KongNewComponent,
+  KongGrantComponent
 } from '.';
 
 const routes: Routes = [
@@ -24,7 +25,8 @@ const routes: Routes = [
   { path: 'certificate', component: KongCertificateComponent },
   { path: 'upstream', component: KongUpstreamComponent },
   { path: 'target', component: KongTargetComponent },
-  { path: 'plugin', component: KongPluginComponent }
+  { path: 'plugin', component: KongPluginComponent },
+  { path: 'grant', component: KongGrantComponent }
 ];
 
 @NgModule({

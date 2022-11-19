@@ -39,8 +39,16 @@ export class AuthRoleComponent implements OnInit, OnReuseInit {
       type: 'tag',
       tag: {
         1: { text: '有效', color: 'green' },
-        0: { text: '停用', color: 'red' }
-      } as STColumnTag
+        0: { text: '禁用', color: 'red' }
+      } as STColumnTag,
+      filter: {
+        menus: [
+          { value: 1, text: '有效' },
+          { value: 0, text: '禁用' }
+        ],
+        multiple: true,
+        fn: (filter, record) => filter.value === null || filter.value === record.status
+      }
     },
     { title: '更新人', index: 'updateUserName', width: 150 },
     {

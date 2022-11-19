@@ -36,13 +36,13 @@ export class KongPluginComponent {
       index: 'config.enabled',
       type: 'tag',
       tag: {
-        true: { text: '启用', color: 'green' },
-        false: { text: '停用', color: 'red' }
+        true: { text: '有效', color: 'green' },
+        false: { text: '禁用', color: 'red' }
       } as STColumnTag,
       filter: {
         menus: [
-          { value: true, text: '启用' },
-          { value: false, text: '停用' }
+          { value: true, text: '有效' },
+          { value: false, text: '禁用' }
         ],
         multiple: true,
         fn: (filter, record) => filter.value === null || filter.value === record.config.enabled
@@ -56,12 +56,12 @@ export class KongPluginComponent {
       type: 'tag',
       tag: {
         1: { text: '有效', color: 'green' },
-        0: { text: '删除', color: 'red' }
+        0: { text: '已删除', color: 'red' }
       } as STColumnTag,
       filter: {
         menus: [
           { value: 1, text: '有效' },
-          { value: 0, text: '删除' }
+          { value: 0, text: '已删除' }
         ],
         multiple: true,
         fn: (filter, record) => filter.value === null || filter.value === record.status

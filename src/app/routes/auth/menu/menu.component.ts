@@ -68,8 +68,16 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
       type: 'tag',
       tag: {
         1: { text: '有效', color: 'green' },
-        0: { text: '停用', color: 'red' }
-      } as STColumnTag
+        0: { text: '禁用', color: 'red' }
+      } as STColumnTag,
+      filter: {
+        menus: [
+          { value: 1, text: '有效' },
+          { value: 0, text: '禁用' }
+        ],
+        multiple: true,
+        fn: (filter, record) => filter.value === null || filter.value === record.status
+      }
     },
     { title: '更新人', index: 'updateUserName', width: 150 },
     {
@@ -87,14 +95,14 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
           text: '编辑',
           icon: 'edit',
           type: 'modal',
-          modal: { component: AuthMenuEditComponent, params: () => ({ copy: false }), size: 1800 },
+          modal: { component: AuthMenuEditComponent, params: () => ({ copy: false }) },
           click: (record, modal) => this.getData(modal)
         },
         {
           text: '复制',
           icon: 'copy',
           type: 'modal',
-          modal: { component: AuthMenuEditComponent, params: () => ({ copy: true }), size: 1800 },
+          modal: { component: AuthMenuEditComponent, params: () => ({ copy: true }) },
           click: (record, modal) => this.getData(modal)
         },
         {
