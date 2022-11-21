@@ -49,7 +49,7 @@ export class KongServiceComponent {
       } as STColumnTag,
       filter: {
         menus: [
-          { value: 1, text: '有效' },
+          { value: 1, text: '有效', checked: true },
           { value: 0, text: '已删除' }
         ],
         multiple: true,

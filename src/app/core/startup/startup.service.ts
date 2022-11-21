@@ -39,16 +39,21 @@ export class StartupService {
         this.baseService.baseUrl = res.baseUrl;
         console.debug(`获取token`, this.tokenService.get());
         const token = this.tokenService.get()?.token;
+        // 判断令牌有效性
         if (token) {
+          // 当令牌有效时，初始化应用信息的同时，也尝试初始化用户信息
           return this.clientService.get('common/init/startup').pipe(
             mergeMap((res: NzSafeAny) => {
               // 设置应用信息：包括应用名称，说明等
               this.settingService.setApp(res.data.app);
               // 设置浏览器标题栏后缀
               this.titleService.suffix = res.data.app.title || '管理平台';
+              // 判断响应结果
               if (res.code) {
+                // 当响应异常时，返回异常消息
                 throw res.msg;
               } else {
+                // 当响应正常时，开始在前端初始化用户基础数据
                 // 设置用户信息：包括姓名，头像
                 this.settingService.setUser(res.data.user);
                 // 设置用户权限点
@@ -61,6 +66,7 @@ export class StartupService {
             })
           );
         } else {
+          // 当令牌无效时，只初始化应用信息
           return this.clientService.get('passport/startup').pipe(
             map((res: NzSafeAny) => {
               if (res.code) {

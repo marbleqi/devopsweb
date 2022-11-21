@@ -72,7 +72,7 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
       } as STColumnTag,
       filter: {
         menus: [
-          { value: 1, text: '有效' },
+          { value: 1, text: '有效', checked: true },
           { value: 0, text: '禁用' }
         ],
         multiple: true,

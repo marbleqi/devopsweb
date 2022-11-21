@@ -406,7 +406,6 @@ export class AuthMenuEditComponent implements OnInit {
   }
 
   saveas(value: any): void {
-    console.debug('value', value);
     this.menuService.create(value).subscribe(res => {
       if (res.code) {
         this.messageService.error(res.msg);
@@ -418,7 +417,6 @@ export class AuthMenuEditComponent implements OnInit {
   }
 
   save(value: any): void {
-    console.debug('value', value);
     this.menuService.update(this.record.menuId, value).subscribe(res => {
       if (res.code) {
         this.messageService.error(res.msg);
@@ -430,6 +428,6 @@ export class AuthMenuEditComponent implements OnInit {
   }
 
   close(): void {
-    this.modal.destroy(this.pMenuId);
+    this.modal.destroy(this.record.pmenuid);
   }
 }

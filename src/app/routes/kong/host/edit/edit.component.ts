@@ -1,9 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SFSchema, SFUISchema } from '@delon/form';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
-import { NzTreeComponent, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
-import { map } from 'rxjs';
 
 import { KongHostService } from '../..';
 

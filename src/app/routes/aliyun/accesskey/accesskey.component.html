@@ -1,9 +1,8 @@
-<page-header [action]="phActionTpl">
+<page-header title="密钥" [action]="phActionTpl">
   <ng-template #phActionTpl>
-    <button (click)="add()" nz-button nzType="primary">新建</button>
+    <button nz-button (click)="getData()">刷新</button>
+    <button nz-button nzType="primary" (click)="add()">新建</button>
+    <button nz-button nzType="primary" (click)="sort()" [disabled]="dissort">排序</button>
   </ng-template>
 </page-header>
-<nz-card>
-  <sf mode="search" [schema]="searchSchema" (formSubmit)="st.reset($event)" (formReset)="st.reset($event)"></sf>
-  <st #st [data]="url" [columns]="columns"></st>
-</nz-card>
+<st #st [data]="stData" [columns]="columns"></st>

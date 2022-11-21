@@ -63,7 +63,7 @@ export class KongHostService {
     return this.clientService.get(`kong/host/${hostId}/show`).pipe(
       map((res: Result) => {
         if (res.code) {
-          return { hostId, abilities: [] };
+          return { hostId };
         } else {
           return {
             ...res.data,

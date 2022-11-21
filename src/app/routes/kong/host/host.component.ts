@@ -42,7 +42,7 @@ export class KongHostComponent implements OnInit, OnReuseInit {
       } as STColumnTag,
       filter: {
         menus: [
-          { value: 1, text: '有效' },
+          { value: 1, text: '有效', checked: true },
           { value: 0, text: '禁用' }
         ],
         multiple: true,
@@ -105,9 +105,7 @@ export class KongHostComponent implements OnInit, OnReuseInit {
   constructor(private baseService: BaseService, private hostService: KongHostService, private modal: ModalHelper) {}
 
   ngOnInit(): void {
-    console.debug('窗体内高', window.innerHeight);
     this.baseService.menuWebSub.next('kong');
-    this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.getData();
   }
 
@@ -116,9 +114,8 @@ export class KongHostComponent implements OnInit, OnReuseInit {
   }
 
   getData(operateId?: number): void {
-    this.hostService.index(operateId).subscribe(roleList => {
-      console.debug('res', roleList);
-      this.stData = roleList;
+    this.hostService.index(operateId).subscribe(hostList => {
+      this.stData = hostList;
       this.dissort = this.stData.length < 2;
     });
   }

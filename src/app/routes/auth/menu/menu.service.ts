@@ -82,10 +82,10 @@ export class AuthMenuService {
   params(value: any) {
     return {
       pMenuId: value.pMenuId,
+      link: value.link,
       config: {
         text: value.config.text,
         description: value.config.description,
-        link: value.config.link,
         reuse: value.config.reuse,
         isLeaf: value.config.isLeaf,
         icon: value.config.icon
