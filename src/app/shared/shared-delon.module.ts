@@ -6,6 +6,7 @@ import { ReuseTabModule } from '@delon/abc/reuse-tab';
 import { SEModule } from '@delon/abc/se';
 import { STModule } from '@delon/abc/st';
 import { SVModule } from '@delon/abc/sv';
+import { XlsxModule } from '@delon/abc/xlsx';
 
 export const SHARED_DELON_MODULES = [
   OnboardingModule,
@@ -15,5 +16,6 @@ export const SHARED_DELON_MODULES = [
   SEModule,
   SVModule,
   ResultModule,
-  EllipsisModule
+  EllipsisModule,
+  XlsxModule
 ];

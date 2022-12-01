@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { STColumn, STColumnTag, STData, STChange } from '@delon/abc/st';
+import { XlsxService } from '@delon/abc/xlsx';
 import { ModalHelper, _HttpClient } from '@delon/theme';
 import { Result, LogComponent } from '@shared';
 import { format, fromUnixTime } from 'date-fns';
@@ -102,6 +103,7 @@ export class KongRouteComponent {
     private kongServiceService: KongServiceService,
     private kongRouteService: KongRouteService,
     private messageService: NzMessageService,
+    private xlsxService: XlsxService,
     private modal: ModalHelper
   ) {}
 

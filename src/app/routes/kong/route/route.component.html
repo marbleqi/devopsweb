@@ -4,6 +4,7 @@
   [disremove]="disremove"
   (hostChange)="hostChange($event)"
   (getData)="getData()"
+  (export)="st.export(data, { filename: 'KONG路由记录.xlsx', sheetname: '路由记录' })"
   (sync)="sync()"
   (add)="add()"
   (remove)="remove($event)"

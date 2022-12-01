@@ -3,6 +3,7 @@
     <button nz-button [disabled]="disfresh" (click)="getData.emit()">刷新</button>
     <button nz-button [disabled]="dissync" (click)="sync.emit()">同步</button>
     <button nz-button nzType="primary" [disabled]="discreate" (click)="add.emit()">新建</button>
+    <button nz-button [disabled]="disexport" (click)="export.emit()">导出</button>
   </ng-template>
 </page-header>
 <sf #sf mode="search" [schema]="schema" [ui]="ui" [formData]="i" button="none">

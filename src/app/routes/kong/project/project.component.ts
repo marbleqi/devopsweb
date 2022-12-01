@@ -15,6 +15,7 @@ export class KongProjectComponent implements OnInit, OnReuseInit {
   discreate = true;
   dissync = true;
   disfresh = true;
+  disexport = true;
   hostSubject: Subject<SFSchemaEnum[]>;
   @Input() project!: string;
   @Input() title!: string;
@@ -22,6 +23,7 @@ export class KongProjectComponent implements OnInit, OnReuseInit {
   @Output() readonly hostChange = new EventEmitter<number>();
   @Output() readonly getData = new EventEmitter();
   @Output() readonly sync = new EventEmitter();
+  @Output() readonly export = new EventEmitter();
   @Output() readonly add = new EventEmitter();
   @Output() readonly remove = new EventEmitter();
   schema: SFSchema = { properties: { hostId: { type: 'number', title: '站点', default: this.kongHostService.hostId } } };
@@ -36,6 +38,7 @@ export class KongProjectComponent implements OnInit, OnReuseInit {
         if (value) {
           this.disfresh = false;
           this.discreate = false;
+          this.disexport = false;
           this.dissync = false;
           this.kongHostService.hostId = value;
           this.hostChange.emit(value);
