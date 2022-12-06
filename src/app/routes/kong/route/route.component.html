@@ -4,7 +4,7 @@
   [disremove]="disremove"
   (hostChange)="hostChange($event)"
   (getData)="getData()"
-  (export)="st.export(data, { filename: 'KONG路由记录.xlsx', sheetname: '路由记录' })"
+  (export)="export()"
   (sync)="sync()"
   (add)="add()"
   (remove)="remove($event)"
@@ -22,8 +22,8 @@
       </ng-template>
     </ng-template>
     <ng-template st-row="service" let-item>
-      <a *ngIf="item.serviceName" nz-button nzType="link" nz-popover nzPopoverTrigger="click" [nzPopoverContent]="editButton">
-        {{ item.serviceName }}
+      <a *ngIf="item.service" nz-button nzType="link" nz-popover nzPopoverTrigger="click" [nzPopoverContent]="editButton">
+        {{ item.service.config?.name ? item.service.config?.name : '无' }}
       </a>
       <ng-template #editButton>
         <a nz-button nzType="link" (click)="edit('service', item, false)">编辑</a>

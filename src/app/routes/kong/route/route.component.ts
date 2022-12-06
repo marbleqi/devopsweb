@@ -128,15 +128,54 @@ export class KongRouteComponent {
     zip(this.kongRouteService.index(this.hostId), this.kongServiceService.index(this.hostId)).subscribe(
       ([routeList, serviceList]: [any[], any[]]) => {
         console.debug('处理前的数据', routeList, serviceList);
-        this.data = routeList.map(item => {
-          return {
-            ...item,
-            serviceName: item.config.service ? this.kongServiceService.serviceMap.get(item.config.service.id).config.name : ''
-          };
-        });
+        console.debug(
+          'config含服务路由',
+          routeList.filter(item => item?.config?.service).map(item => this.kongServiceService.serviceMap.get(item.config.service.id))
+        );
+        this.data = routeList
+          .filter(item => item.status)
+          .map(item => {
+            return {
+              ...item,
+              service: item?.config?.service ? this.kongServiceService.serviceMap.get(item.config.service.id) : null
+            };
+          });
         console.debug('处理后的数据', this.data);
+        console.debug(
+          '处理后的无服务数据',
+          this.data.filter(item => !item['service'])
+        );
       }
     );
+  }
+
+  export() {
+    const data = [['路由ID', '路由名', '状态', '域名', '路由路径', '服务名', '服务地址']];
+    for (const routeItem of this.data) {
+      for (const hostItem of routeItem['config']['hosts'] as string[]) {
+        data.push([
+          routeItem['id'],
+          routeItem['config']['name'],
+          routeItem['status'],
+          hostItem,
+          routeItem['config']['paths'].join(),
+          routeItem['serviceName'],
+          routeItem['service']
+            ? `${routeItem['service']['config']['protocol']}://${routeItem['service']['config']['host']}:${routeItem['service']['config']['port']}${routeItem['service']['config']['path']}`
+            : ''
+        ]);
+      }
+    }
+    console.debug('data', data);
+    this.xlsxService.export({
+      sheets: [
+        {
+          data,
+          name: '路由记录'
+        }
+      ],
+      filename: 'KONG路由记录.xlsx'
+    });
   }
 
   change(e: STChange): void {
