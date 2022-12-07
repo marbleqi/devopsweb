@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { BaseService } from '@core';
 import { OnReuseInit } from '@delon/abc/reuse-tab';
-import { STColumn, STData, STChange, STComponent } from '@delon/abc/st';
+import { STColumn, STData, STChange } from '@delon/abc/st';
+import { XlsxService } from '@delon/abc/xlsx';
 import { SFSchema, SFUISchema } from '@delon/form';
-import { ModalHelper, _HttpClient } from '@delon/theme';
+import { format, fromUnixTime } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { SysQueueService, SysQueueViewComponent } from '..';
@@ -12,7 +13,7 @@ import { SysQueueService, SysQueueViewComponent } from '..';
   selector: 'app-sys-queue',
   templateUrl: './queue.component.html'
 })
-export class SysQueueComponent implements OnInit {
+export class SysQueueComponent implements OnInit, OnReuseInit {
   disremove = true;
   i: any;
   value: any;
@@ -55,7 +56,6 @@ export class SysQueueComponent implements OnInit {
   };
   stData: STData[] = [];
   checkData: STData[] = [];
-  scroll!: { x?: string; y?: string };
   columns: STColumn[] = [
     { type: 'checkbox' },
     {
@@ -76,12 +76,15 @@ export class SysQueueComponent implements OnInit {
     { title: '操作', buttons: [{ text: '查看', icon: 'file', type: 'modal', modal: { component: SysQueueViewComponent } }] }
   ];
 
-  constructor(private queueService: SysQueueService, private messageService: NzMessageService, private baseService: BaseService) {}
+  constructor(
+    private queueService: SysQueueService,
+    private xlsxService: XlsxService,
+    private messageService: NzMessageService,
+    private baseService: BaseService
+  ) {}
 
   ngOnInit(): void {
-    console.debug('窗体内高', window.innerHeight);
     this.baseService.menuWebSub.next('sys');
-    this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.i = {
       types: ['active', 'completed', 'delayed', 'failed', 'paused', 'waiting'],
       range: [Date.now() - 86400000, Date.now()],
@@ -100,6 +103,23 @@ export class SysQueueComponent implements OnInit {
     this.queueService.index(this.value).subscribe((data: STData[]) => {
       console.debug('data', data);
       this.stData = data;
+    });
+  }
+
+  export() {
+    const data = [['任务ID', '任务名', '时间戳']];
+    for (const jobItem of this.stData) {
+      data.push([jobItem['id'], jobItem['name'], format(jobItem['timestamp'], 'yyyy-MM-dd HH:mm:ss.SSS')]);
+    }
+    console.debug('data', data);
+    this.xlsxService.export({
+      sheets: [
+        {
+          data,
+          name: '消息队列记录'
+        }
+      ],
+      filename: '消息队列记录.xlsx'
     });
   }
 

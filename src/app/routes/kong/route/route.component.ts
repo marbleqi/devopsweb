@@ -132,14 +132,12 @@ export class KongRouteComponent {
           'config含服务路由',
           routeList.filter(item => item?.config?.service).map(item => this.kongServiceService.serviceMap.get(item.config.service.id))
         );
-        this.data = routeList
-          .filter(item => item.status)
-          .map(item => {
-            return {
-              ...item,
-              service: item?.config?.service ? this.kongServiceService.serviceMap.get(item.config.service.id) : null
-            };
-          });
+        this.data = routeList.map(item => {
+          return {
+            ...item,
+            service: item?.config?.service ? this.kongServiceService.serviceMap.get(item.config.service.id) : null
+          };
+        });
         console.debug('处理后的数据', this.data);
         console.debug(
           '处理后的无服务数据',
@@ -159,7 +157,7 @@ export class KongRouteComponent {
           routeItem['status'],
           hostItem,
           routeItem['config']['paths'].join(),
-          routeItem['serviceName'],
+          routeItem['service'] ? routeItem['service']['config']['name'] : '',
           routeItem['service']
             ? `${routeItem['service']['config']['protocol']}://${routeItem['service']['config']['host']}:${routeItem['service']['config']['port']}${routeItem['service']['config']['path']}`
             : ''
@@ -248,6 +246,7 @@ export class KongRouteComponent {
           this.messageService.success('删除成功！');
         }
       });
+      return;
     }
     if (record) {
       this.checkRecords = [record];
