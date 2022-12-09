@@ -14,7 +14,6 @@ export class KongHostComponent implements OnInit, OnReuseInit {
   dissort = true;
   @ViewChild('st') private st!: STComponent;
   stData: STData[] = [];
-  scroll!: { x?: string; y?: string };
   columns: STColumn[] = [
     { title: '站点ID', index: 'hostId', width: 100, sort: { compare: (a, b) => a.roleId - b.roleId } },
     {

@@ -8,7 +8,7 @@ import { AuthDashboardService } from '..';
   selector: 'app-auth-dashboard',
   templateUrl: './dashboard.component.html'
 })
-export class AuthDashboardComponent implements OnInit {
+export class AuthDashboardComponent implements OnInit, OnReuseInit {
   constructor(private dashboardService: AuthDashboardService, private baseService: BaseService) {}
 
   ngOnInit(): void {

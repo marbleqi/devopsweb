@@ -125,7 +125,7 @@ export class KongRouteEditComponent implements OnInit {
         this.buttonName = '';
         this.ui['$hostId'].hidden = true;
       }
-      this.i = { hostId: this.hostId };
+      // this.i = { hostId: this.hostId };
       this.kongProjectService.show(this.hostId, 'route', this.id).subscribe(res => {
         console.debug('路由编辑页面获取的数据', res);
         if (res.apidata) {

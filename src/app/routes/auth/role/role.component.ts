@@ -15,7 +15,6 @@ export class AuthRoleComponent implements OnInit, OnReuseInit {
   dissort = true;
   @ViewChild('st') private st!: STComponent;
   stData: STData[] = [];
-  scroll!: { x?: string; y?: string };
   columns: STColumn[] = [
     { title: '角色ID', index: 'roleId', width: 100, sort: { compare: (a, b) => a.roleId - b.roleId } },
     {
@@ -112,9 +111,7 @@ export class AuthRoleComponent implements OnInit, OnReuseInit {
   constructor(private baseService: BaseService, private roleService: AuthRoleService, private modal: ModalHelper) {}
 
   ngOnInit(): void {
-    console.debug('窗体内高', window.innerHeight);
     this.baseService.menuWebSub.next('auth');
-    this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.getData();
   }
 

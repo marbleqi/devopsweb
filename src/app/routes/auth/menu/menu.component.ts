@@ -34,7 +34,6 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
       asyncData: () => this.menuSubject.asObservable()
     }
   };
-  scroll!: { x?: string; y?: string };
   stData!: STData[];
   columns: STColumn[] = [
     { title: '菜单ID', index: 'menuId', width: 100, sort: { compare: (a, b) => a.menuId - b.menuId } },
@@ -96,14 +95,14 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
           icon: 'edit',
           type: 'modal',
           modal: { component: AuthMenuEditComponent, params: () => ({ copy: false }) },
-          click: (record, modal) => this.getData(modal)
+          click: modal => this.getData(modal)
         },
         {
           text: '复制',
           icon: 'copy',
           type: 'modal',
           modal: { component: AuthMenuEditComponent, params: () => ({ copy: true }) },
-          click: (record, modal) => this.getData(modal)
+          click: modal => this.getData(modal)
         },
         {
           text: '变更历史',
@@ -127,7 +126,7 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
             }),
             size: 1800
           },
-          click: (record, modal) => this.getData(modal)
+          click: modal => this.getData(modal)
         }
       ]
     }
@@ -147,8 +146,6 @@ export class AuthMenuComponent implements OnInit, OnReuseInit {
   ngOnInit(): void {
     console.debug('菜单初始化函数执行');
     this.columns = this.columns.map((item: STColumn) => ({ ...item, className: 'text-center' }));
-    console.debug('窗体内高', window.innerHeight);
-    this.scroll = { y: `${(window.innerHeight - 489).toString()}px` };
     this.reload();
     this.i = { pMenuId: 0 };
     this.getData(0);

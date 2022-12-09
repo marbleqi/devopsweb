@@ -35,11 +35,11 @@ export class KongRouteComponent {
       title: '服务',
       render: 'service',
       sort: {
-        compare: (a, b) => a.serviceName.localeCompare(b.serviceName)
+        compare: (a, b) => a.service.config.name.localeCompare(b.service.config.name)
       },
       filter: {
         type: 'keyword',
-        fn: (filter, record) => !filter.value || (record?.service_name && record.service_name.indexOf(filter.value) !== -1)
+        fn: (filter, record) => !filter.value || (record?.service && record.service.config.name.indexOf(filter.value) !== -1)
       }
     },
     {
@@ -150,19 +150,17 @@ export class KongRouteComponent {
   export() {
     const data = [['路由ID', '路由名', '状态', '域名', '路由路径', '服务名', '服务地址']];
     for (const routeItem of this.data) {
-      for (const hostItem of routeItem['config']['hosts'] as string[]) {
-        data.push([
-          routeItem['id'],
-          routeItem['config']['name'],
-          routeItem['status'],
-          hostItem,
-          routeItem['config']['paths'].join(),
-          routeItem['service'] ? routeItem['service']['config']['name'] : '',
-          routeItem['service']
-            ? `${routeItem['service']['config']['protocol']}://${routeItem['service']['config']['host']}:${routeItem['service']['config']['port']}${routeItem['service']['config']['path']}`
-            : ''
-        ]);
-      }
+      data.push([
+        routeItem['id'],
+        routeItem['config']['name'],
+        routeItem['status'],
+        routeItem['config']['hosts'].join(),
+        routeItem['config']['paths'].join(),
+        routeItem['service'] ? routeItem['service']['config']['name'] : '',
+        routeItem['service']
+          ? `${routeItem['service']['config']['protocol']}://${routeItem['service']['config']['host']}:${routeItem['service']['config']['port']}${routeItem['service']['config']['path']}`
+          : ''
+      ]);
     }
     console.debug('data', data);
     this.xlsxService.export({

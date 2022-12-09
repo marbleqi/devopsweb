@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BaseService } from '@core';
 import { OnReuseInit } from '@delon/abc/reuse-tab';
 import { STColumn, STData } from '@delon/abc/st';
+import { XlsxService } from '@delon/abc/xlsx';
 import { ModalHelper } from '@delon/theme';
 
 import { AuthAbilityService, AuthAbilityGrantComponent } from '..';
@@ -67,7 +68,12 @@ export class AuthAbilityComponent implements OnInit, OnReuseInit {
     }
   ];
 
-  constructor(private abilityService: AuthAbilityService, private baseService: BaseService, private modal: ModalHelper) {}
+  constructor(
+    private abilityService: AuthAbilityService,
+    private baseService: BaseService,
+    private xlsxService: XlsxService,
+    private modal: ModalHelper
+  ) {}
 
   ngOnInit(): void {
     this.baseService.menuWebSub.next('auth');
@@ -79,9 +85,32 @@ export class AuthAbilityComponent implements OnInit, OnReuseInit {
   }
 
   getData(): void {
-    console.debug('刷新');
     this.abilityService.index().subscribe(res => {
       this.stData = res;
+    });
+  }
+
+  export() {
+    const data = [['权限点ID', '上级权限点ID', '权限', '权限说明', '类型', '模块', '对象']];
+    for (const routeItem of this.stData) {
+      data.push([
+        routeItem['id'],
+        routeItem['pid'],
+        routeItem['name'],
+        routeItem['description'],
+        routeItem['type'],
+        routeItem['moduleName'],
+        routeItem['objectName']
+      ]);
+    }
+    this.xlsxService.export({
+      sheets: [
+        {
+          data,
+          name: '权限点清单记录'
+        }
+      ],
+      filename: '权限点清单记录.xlsx'
     });
   }
 

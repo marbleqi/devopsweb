@@ -10,11 +10,10 @@ import { AliyunAccesskeyService, AliyunAccesskeyEditComponent } from '..';
   selector: 'app-aliyun-accesskey',
   templateUrl: './accesskey.component.html'
 })
-export class AliyunAccesskeyComponent implements OnInit {
+export class AliyunAccesskeyComponent implements OnInit, OnReuseInit {
   dissort = true;
   @ViewChild('st') private st!: STComponent;
   stData: STData[] = [];
-  scroll!: { x?: string; y?: string };
   columns: STColumn[] = [
     { title: '密钥ID', index: 'keyId', width: 100, sort: { compare: (a, b) => a.keyId - b.keyId } },
     {

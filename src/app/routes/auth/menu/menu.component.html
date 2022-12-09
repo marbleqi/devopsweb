@@ -10,7 +10,7 @@
     <i nz-icon nzType="reload" nz-popover nzPopoverContent="刷新选项"></i>
   </button>
 </sf>
-<st #st [data]="stData" [columns]="columns" [scroll]="scroll">
+<st #st [data]="stData" [columns]="columns">
   <ng-template st-row="name" let-item>
     <a nz-button nzType="link" nz-popover nzPopoverTrigger="click" [nzPopoverContent]="editButton">
       {{ item.config.text }}

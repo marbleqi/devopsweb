@@ -15,7 +15,6 @@ import { AuthUserService, AuthUserEditComponent, AuthUserResetComponent } from '
 export class AuthUserComponent implements OnInit, OnReuseInit {
   loading: boolean = false;
   stData: STData[] = [];
-  scroll!: { x?: string; y?: string };
   columns: STColumn[] = [
     { title: '用户ID', index: 'userId', width: 100, sort: { compare: (a, b) => a.userId - b.userId } },
     {
@@ -125,8 +124,6 @@ export class AuthUserComponent implements OnInit, OnReuseInit {
 
   ngOnInit(): void {
     this.baseService.menuWebSub.next('auth');
-    console.debug('窗体内高', window.innerHeight);
-    this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.getData();
   }
 

@@ -14,15 +14,12 @@ export class AuthTokenComponent implements OnInit, OnReuseInit {
   disremove = true;
   stData: STData[] = [];
   checkData: STData[] = [];
-  scroll!: { x?: string; y?: string };
   columns: STColumn[] = [{}];
 
   constructor(private tokenService: AuthTokenService, private messageService: NzMessageService, private baseService: BaseService) {}
 
   ngOnInit(): void {
-    console.debug('窗体内高', window.innerHeight);
     this.baseService.menuWebSub.next('auth');
-    this.scroll = { y: `${(window.innerHeight - 0).toString()}px` };
     this.columns = [
       { type: 'checkbox' },
       {

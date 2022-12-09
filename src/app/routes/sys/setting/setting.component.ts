@@ -53,13 +53,11 @@ export class SysSettingComponent implements OnInit, OnReuseInit {
 
   ngOnInit(): void {
     this.baseService.menuWebSub.next('sys');
-    console.debug('页面自身初始化');
     this.reset();
   }
 
   _onReuseInit(): void {
     this.baseService.menuWebSub.next('sys');
-    console.debug('页面路由复用初始化');
     this.reset();
   }
 
