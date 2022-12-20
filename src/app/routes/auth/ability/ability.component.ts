@@ -32,8 +32,15 @@ export class AuthAbilityComponent implements OnInit, OnReuseInit {
     {
       title: '类型',
       index: 'type',
-      sort: { compare: (a, b) => a.type.localeCompare(b.type) },
-      filter: { type: 'keyword', fn: (filter, record) => !filter.value || record.description.includes(filter.value) }
+      filter: {
+        menus: [
+          { value: '模块', text: '模块' },
+          { value: '对象', text: '对象' },
+          { value: '接口', text: '接口' }
+        ],
+        multiple: true,
+        fn: (filter, record) => filter.value === null || record.type === filter.value
+      }
     },
     {
       title: '模块',

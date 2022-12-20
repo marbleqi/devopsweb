@@ -1,5 +1,6 @@
 <page-header title="权限点" [action]="phActionTpl">
   <ng-template #phActionTpl>
+    <button nz-button (click)="export()">导出</button>
     <button nz-button (click)="getData()">刷新</button>
   </ng-template>
 </page-header>
