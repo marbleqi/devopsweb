@@ -82,8 +82,8 @@ export class KongPluginEditComponent implements OnInit {
               method: { type: 'string', title: '方法', default: 'POST', enum: ['POST', 'PUT', 'PATCH'] },
               content_type: { type: 'string', title: '数据类型', default: 'application/json', enum: ['application/json'] },
               timeout: { type: 'integer', title: '超时时间', default: 10000, multipleOf: 1000 },
-              keepalive: { type: 'integer', title: '关闭后空闲时间', default: 60000, multipleOf: 1000 },
-              flush_timeout: { type: 'integer', title: '发送后空闲时间', default: 2 },
+              keepalive: { type: 'integer', title: '存活时间', default: 60000, multipleOf: 1000 },
+              flush_timeout: { type: 'integer', title: '超时次数', default: 2 },
               retry_count: { type: 'integer', title: '重试次数', default: 10 },
               queue_size: { type: 'integer', title: '发送次数', default: 1 },
               headers: { type: 'string', title: '消息头' }
@@ -102,7 +102,7 @@ export class KongPluginEditComponent implements OnInit {
                   { label: '拒绝', value: 'deny' }
                 ]
               },
-              list: { type: 'string', title: '授权IP', format: 'ipv4' }
+              list: { type: 'string', title: 'IP网段', format: 'ipv4' }
             }
           },
           proxyCache: {
@@ -491,10 +491,95 @@ export class KongPluginEditComponent implements OnInit {
   }
 
   params(value: any): any {
-    return { snis: value.config.snis, tags: value.config.tags, key: value.config.key, cert: value.config.cert };
+    // 针对传入的不同插件类型，重新初始化表单值
+    if (value.config.name === 'cors') {
+      return {
+        name: value.config.name,
+        route: value.config.route,
+        service: value.config.service,
+        consumer: value.config.consumer,
+        protocols: value.config.protocols,
+        enabled: value.config.enabled,
+        tags: value.config.tags,
+        config: value.config.cors
+      };
+    }
+    if (value.config.name === 'http-log') {
+      return {
+        name: value.config.name,
+        route: value.config.route,
+        service: value.config.service,
+        consumer: value.config.consumer,
+        protocols: value.config.protocols,
+        enabled: value.config.enabled,
+        tags: value.config.tags,
+        config: value.config.httpLog
+      };
+    }
+    if (value.config.name === 'ip-restriction') {
+      return {
+        name: value.config.name,
+        route: value.config.route,
+        service: value.config.service,
+        consumer: value.config.consumer,
+        protocols: value.config.protocols,
+        enabled: value.config.enabled,
+        tags: value.config.tags,
+        config: value.config.ipRestriction
+      };
+    }
+    if (value.config.name === 'proxy-cache') {
+      return {
+        name: value.config.name,
+        route: value.config.route,
+        service: value.config.service,
+        consumer: value.config.consumer,
+        protocols: value.config.protocols,
+        enabled: value.config.enabled,
+        tags: value.config.tags,
+        config: value.config.proxyCache
+      };
+    }
+    if (value.config.name === 'redirect') {
+      return {
+        name: value.config.name,
+        route: value.config.route,
+        service: value.config.service,
+        consumer: value.config.consumer,
+        protocols: value.config.protocols,
+        enabled: value.config.enabled,
+        tags: value.config.tags,
+        config: value.config.redirect
+      };
+    }
+    if (value.config.name === 'request-termination') {
+      return {
+        name: value.config.name,
+        route: value.config.route,
+        service: value.config.service,
+        consumer: value.config.consumer,
+        protocols: value.config.protocols,
+        enabled: value.config.enabled,
+        tags: value.config.tags,
+        config: value.config.requestTermination
+      };
+    }
+    if (value.config.name === 'response-transformer') {
+      return {
+        name: value.config.name,
+        route: value.config.route,
+        service: value.config.service,
+        consumer: value.config.consumer,
+        protocols: value.config.protocols,
+        enabled: value.config.enabled,
+        tags: value.config.tags,
+        config: value.config.responseTransformer
+      };
+    }
   }
 
   saveas(value: any): void {
+    console.debug('value', value);
     this.loading = true;
     this.kongProjectService.create(value.hostId, 'plugin', this.params(value)).subscribe(res => {
       if (res.code) {
@@ -508,6 +593,7 @@ export class KongPluginEditComponent implements OnInit {
   }
 
   save(value: any): void {
+    console.debug('value', value);
     this.loading = true;
     this.kongProjectService.update(value.hostId, 'plugin', this.id, this.params(value)).subscribe(res => {
       if (res.code) {

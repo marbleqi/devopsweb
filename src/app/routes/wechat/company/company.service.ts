@@ -6,13 +6,13 @@ import { format } from 'date-fns';
 import { Observable, map } from 'rxjs';
 
 @Injectable()
-export class KongHostService {
-  /**在站点服务中保存当前选中的站点ID */
-  hostId: number;
+export class WechatCompanyService {
+  /**在企业服务中保存当前选中的企业ID */
+  corpid: string;
   /**最新操作ID */
   private operateId: number;
-  /**缓存的站点列表 */
-  private hostMap: Map<number, any>;
+  /**缓存的菜单列表 */
+  private companyMap: Map<string, any>;
 
   /**
    * 构建函数
@@ -21,25 +21,25 @@ export class KongHostService {
    * @param baseService 基础服务
    */
   constructor(private clientService: _HttpClient, private baseService: BaseService) {
-    this.hostId = 0;
+    this.corpid = '';
     this.operateId = 0;
-    this.hostMap = new Map<number, any>();
+    this.companyMap = new Map<string, any>();
   }
 
   /**
-   * 获取站点列表
+   * 获取企业列表
    *
-   * @returns 站点列表
+   * @returns 企业列表
    */
   index(operateId?: number): Observable<any[]> {
     if (typeof operateId === 'number') {
       this.operateId = operateId;
     }
-    return this.clientService.get('kong/host/index', { operateId: this.operateId }).pipe(
+    return this.clientService.get('wechat/company/index', { operateId: this.operateId }).pipe(
       map((res: Result) => {
         if (!res.code && res.data.length) {
           for (const hostItem of res.data) {
-            this.hostMap.set(hostItem.hostId, {
+            this.companyMap.set(hostItem.corpid, {
               ...hostItem,
               updateUserName: this.baseService.userName(hostItem.updateUserId)
             });
@@ -48,22 +48,22 @@ export class KongHostService {
             }
           }
         }
-        return Array.from(this.hostMap.values()).sort((a, b) => a.orderId - b.orderId);
+        return Array.from(this.companyMap.values()).sort((a, b) => a.orderId - b.orderId);
       })
     );
   }
 
   /**
-   * 获取站点详情
+   * 获取企业详情
    *
-   * @param hostId 站点ID
-   * @returns 站点详情
+   * @param corpid 企业ID
+   * @returns 企业详情
    */
-  show(hostId: number): Observable<any> {
-    return this.clientService.get(`kong/host/${hostId}/show`).pipe(
+  show(corpid: string): Observable<any> {
+    return this.clientService.get(`wechat/company/${corpid}/show`).pipe(
       map((res: Result) => {
         if (res.code) {
-          return { hostId };
+          return { corpid };
         } else {
           return {
             ...res.data,
@@ -83,33 +83,33 @@ export class KongHostService {
    * @param value 表单数据
    * @returns 提交后台的数据
    */
-  params(value: any) {
+  params(value: any): any {
     return {
-      name: value.name,
+      corpid: value.corpid,
+      corpsecret: value.corpsecret,
       description: value.description,
-      url: value.url,
       status: value.status
     };
   }
 
   /**
-   * 创建站点
+   * 创建企业
    *
    * @param value 表单数据
    * @returns 后端响应报文
    */
   create(value: any): Observable<Result> {
-    return this.clientService.post('kong/host/create', this.params(value));
+    return this.clientService.post('wechat/company/create', this.params(value));
   }
 
   /**
-   * 修改站点
+   * 修改企业
    *
-   * @param hostId 站点ID
+   * @param corpid 企业ID
    * @param value 表单数据
    * @returns 后端响应报文
    */
-  update(hostId: number, value: any): Observable<Result> {
-    return this.clientService.post(`kong/host/${hostId}/update`, this.params(value));
+  update(corpid: string, value: any): Observable<Result> {
+    return this.clientService.post(`wechat/company/${corpid}/update`, this.params(value));
   }
 }

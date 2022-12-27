@@ -1,0 +1,18 @@
+<page-header title="订单"></page-header>
+<sf #sf mode="search" [schema]="schema" [ui]="ui" [formData]="i" button="none">
+  <button nz-button (click)="search(sf.value)" [disabled]="!sf.valid" [nzLoading]="searching">查询</button>
+</sf>
+<sf *ngIf="orderi" #order mode="edit" [schema]="orderschema" [ui]="orderui" [formData]="orderi" button="none">
+  <div class="text-center">
+    <button
+      nz-button
+      type="submit"
+      nzType="primary"
+      (click)="refund(order.value)"
+      [disabled]="!order.valid || disrefund"
+      [nzLoading]="refunding"
+    >
+      发起退款
+    </button>
+  </div>
+</sf>

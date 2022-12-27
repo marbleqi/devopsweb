@@ -1,12 +1,35 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 
-import { WechatRoutingModule } from './wechat-routing.module';
+import {
+  WechatCompanyService,
+  WechatMerchantService,
+  WechatOrderService,
+  WechatRefundService,
+  WechatComplaintService,
+  WechatCompanyEditComponent,
+  WechatCompanyComponent,
+  WechatMerchantEditComponent,
+  WechatMerchantComponent,
+  WechatOrderComponent,
+  WechatRefundComponent,
+  WechatComplaintComponent,
+  WechatRoutingModule
+} from '.';
 
-const COMPONENTS: Array<Type<void>> = [];
+const COMPONENTS: Array<Type<void>> = [
+  WechatCompanyComponent,
+  WechatMerchantComponent,
+  WechatOrderComponent,
+  WechatRefundComponent,
+  WechatComplaintComponent,
+  WechatCompanyEditComponent,
+  WechatMerchantEditComponent
+];
 
 @NgModule({
   imports: [SharedModule, WechatRoutingModule],
-  declarations: COMPONENTS
+  declarations: COMPONENTS,
+  providers: [WechatCompanyService, WechatMerchantService, WechatOrderService, WechatRefundService, WechatComplaintService]
 })
 export class WechatModule {}
