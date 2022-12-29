@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { BaseService } from '@core';
+import { OnReuseInit } from '@delon/abc/reuse-tab';
 import { STColumn, STComponent } from '@delon/abc/st';
 import { SFSchema } from '@delon/form';
 import { ModalHelper, _HttpClient } from '@delon/theme';
@@ -8,7 +9,7 @@ import { ModalHelper, _HttpClient } from '@delon/theme';
   selector: 'app-wechat-complaint',
   templateUrl: './complaint.component.html'
 })
-export class WechatComplaintComponent implements OnInit {
+export class WechatComplaintComponent implements OnInit, OnReuseInit {
   url = `/user`;
   searchSchema: SFSchema = {
     properties: {
@@ -38,7 +39,9 @@ export class WechatComplaintComponent implements OnInit {
   ngOnInit(): void {
     this.baseService.menuWebSub.next('wechat');
   }
-
+  _onReuseInit(): void {
+    this.baseService.menuWebSub.next('wechat');
+  }
   add(): void {
     // this.modal
     //   .createStatic(FormEditComponent, { i: { id: 0 } })

@@ -1,9 +1,5 @@
-<page-header [action]="phActionTpl">
-  <ng-template #phActionTpl>
-    <button (click)="add()" nz-button nzType="primary">新建</button>
-  </ng-template>
-</page-header>
-<nz-card>
-  <sf mode="search" [schema]="searchSchema" (formSubmit)="st.reset($event)" (formReset)="st.reset($event)"></sf>
-  <st #st [data]="url" [columns]="columns"></st>
-</nz-card>
+<page-header title="退款"></page-header>
+<sf #sf mode="search" [schema]="schema" [ui]="ui" [formData]="i" button="none">
+  <button nz-button (click)="search(sf.value)" [disabled]="!sf.valid" [nzLoading]="searching">查询</button>
+</sf>
+<st #st [data]="stData" [columns]="columns"></st>

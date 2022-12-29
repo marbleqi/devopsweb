@@ -7,7 +7,7 @@ import { ModalHelper, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { map } from 'rxjs';
 
-import { WechatMerchantService, WechatOrderService } from '..';
+import { WechatMerchantService, WechatOrderService, WechatRefundService } from '..';
 
 @Component({
   selector: 'app-wechat-order',
@@ -86,6 +86,7 @@ export class WechatOrderComponent implements OnInit, OnReuseInit {
     private baseService: BaseService,
     private wechatMerchantService: WechatMerchantService,
     private wechatOrderService: WechatOrderService,
+    private wechatRefundService: WechatRefundService,
     private msgSrv: NzMessageService
   ) {}
 
@@ -144,14 +145,15 @@ export class WechatOrderComponent implements OnInit, OnReuseInit {
       return;
     }
     this.refunding = true;
-    // this.http.post('wechat/merchant/refund', value).subscribe((res: any) => {
-    //   if (res.code === 0) {
-    //     this.msgSrv.success('退款成功！');
-    //     this.disrefund = true;
-    //   } else {
-    //     this.msgSrv.warning(res.msg);
-    //   }
-    //   this.refunding = false;
-    // });
+    const params = { mchid: value.mchid, out_trade_no: value.out_trade_no, amount: value.amount, refund: value.refund };
+    this.wechatRefundService.create(params).subscribe((res: any) => {
+      if (res.code === 0) {
+        this.msgSrv.success('退款成功！');
+        this.disrefund = true;
+      } else {
+        this.msgSrv.warning(res.msg);
+      }
+      this.refunding = false;
+    });
   }
 }

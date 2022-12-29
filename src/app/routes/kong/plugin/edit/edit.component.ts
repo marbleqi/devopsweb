@@ -238,6 +238,7 @@ export class KongPluginEditComponent implements OnInit {
         $id: {
           widget: 'select',
           mode: 'default',
+          allowClear: true,
           asyncData: () => this.routeSubject.asObservable()
         }
       },
@@ -248,6 +249,7 @@ export class KongPluginEditComponent implements OnInit {
         $id: {
           widget: 'select',
           mode: 'default',
+          allowClear: true,
           asyncData: () => this.serviceSubject.asObservable()
         }
       },
@@ -258,6 +260,7 @@ export class KongPluginEditComponent implements OnInit {
         $id: {
           widget: 'select',
           mode: 'default',
+          allowClear: true,
           asyncData: () => this.consumerSubject.asObservable()
         }
       },
@@ -491,88 +494,56 @@ export class KongPluginEditComponent implements OnInit {
   }
 
   params(value: any): any {
+    const result = {
+      name: value.config.name,
+      route: value.config.route?.id ? value.config.route : undefined,
+      service: value.config.service?.id ? value.config.service : undefined,
+      consumer: value.config.consumer?.id ? value.config.consumer : undefined,
+      protocols: value.config.protocols,
+      enabled: value.config.enabled,
+      tags: value.config.tags
+    };
+    console.debug('result', result);
     // 针对传入的不同插件类型，重新初始化表单值
-    if (value.config.name === 'cors') {
+    if (result.name === 'cors') {
       return {
-        name: value.config.name,
-        route: value.config.route,
-        service: value.config.service,
-        consumer: value.config.consumer,
-        protocols: value.config.protocols,
-        enabled: value.config.enabled,
-        tags: value.config.tags,
+        ...result,
         config: value.config.cors
       };
     }
-    if (value.config.name === 'http-log') {
+    if (result.name === 'http-log') {
       return {
-        name: value.config.name,
-        route: value.config.route,
-        service: value.config.service,
-        consumer: value.config.consumer,
-        protocols: value.config.protocols,
-        enabled: value.config.enabled,
-        tags: value.config.tags,
+        ...result,
         config: value.config.httpLog
       };
     }
-    if (value.config.name === 'ip-restriction') {
+    if (result.name === 'ip-restriction') {
       return {
-        name: value.config.name,
-        route: value.config.route,
-        service: value.config.service,
-        consumer: value.config.consumer,
-        protocols: value.config.protocols,
-        enabled: value.config.enabled,
-        tags: value.config.tags,
+        ...result,
         config: value.config.ipRestriction
       };
     }
-    if (value.config.name === 'proxy-cache') {
+    if (result.name === 'proxy-cache') {
       return {
-        name: value.config.name,
-        route: value.config.route,
-        service: value.config.service,
-        consumer: value.config.consumer,
-        protocols: value.config.protocols,
-        enabled: value.config.enabled,
-        tags: value.config.tags,
+        ...result,
         config: value.config.proxyCache
       };
     }
-    if (value.config.name === 'redirect') {
+    if (result.name === 'redirect') {
       return {
-        name: value.config.name,
-        route: value.config.route,
-        service: value.config.service,
-        consumer: value.config.consumer,
-        protocols: value.config.protocols,
-        enabled: value.config.enabled,
-        tags: value.config.tags,
+        ...result,
         config: value.config.redirect
       };
     }
-    if (value.config.name === 'request-termination') {
+    if (result.name === 'request-termination') {
       return {
-        name: value.config.name,
-        route: value.config.route,
-        service: value.config.service,
-        consumer: value.config.consumer,
-        protocols: value.config.protocols,
-        enabled: value.config.enabled,
-        tags: value.config.tags,
+        ...result,
         config: value.config.requestTermination
       };
     }
-    if (value.config.name === 'response-transformer') {
+    if (result.name === 'response-transformer') {
       return {
-        name: value.config.name,
-        route: value.config.route,
-        service: value.config.service,
-        consumer: value.config.consumer,
-        protocols: value.config.protocols,
-        enabled: value.config.enabled,
-        tags: value.config.tags,
+        ...result,
         config: value.config.responseTransformer
       };
     }
