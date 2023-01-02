@@ -18,11 +18,8 @@ export class WechatRefundService {
    * @param mchid 商家ID
    * @returns 退款列表
    */
-  index(operateId?: number): Observable<any> {
-    if (typeof operateId === 'number') {
-      this.operateId = operateId;
-    }
-    return this.clientService.get(`wechat/refund/index`);
+  index(mchid: string, start: string, end: string): Observable<any> {
+    return this.clientService.get(`wechat/refund/index`, { mchid, start, end });
   }
 
   /**

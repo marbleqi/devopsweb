@@ -14,7 +14,6 @@ import { WechatMerchantService, WechatOrderService, WechatRefundService } from '
   templateUrl: './order.component.html'
 })
 export class WechatOrderComponent implements OnInit, OnReuseInit {
-  mchid: string | null = null;
   searching: boolean = false;
   refunding: boolean = false;
   schema: SFSchema = {
@@ -25,12 +24,12 @@ export class WechatOrderComponent implements OnInit, OnReuseInit {
         title: '订单类型',
         enum: [
           { label: '商户订单号', value: 'out_trade_no' },
-          { label: '微信支付订单号', value: 'transaction_id' }
+          { label: '微信订单号', value: 'transaction_id' }
         ],
         default: 'out_trade_no'
       },
       out_trade_no: { type: 'string', title: '商户订单号' },
-      transaction_id: { type: 'string', title: '微信支付订单号' }
+      transaction_id: { type: 'string', title: '微信订单号' }
     }
   };
   ui: SFUISchema = {
@@ -42,7 +41,7 @@ export class WechatOrderComponent implements OnInit, OnReuseInit {
       spanLabelFixed: 100,
       width: 200
     },
-    $ordertype: { spanLabelFixed: 100, width: 300, widget: 'select', mode: 'default' },
+    $ordertype: { spanLabelFixed: 100, width: 400, widget: 'select', mode: 'default' },
     $out_trade_no: {
       spanLabelFixed: 100,
       width: 400,
@@ -92,9 +91,10 @@ export class WechatOrderComponent implements OnInit, OnReuseInit {
 
   ngOnInit(): void {
     this.baseService.menuWebSub.next('wechat');
-    if (localStorage.getItem('wxpay_mchid')) {
-      this.mchid = localStorage.getItem('wxpay_mchid');
-      this.i = { mchid: this.mchid, ordertype: 'out_trade_no' };
+    if (this.wechatMerchantService.mchid) {
+      this.i = { mchid: this.wechatMerchantService.mchid, ordertype: 'out_trade_no' };
+    } else {
+      this.i = { ordertype: 'out_trade_no' };
     }
   }
 
@@ -103,13 +103,11 @@ export class WechatOrderComponent implements OnInit, OnReuseInit {
   }
 
   mchChange(mchid: string): void {
-    localStorage.setItem('wxpay_mchid', mchid);
-    this.mchid = mchid;
-    console.debug('mchid', this.mchid);
+    this.wechatMerchantService.mchid = mchid;
   }
 
   search(value: any): void {
-    if (!this.mchid) {
+    if (!this.wechatMerchantService.mchid) {
       this.msgSrv.warning('请选择有效商户！');
       return;
     }
@@ -124,7 +122,7 @@ export class WechatOrderComponent implements OnInit, OnReuseInit {
     const orderType = value.ordertype;
     const orderId = value.ordertype === 'out_trade_no' ? value.out_trade_no : value.transaction_id;
     this.searching = true;
-    this.wechatOrderService.show(this.mchid, orderType, orderId).subscribe((res: any) => {
+    this.wechatOrderService.show(this.wechatMerchantService.mchid, orderType, orderId).subscribe((res: any) => {
       if (res.code) {
         this.msgSrv.warning(res.msg);
       } else {
